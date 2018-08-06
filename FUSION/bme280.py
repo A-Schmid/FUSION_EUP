@@ -1,6 +1,6 @@
 import threading
 import time
-import core
+from .core import *
 
 class bme280:
     def __init__(self, node_id):
@@ -34,7 +34,7 @@ class bme280:
         self.humidity = self.__sensor_data[self.__index["humidity"]]
         self.__last_heart_beats.pop(0)
         self.__last_heart_beats.append(self.heart_beat)
-        if(core.all_elements_equal(self.__last_heart_beats)):
+        if(all_elements_equal(self.__last_heart_beats)):
             self.running = False
         else:
             self.running = True
