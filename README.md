@@ -13,10 +13,10 @@ WIP! End User Programming Interface for the Open Source Project FUSION (http://f
    * $ cp additional_files/daemons/* /usr/local/bin/FUSION/
    * plug in the FTDI usb thing and hopefully the daemon starts
  * for UDP support:
-   * set up a wifi network on your gateway (i called mine fusion)
+   * set up a wifi network on your gateway (i called mine fusion): https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md 
    * ssid and pw of your network have to be hardcoded into the sensor nodes at the moment
-   * run the UDP daemon and you're good to go
-   * # python additional_files/daemons/udp_receiver.py
+   * run the UDP daemon as root and you're good to go
+   * $ python additional_files/daemons/udp_receiver.py
 
 ### actually doing stuff ###
 
