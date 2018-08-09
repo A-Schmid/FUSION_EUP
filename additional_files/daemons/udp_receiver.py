@@ -28,7 +28,7 @@ while True:
     data, addr = sock.recvfrom(1024)
     pack = Packet(data)
     
-    outpath = '/dev/FUSION/UDP'.replace("\"", "")#.replace("(", "").replace(")", "").replace(" ", "_")
+    outpath = '/dev/FUSION/UDP'.replace("\"", "")
     try:
         os.stat(outpath)
     except:

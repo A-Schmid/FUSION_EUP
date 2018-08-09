@@ -3,10 +3,15 @@ WIP! End User Programming Interface for the Open Source Project FUSION (http://f
 
 ### WIP! Setup ###
 
+You might want to try the new install script (not tested yet!):
+$ sudo sh install.sh
+make sure to run it from the FUSION_EUP directory (check with pwd)
+
  * clone the repo to your gateway (might be any linux system, tested with a RPi 3)
  * for xbee support:
+   * install bRingBuf, numpy and pyserial python packages
    * add a udev rule for the FTDI usb thing; this rule will start and end the xbee daemon ones it's plugged in or unplugged:
-   * $ cp additional_files/udev/99-FUSION.rules /etc/udev/rules.d/
+   * $ cp additional_files/udev/98-FUSION.rules /etc/udev/rules.d/
    * add a directory for the daemon scripts:
    * $ mkdir /usr/local/bin/FUSION
    * copy the daemon scrips to the folder where the udev rule is expecting them:
@@ -16,7 +21,7 @@ WIP! End User Programming Interface for the Open Source Project FUSION (http://f
    * set up a wifi network on your gateway (i called mine fusion): https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md 
    * ssid and pw of your network have to be hardcoded into the sensor nodes at the moment
    * run the UDP daemon as root and you're good to go
-   * $ python additional_files/daemons/udp_receiver.py
+   * $ sh additional_files/scripts/start_udp.sh
 
 ### actually doing stuff ###
 

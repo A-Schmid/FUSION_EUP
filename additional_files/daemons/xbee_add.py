@@ -1,12 +1,9 @@
-#!/usr/bin/python3.6
-
+#!/usr/bin/env python3
 import sys
 import os
 from functools import partial
 from threading import Thread
 import time
-
-#from tornado import gen
 
 import numpy as np
 
@@ -15,8 +12,6 @@ from stream_parser import DataContainer
 from stream_parser import bme280Data
 
 import serial
-
-#from bottle import route, run, template
 
 import json
 
@@ -34,17 +29,10 @@ if len(sys.argv) > 2:
 
 outpath = '/dev/FUSION/{}/'.format(modulename).replace("\"", "")#.replace("(", "").replace(")", "").replace(" ", "_")
 
-"""
-#print(port)
-#print(outpath)
-f = open("/tmp/test.log", "a")
-f.write("\n")
-f.write(port)
-f.write("\n")
-f.write(outpath)
-f.write("\n")
-f.close()
-"""
+
+def write_to_log(msg):
+    with open("/tmp/logfile.txt", "a") as logfile:
+        logfile.write("{}\n".format(msg))
 
 ser = serial.Serial()
 ser.port = port
@@ -87,8 +75,7 @@ def sp_callback(dc):
             try:
               os.stat(outpath)
             except:
-              exit()
-              #os.makedirs(outpath)
+              os.makedirs(outpath)
             path = outpath + "node{}".format(bme280.ni)
             outfile = open(path, "w")
             outfile.write(str(bme280.ni) + "\n")
@@ -145,16 +132,5 @@ def blocking_task():
         time.sleep(1)
         ct += 1
 
-
 thread = Thread(target=blocking_task)
 thread.start()
-
-"""
-@route('/sensorData')
-def index():
-    buf = ""
-    for key, data in nodeData.items():
-        buf += json.dumps(data) + "|"
-    return(buf)
-
-run(host='localhost', port=8080)"""

@@ -2,4 +2,6 @@ test.ipynb
 test.py
 *.pyc
 *.swp
+.ipynb_checkpoints/
+nohup.out
 FUSION/__pycache__/
