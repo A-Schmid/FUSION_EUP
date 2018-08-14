@@ -1,9 +1,14 @@
-#!/usr/bin/env python3
+#!/home/fusion/fusion-env/bin/python3
+
 import sys
 import os
 from functools import partial
 from threading import Thread
 import time
+
+def write_to_log(msg):
+    with open("/tmp/logfile.txt", "a") as logfile:
+        logfile.write("{}\n".format(msg))
 
 import numpy as np
 
@@ -28,11 +33,6 @@ if len(sys.argv) > 2:
   modulename = sys.argv[2]
 
 outpath = '/dev/FUSION/{}/'.format(modulename).replace("\"", "")#.replace("(", "").replace(")", "").replace(" ", "_")
-
-
-def write_to_log(msg):
-    with open("/tmp/logfile.txt", "a") as logfile:
-        logfile.write("{}\n".format(msg))
 
 ser = serial.Serial()
 ser.port = port
@@ -59,6 +59,7 @@ bme280 = bme280Data()
 
 nodeData = {}
 
+write_to_log("2")
 def sp_callback(dc):
     global testData
     print('Do stuff with given data.')
@@ -76,6 +77,7 @@ def sp_callback(dc):
               os.stat(outpath)
             except:
               os.makedirs(outpath)
+
             path = outpath + "node{}".format(bme280.ni)
             outfile = open(path, "w")
             outfile.write(str(bme280.ni) + "\n")

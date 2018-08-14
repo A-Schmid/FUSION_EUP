@@ -2,7 +2,7 @@ import threading
 import time
 from .core import *
 
-class pir:
+class udp:
     def __init__(self, node_id):
         self.__path = '/dev/FUSION/UDP/node{}_in'.format(node_id)
         self.__index = {"ni" : 0, "heart_beat" : 1, "data" : 2}

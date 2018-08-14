@@ -13,6 +13,7 @@ name=$(env | grep "ID_MODEL_FROM_DATABASE" | grep -o -P "(?<=ID_MODEL_FROM_DATAB
 #echo "test">>"/tmp/$name.txt"
 #mkdir "/tmp/fusisusi/$name"
 mkdir "/dev/FUSION/$name"
-python3 /usr/local/bin/FUSION/xbee_add.py $path "\"$name\"" &
+#source /home/fusion/fusion-env/bin/activate
+/home/fusion/fusion-env/bin/python3 /usr/local/bin/FUSION/xbee_add.py $path "\"$name\"" &
 #echo "py script started from sh" >> /tmp/logfile.txt
 #echo "it worked" >>/tmp/test.log

@@ -63,7 +63,7 @@ while True:
     #sock_uds.sendall(pack.getRawData())
     #sock_uds.close()
 
-
+    print(str(pack.heartbeat))
     
     outfile = open(uds_path + "/node{}_in".format(pack.ni), "w")
     outfile.write(str(pack.ni) + "\n")

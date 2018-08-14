@@ -8,7 +8,12 @@ mkdir /usr/local/bin/FUSION
 echo "copying daemons to said directory..."
 cp additional_files/daemons/* /usr/local/bin/FUSION
 
-echo "reloading udev rules..."
-sh additional_files/scripts/reload_udev.sh
+if [ "$1" = "no-udev" ]
+then
+	echo "skipped reload of udev rules."
+else
+	echo "reloading udev rules..."
+	sh additional_files/scripts/reload_udev.sh
+fi
 
 echo "FUSION setup done"
