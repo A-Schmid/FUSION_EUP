@@ -1,0 +1,116 @@
+1. install raspbian
+
+2. enable ssh on the rpi:
+ * create a file called "ssh" in the boot partition of the sd card
+
+3. ssh into the rpi
+ * $ ssh pi@ipadress.of.pi
+ * default password is raspberry
+
+4. create a new user called "fusion" with password "fusion" and grant root privileges
+ * $ sudo adduser fusion
+ * $ sudo usermod -aG sudo fusion
+
+5. switch to the new user
+ * $ su fusion
+
+6. cofigure the rpi
+ * $ sudo raspi-config
+ * change locale the one you prefer
+ * set the correct timezone:
+   * $ sudo dpkg-reconfigure tzdata
+
+7. install some convenient software
+ * $ sudo apt update
+ * $ sudo apt install fish
+ * $ sudo apt install tmux
+ * $ sudo apt install git
+ * $ sudo apt install nmap
+ * $ sudo apt install vim
+ * $ sudo apt install libatlas-base-dev
+
+8. set up the python environment
+ * set up a virtual environment:
+   * install python3-venv
+     * $ sudo apt install python3-venv
+   * $ python3 -m venv fusion-env
+   * $ source fusion-env/bin/activate
+ * install pip
+   * curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+   * python3 get-pip.py
+ * install required packages
+   * $ pip install --upgrade pip
+   * $ pip install jupyter
+   * $ pip install numpy
+   * $ pip install bokeh
+   * $ pip install bringbuf
+ * configure jupyter
+   * $ jupyter notebook --generate-config
+   * $ jupyter notebook password
+   * $ vim ~/.jupyter/jupyter_notebook_config.py
+   * add following lines:
+c.NotebookApp.open_browser = False
+c.NotebookApp.ip = '*'
+c.NotebookApp.port = 8888
+
+9. set up the rpi as an access point (from https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md)
+ * $ sudo apt install dnsmasq hostapd
+ * $ sudo systemctl stop dnsmasq
+ * $ sudo systemctl stop hostapd
+ * $ sudo vim /etc/dhcpcd.conf
+   * add the following to the end of the file:
+interface wlan0
+    static ip_address=192.168.4.1/24
+    nohook wpa_supplicant
+ * $ sudo service dhcpcd restart
+ * backup the dnsmasq.conf and create a new one:
+   * $ sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+   * $ sudo vim /etc/dnsmasq.conf
+   * add the following text:
+interface=wlan0
+    dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
+ * configure the access point
+   * $ sudo vim /etc/hostapd/hostapd.conf
+   * insert following stuff (you might want to change you network ssid and password (and the password has to be at least 8 letters!)):
+interface=wlan0
+driver=nl80211
+ssid=FUSION
+hw_mode=g
+channel=7
+wmm_enabled=0
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=fusionjazz
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+ * tell the system where last created file is:
+   * $ sudo vim /etc/default/hostapd
+   * add the following:
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+ * start up the services again
+   * $ sudo systemctl start hostapd
+   * $ sudo systemctl start dnsmasq
+ * add routing and masquerade:
+   * $ sudo vim /etc/sysctl.conf
+   * uncomment the line
+net.ipv4.ip_forward=1
+   * add a masquerade for outgoing traffic on eth0 (i have no idea what that means, see the source)
+     * $ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+   * save the iptables rule
+     * $ sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+   * add following line to /etc/rc.local above "exit 0" to install these rools when booting
+iptables-restore < /etc/iptables.ipv4.nat
+   * reboot
+
+10. set up git
+ * set name and email address:
+   * git config --global user.email "your@email.com"
+   * git config --global user.name "Your Name"
+
+11. set up the fusion environment
+ * $ git clone https://github.com/A-Schmid/FUSION_EUP.git
+ * $ cd FUSION_EUP
+ * $ sudo sh install.sh
