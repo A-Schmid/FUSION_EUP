@@ -4,7 +4,7 @@ from .core import *
 
 class udp:
     def __init__(self, node_id):
-        self.__path = '/dev/FUSION/UDP/node{}_in'.format(node_id)
+        self.__path = '/dev/FUSION/node{}_in'.format(node_id)
         self.__index = {"ni" : 0, "heart_beat" : 1, "data" : 2}
         self.__callbacks = []
         self.__interval = 0.1

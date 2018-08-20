@@ -4,7 +4,7 @@ from .core import *
 
 class bme280:
     def __init__(self, node_id):
-        self.__path = '/dev/FUSION/FT232_Serial_UART_IC/node{}_in'.format(node_id)
+        self.__path = '/dev/FUSION/node{}_in'.format(node_id)
         self.__index = {"ni" : 0, "heart_beat" : 1, "temperature" : 2, "pressure" : 3, "humidity" : 4}
         self.__interval = 1.0
         self.__last_heart_beats = [0, 0, 0]

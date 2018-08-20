@@ -20,19 +20,7 @@ import serial
 
 import json
 
-modulename = "misc"
-
-port = "/dev/FUSION/"
-
-if len(sys.argv) > 1:
-  port = sys.argv[1]
-else:
-  sys.exit()
-
-if len(sys.argv) > 2:
-  modulename = sys.argv[2]
-
-outpath = '/dev/FUSION/{}/'.format(modulename).replace("\"", "")#.replace("(", "").replace(")", "").replace(" ", "_")
+outpath = '/dev/FUSION/'
 
 ser = serial.Serial()
 ser.port = port
@@ -59,38 +47,26 @@ bme280 = bme280Data()
 
 nodeData = {}
 
-write_to_log("2")
 def sp_callback(dc):
     global testData
-    print('Do stuff with given data.')
-    #print()
+    
     for d in dc.new_data_for:
         if( type(dc.new_data_for[d]) is bme280Data ):
             nodeData[d] = {}
             bme280 = dc.new_data_for[d]
-            """nodeData[d]['nodeId'] = bme280.ni
-            nodeData[d]['heartBeat'] = bme280.heart_beat
-            nodeData[d]['temperature'] = bme280.temperature
-            nodeData[d]['pressure'] = bme280.pressure
-            nodeData[d]['humidity'] = bme280.humidity"""
+            
             try:
               os.stat(outpath)
             except:
               os.makedirs(outpath)
 
-            path = outpath + "node{}".format(bme280.ni)
+            path = outpath + "node{}_in".format(bme280.ni)
             outfile = open(path, "w")
             outfile.write(str(bme280.ni) + "\n")
             outfile.write(str(bme280.heart_beat) + "\n")
             outfile.write(str(bme280.temperature) + "\n")
             outfile.write(str(bme280.pressure) + "\n")
             outfile.write(str(bme280.humidity) + "\n")
-            outfile.close()
-            print( 'node identifier:\t' + str(bme280.ni) )
-            print( 'heart beat:\t\t' + str(bme280.heart_beat) )
-            print( 'temperature:\t\t' + str(bme280.temperature) + ' C')
-            print( 'pressure:\t\t' + str(bme280.pressure) + ' Pa' )
-            print( 'humidity:\t\t' + "%.2f" % (bme280.humidity) + ' %RH' )
 
 sp.parsed_all_callback = sp_callback
 

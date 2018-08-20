@@ -1,2 +1,2 @@
 ACTION=="add", SUBSYSTEM=="tty", SUBSYSTEMS=="usb-serial", DRIVERS=="ftdi_sio", RUN+="/bin/sh /usr/local/bin/FUSION/xbee_add.sh"
-ACTION=="remove", SUBSYSTEM=="tty", ENV{ID_MODEL_ID}=="6001", ENV{ID_VENDOR_ID}=="0403", RUN+="/bin/sh /usr/local/bin/FUSION/xbee_remove.sh"
+#ACTION=="remove", SUBSYSTEM=="tty", ENV{ID_MODEL_ID}=="6001", ENV{ID_VENDOR_ID}=="0403", RUN+="/bin/sh /usr/local/bin/FUSION/xbee_remove.sh"

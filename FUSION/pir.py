@@ -4,7 +4,7 @@ from .core import *
 
 class pir:
     def __init__(self, node_id):
-        self.__path = '/dev/FUSION/UDP/node{}_in'.format(node_id)
+        self.__path = '/dev/FUSION/node{}_in'.format(node_id)
         self.__index = {"ni" : 0, "heart_beat" : 1, "event" : 2, "time" : 3}
         self.__events = ["leave", "enter"]
         self.__last_update = 0
