@@ -4,7 +4,7 @@ from .core import *
 
 class bme280:
     def __init__(self, node_id):
-        self.__path = '/dev/FUSION/FT232_Serial_UART_IC/node{}'.format(node_id)
+        self.__path = '/dev/FUSION/FT232_Serial_UART_IC/node{}_in'.format(node_id)
         self.__index = {"ni" : 0, "heart_beat" : 1, "temperature" : 2, "pressure" : 3, "humidity" : 4}
         self.__interval = 1.0
         self.__last_heart_beats = [0, 0, 0]
@@ -24,14 +24,14 @@ class bme280:
         self.__sensor_data = []
         with open(self.__path) as data_file:
             for line in data_file:
-                self.__sensor_data.append(float(line))
+                self.__sensor_data.append(line)
 
     def __update_sensor_data(self):
-        self.node_id = self.__sensor_data[self.__index["ni"]]
-        self.heart_beat = self.__sensor_data[self.__index["heart_beat"]]
-        self.temperature = self.__sensor_data[self.__index["temperature"]]
-        self.pressure = self.__sensor_data[self.__index["pressure"]]
-        self.humidity = self.__sensor_data[self.__index["humidity"]]
+        self.node_id = int(self.__sensor_data[self.__index["ni"]])
+        self.heart_beat = int(self.__sensor_data[self.__index["heart_beat"]])
+        self.temperature = float(self.__sensor_data[self.__index["temperature"]])
+        self.pressure = float(self.__sensor_data[self.__index["pressure"]])
+        self.humidity = float(self.__sensor_data[self.__index["humidity"]])
         self.__last_heart_beats.pop(0)
         self.__last_heart_beats.append(self.heart_beat)
         if(all_elements_equal(self.__last_heart_beats)):

@@ -21,8 +21,9 @@ class Packet():
     def getRawData(self):
         return self.raw_data
     def deserialize(self):
-        self.raw_bytes = bytearray()
-        self.raw_bytes.extend(self.raw_data) # map(ord, self.raw_data)
+        #self.raw_bytes = bytearray()
+        #self.raw_bytes.extend(self.raw_data) # map(ord, self.raw_data)
+        self.raw_bytes = list(self.raw_data)
         self.ni = self.raw_bytes[3]
         self.heartbeat = self.raw_bytes[1]
         self.data_length = self.raw_bytes[4]
@@ -31,13 +32,18 @@ class Packet():
         self.checksum_ok = True
 
 while True:
+    #print("waiting for packet...")
     data, addr = sock_udp.recvfrom(1024)
     pack = Packet(data)
     
-    #try:
-    #    os.stat(uds_addr)
-    #except:
-    #    os.makedirs(uds_addr)
+    #print("creating directories")
+
+    try:
+        os.stat(uds_path)
+    except:
+        os.makedirs(uds_path)
+
+    #print("directories created")
 
     #uds_addr = uds_path + "/node{}_in".format(pack.ni)
 
@@ -63,13 +69,20 @@ while True:
     #sock_uds.sendall(pack.getRawData())
     #sock_uds.close()
 
-    print(str(pack.heartbeat))
+    #print(str(pack.heartbeat))
     
     outfile = open(uds_path + "/node{}_in".format(pack.ni), "w")
     outfile.write(str(pack.ni) + "\n")
     outfile.write(str(pack.heartbeat) + "\n")
-    outfile.write(str(pack.getData()) + "\n") # getData()[0] ???
+
+    for d in pack.getData():
+        outfile.write(str(d))
+
+    outfile.write("\n")
+    #outfile.write(str(pack.getData()) + "\n") # getData()[0] ???
     outfile.write(str(time.time()) + "\n")
     outfile.close()
+
+    #print("done")
     
     time.sleep(0.1)
