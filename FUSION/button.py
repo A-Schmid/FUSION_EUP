@@ -56,7 +56,7 @@ class button:
         while(True):
             self.__get_sensor_data()
             self.__update_sensor_data()
-            #time.sleep(self.__interval)
+            time.sleep(self.__interval)
 
     def OnPress(self, callback):
         self.__callbacks["pressed"].append(callback)
