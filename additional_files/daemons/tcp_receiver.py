@@ -5,12 +5,14 @@ import os
 import sys
 
 ip_addr = "192.168.4.1"
-port = 5005
+port = 5006
 
 fusion_path = "/dev/FUSION"
 
-sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock_udp.bind((ip_addr, port))
+sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock_tcp.bind((ip_addr, port))
+sock_tcp.listen(1)
+client, addr = sock_tcp.accept()
 
 class Packet():
     def __init__(self, data_string):
@@ -21,7 +23,8 @@ class Packet():
     def getRawData(self):
         return self.raw_data
     def deserialize(self):
-        self.raw_bytes = list(self.raw_data)
+        print(self.raw_data)
+        self.raw_bytes = list(self.raw_data[0])
         self.ni = self.raw_bytes[3]
         self.heartbeat = self.raw_bytes[1]
         self.data_length = self.raw_bytes[4]
@@ -30,16 +33,14 @@ class Packet():
         self.checksum_ok = True
 
 while True:
-    data, addr = sock_udp.recvfrom(1024)
+    data = client.recvfrom(1024)
     pack = Packet(data)
-    
     try:
         os.stat(fusion_path)
     except:
         os.makedirs(fusion_path)
 
     fifo_path = fusion_path + "/node{}_in".format(pack.ni)
-    #os.mkfifo(fifo_path)
 
     outfile = open(fifo_path, "w")
     outfile.write(str(pack.ni) + "\n")
