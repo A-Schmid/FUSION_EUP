@@ -23,7 +23,6 @@ class Packet():
     def getRawData(self):
         return self.raw_data
     def deserialize(self):
-        print(self.raw_data)
         self.raw_bytes = list(self.raw_data[0])
         self.ni = self.raw_bytes[3]
         self.heartbeat = self.raw_bytes[1]
