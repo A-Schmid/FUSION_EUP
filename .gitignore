@@ -5,3 +5,4 @@ test.py
 .ipynb_checkpoints/
 nohup.out
 FUSION/__pycache__/
+log/
