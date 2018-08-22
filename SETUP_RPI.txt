@@ -102,7 +102,7 @@ net.ipv4.ip_forward=1
      * $ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
    * save the iptables rule
      * $ sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
-   * add following line to /etc/rc.local above "exit 0" to install these rools when booting
+   * add following line to /etc/rc.local above "exit 0" to install these rules when booting
 iptables-restore < /etc/iptables.ipv4.nat
    * reboot
 
