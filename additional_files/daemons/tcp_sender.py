@@ -3,6 +3,7 @@ import time
 import datetime
 import os
 import sys
+import struct
 
 ip_addr = "192.168.4.1"
 port = 5006
@@ -34,27 +35,17 @@ class Packet():
         self.checksum_ok = True
 
 while True:
+    # WIP!
     print(counter)
-    client.send(str(counter))
+    FRAME_BEGIN = 0xAA
+    FRAME_ID = 0
+    MSG_ID = 0
+    NI = 0
+    NMB_DATA = 1
+    DATA = counter % 2
+    CHECKSUM = 0x0000
+    packet = struct.pack("<BBBBBBH", FRAME_BEGIN, FRAME_ID, MSG_ID, NI, NMB_DATA, DATA, CHECKSUM)
+    client.sendall(packet)
     counter += 1
-#   data = client.recvfrom(1024)
-#   pack = Packet(data)
-#   try:
-#       os.stat(fusion_path)
-#   except:
-#       os.makedirs(fusion_path)
-
-#   fifo_path = fusion_path + "/node{}_in".format(pack.ni)
-
-#   outfile = open(fifo_path, "w")
-#   outfile.write(str(pack.ni) + "\n")
-#   outfile.write(str(pack.heartbeat) + "\n")
-
-#   for d in pack.getData():
-#       outfile.write(str(d))
-#   outfile.write("\n")
-#   
-#   outfile.write(str(time.time()) + "\n")
-#   outfile.close()
     
     time.sleep(1)
