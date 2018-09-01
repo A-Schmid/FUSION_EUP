@@ -9,6 +9,11 @@ port = 5006
 
 fusion_path = "/dev/FUSION"
 
+try:
+    os.stat(fusion_path)
+except:
+    os.makedirs(fusion_path)
+
 sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock_tcp.bind((ip_addr, port))
 sock_tcp.listen(1)
@@ -17,7 +22,11 @@ client, addr = sock_tcp.accept()
 class Packet():
     def __init__(self, data_string):
         self.raw_data = data_string
-        self.deserialize()
+        try:
+            self.deserialize()
+        except:
+            #this is not how a checksum works, but better than nothing for now
+            self.checksum_ok = False
     def getData(self):
         return self.data
     def getRawData(self):
@@ -34,10 +43,9 @@ class Packet():
 while True:
     data = client.recvfrom(1024)
     pack = Packet(data)
-    try:
-        os.stat(fusion_path)
-    except:
-        os.makedirs(fusion_path)
+
+    if(pack.checksum_ok == False):
+        return
 
     fifo_path = fusion_path + "/node{}_in".format(pack.ni)
 

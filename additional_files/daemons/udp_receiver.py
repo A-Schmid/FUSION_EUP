@@ -9,13 +9,22 @@ port = 5005
 
 fusion_path = "/dev/FUSION"
 
+try:
+    os.stat(fusion_path)
+except:
+    os.makedirs(fusion_path)
+
 sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock_udp.bind((ip_addr, port))
 
 class Packet():
     def __init__(self, data_string):
         self.raw_data = data_string
-        self.deserialize()
+        try:
+            self.deserialize()
+        except:
+            #TODO
+            self.checksum_ok = False
     def getData(self):
         return self.data
     def getRawData(self):
@@ -32,14 +41,11 @@ class Packet():
 while True:
     data, addr = sock_udp.recvfrom(1024)
     pack = Packet(data)
-    
-    try:
-        os.stat(fusion_path)
-    except:
-        os.makedirs(fusion_path)
+
+    if(pack.checksum_ok == False):
+        return
 
     fifo_path = fusion_path + "/node{}_in".format(pack.ni)
-    #os.mkfifo(fifo_path)
 
     outfile = open(fifo_path, "w")
     outfile.write(str(pack.ni) + "\n")
