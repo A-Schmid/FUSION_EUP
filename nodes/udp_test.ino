@@ -44,7 +44,8 @@ char heartbeat = 0;
 void setup() {
   Serial.begin(9600);
   Serial.println("beginning...");
-  
+ 
+  WiFi.mode(WIFI_STA); 
   WiFi.begin(ssid, pw);
   
   while(WiFi.status() != WL_CONNECTED)
