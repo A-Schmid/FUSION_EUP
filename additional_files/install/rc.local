@@ -1,0 +1,4 @@
+19iiptables-restore < /etc/iptables.ipv4.nat
+python3 /usr/local/bin/FUSION/udp_receiver.py
+python3 /usr/local/bin/FUSION/tcp_receiver.py
+
