@@ -42,7 +42,10 @@ class bme280:
     def __update(self):
         while(True):
             self.__get_sensor_data()
-            self.__update_sensor_data()
+            try:
+                self.__update_sensor_data()
+            except:
+                continue
             time.sleep(self.__interval)
 
     def info(self):

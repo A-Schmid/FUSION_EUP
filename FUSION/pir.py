@@ -45,7 +45,10 @@ class pir:
     def __update(self):
         while(True):
             self.__get_sensor_data()
-            self.__update_sensor_data()
+            try:
+                self.__update_sensor_data()
+            except:
+                continue
             time.sleep(self.__interval)
 
     def OnEvent(self, callback):
