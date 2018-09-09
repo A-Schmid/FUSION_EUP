@@ -43,7 +43,7 @@ while True:
     pack = Packet(data)
 
     if(pack.checksum_ok == False):
-        return
+        continue
 
     fifo_path = fusion_path + "/node{}_in".format(pack.ni)
 

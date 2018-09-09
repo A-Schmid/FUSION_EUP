@@ -18,7 +18,8 @@ sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock_tcp.bind((ip_addr, port))
 sock_tcp.listen(1)
 client, addr = sock_tcp.accept()
-
+print(client)
+print(addr)
 class Packet():
     def __init__(self, data_string):
         self.raw_data = data_string
@@ -41,11 +42,14 @@ class Packet():
         self.checksum_ok = True
 
 while True:
+    print("waiting for data...")
     data = client.recvfrom(1024)
+
+    print(data)
     pack = Packet(data)
 
     if(pack.checksum_ok == False):
-        return
+        continue
 
     fifo_path = fusion_path + "/node{}_in".format(pack.ni)
 
@@ -59,5 +63,6 @@ while True:
     
     outfile.write(str(time.time()) + "\n")
     outfile.close()
+    print("done")
     
     time.sleep(0.1)
