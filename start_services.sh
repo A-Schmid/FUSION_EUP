@@ -7,3 +7,4 @@ nohup sudo python3 /usr/local/bin/FUSION/tcp_receiver.py &
 echo "starting jupyter notebook..."
 jupyter notebook 
 echo "all services up and running!"
+exit

@@ -3,6 +3,7 @@ import time
 import datetime
 import os
 import sys
+from threading import Thread
 
 ip_addr = "192.168.4.1"
 port = 5006
@@ -17,9 +18,7 @@ except:
 sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock_tcp.bind((ip_addr, port))
 sock_tcp.listen(1)
-client, addr = sock_tcp.accept()
-print(client)
-print(addr)
+
 class Packet():
     def __init__(self, data_string):
         self.raw_data = data_string
@@ -41,28 +40,34 @@ class Packet():
         self.checksum = self.raw_bytes[5 + self.data_length:7+self.data_length]
         self.checksum_ok = True
 
+def tcp_receive(client):
+    while True:
+        data = client.recvfrom(1024)
+
+        pack = Packet(data)
+
+        if(pack.checksum_ok == False):
+            continue
+
+        fifo_path = fusion_path + "/node{}_in".format(pack.ni)
+
+        outfile = open(fifo_path, "w")
+        outfile.write(str(pack.ni) + "\n")
+        outfile.write(str(pack.heartbeat) + "\n")
+
+        for d in pack.getData():
+            outfile.write(str(d))
+        outfile.write("\n")
+    
+        outfile.write(str(time.time()) + "\n")
+        outfile.close()
+    
+        time.sleep(0.1)
+
 while True:
-    print("waiting for data...")
-    data = client.recvfrom(1024)
-
-    print(data)
-    pack = Packet(data)
-
-    if(pack.checksum_ok == False):
-        continue
-
-    fifo_path = fusion_path + "/node{}_in".format(pack.ni)
-
-    outfile = open(fifo_path, "w")
-    outfile.write(str(pack.ni) + "\n")
-    outfile.write(str(pack.heartbeat) + "\n")
-
-    for d in pack.getData():
-        outfile.write(str(d))
-    outfile.write("\n")
-    
-    outfile.write(str(time.time()) + "\n")
-    outfile.close()
-    print("done")
-    
+    client, addr = sock_tcp.accept()
+    thread = Thread(target=tcp_receive, args=(client,))
+    thread.start()
     time.sleep(0.1)
+    #print(client)
+    #print(addr)
