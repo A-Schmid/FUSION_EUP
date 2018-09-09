@@ -1,15 +1,23 @@
-#define DEBUG 1
-#include "./src/FUSION/FUSION_WIFI.h"
-#include "./src/FUSION/FUSION_MODULE.h"
+void setup()
+{
+pinMode(D4, OUTPUT);
+digitalWrite(D4, HIGH);
+}
+
+void loop()
+{
+}
+
+/*#include "FUSION_WIFI.h"
+#include "FUSION_MODULE.h"
 
 bool wasDown = false;
 
 uint8_t buttonPin = D3;
 
-FusionModule module(43);
-
 void setup()
 {
+  NODE_ID = 43;
   pinMode(buttonPin, INPUT);
   Serial.begin(9600);
   if(initWifi() == true) Serial.println("connected!");
@@ -42,14 +50,9 @@ void loop()
 
 void sendButtonEvent(bool entered)
 {
-  //char* packet;
+  char* packet;
   char data[1] = {(char) entered};
-  /*unsigned int packet_length = createPacket(data, 1, packet);
-  for(int i = 0; i < packet_length; i++)
-  {
-    Serial.println(packet[i], HEX);
-  }*/
-  module.createPacket(data, 1);
-  sendPacket(module.packet, module.packetLength);
-  module.freePacket();
+  unsigned int packet_length = createPacket(data, 1, packet);
+  sendPacket(packet, packet_length);
 }
+*/
