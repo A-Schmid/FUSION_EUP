@@ -19,8 +19,14 @@ class FusionModule
         unsigned int packetLength;
         char* packet;
 
+        void initialize();
         void createPacket(char* data, int data_length);
         void freePacket();
+        void sendData(char* data, int data_length);
+        void sendData(char data);
+        void sendData(int data);
+        void sendData(bool data);
+        //TODO: all data types
 };
 
 #endif // FUSION_MODULE_H

@@ -1,5 +1,4 @@
 #define DEBUG 1
-#include "./src/FUSION/FUSION_WIFI.h"
 #include "./src/FUSION/FUSION_MODULE.h"
 
 bool wasDown = false;
@@ -12,7 +11,7 @@ void setup()
 {
   pinMode(buttonPin, INPUT);
   Serial.begin(9600);
-  if(initWifi() == true) Serial.println("connected!");
+  module.initialize();
 }
 
 void loop()
@@ -42,14 +41,5 @@ void loop()
 
 void sendButtonEvent(bool entered)
 {
-  //char* packet;
-  char data[1] = {(char) entered};
-  /*unsigned int packet_length = createPacket(data, 1, packet);
-  for(int i = 0; i < packet_length; i++)
-  {
-    Serial.println(packet[i], HEX);
-  }*/
-  module.createPacket(data, 1);
-  sendPacket(module.packet, module.packetLength);
-  module.freePacket();
+  module.sendData(entered);
 }

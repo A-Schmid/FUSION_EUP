@@ -1,6 +1,3 @@
-#ifndef FUSION_WIFI_CPP
-#define FUSION_WIFI_CPP
-
 #if defined(ARDUINO) && ARDUINO >= 100
   #include "Arduino.h"
 #else
@@ -51,7 +48,6 @@ bool sendPacket(char* data, unsigned int length, unsigned int mode)
 		        	return false;
 	    	    }
     	    }
-	
     	    tcpClient.write(data, length);
             break;
         case WIFI_MODE_UDP:
@@ -59,4 +55,3 @@ bool sendPacket(char* data, unsigned int length, unsigned int mode)
     }
     return true;
 }
-#endif
