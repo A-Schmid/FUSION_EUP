@@ -4,8 +4,6 @@
   #include "WProgram.h"
 #endif
 
-#include <stdlib.h>
-#include "FUSION_WIFI.h"
 #include "FUSION_MODULE.h"
 
 FusionModule::FusionModule(unsigned int ni)

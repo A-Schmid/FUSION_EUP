@@ -1,24 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
-/*
- * FRAME_BEGIN: 0xAA
- * = FRAME HEAD =
- * FRAME_ID ?
- * MSG_ID ?
- * NI // node id
- * NMB_DATA // number of data bytes?
- * = DATA =
- * DATA_0
- * ...
- * DATA_N
- * = CHECKSUM =
- * CRC_HI
- * CRC_LO
- * 
- * 
- */
-
 #define INDEX_FRAME_BEGIN 0
 #define INDEX_FRAME_ID 1
 #define INDEX_MSG_ID 2

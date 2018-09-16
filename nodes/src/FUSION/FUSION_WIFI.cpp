@@ -12,10 +12,15 @@ const char* ip = "192.168.4.1";
 const unsigned int udp_port = 5005;
 const unsigned int tcp_port = 5006;
 
+bool wifi_initialized = false;
+
 WiFiClient tcpClient;
+WiFiUDP udpClient;
 
 bool initWifi()
 {
+    if(wifi_initialized) return true;
+
 	WiFi.mode(WIFI_STA); 
 	WiFi.begin(ssid, pw);
 	
@@ -25,6 +30,10 @@ bool initWifi()
 	    delay(500);
 	}
 	
+    udpClient.begin(udp_port);
+
+    wifi_initialized = true;
+
     return true;
 }
 
@@ -51,6 +60,9 @@ bool sendPacket(char* data, unsigned int length, unsigned int mode)
     	    tcpClient.write(data, length);
             break;
         case WIFI_MODE_UDP:
+            udpClient.beginPacket(ip, udp_port);
+            udpClient.write(data, length);
+            udpClient.endPacket();
             break;
     }
     return true;

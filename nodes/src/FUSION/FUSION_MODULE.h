@@ -11,6 +11,10 @@
 #define FRAME_CHECKSUM_LENGTH 2
 #define FRAME_BEGIN 0xAA
 
+#include <stdlib.h>
+#include "FUSION_WIFI.h"
+#include "FUSION_MODULE.h"
+
 class FusionModule
 {
     public:
