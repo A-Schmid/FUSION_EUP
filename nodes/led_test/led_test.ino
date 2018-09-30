@@ -9,16 +9,17 @@
 #define FRAME_HEAD_LENGTH 4
 #define FRAME_CHECKSUM_LENGTH 2
 #define FRAME_BEGIN 0xAA
-#define NODE_ID 36
+#define NODE_ID 42
 
 const char* ssid = "FUSION";
 const char* pw = "fusionjazz";
-const unsigned int port = 5006;
+const unsigned int port = 5008;
 const char* ip = "192.168.4.1";
 
 WiFiClient tcpClient;
 
 uint8_t pin_LED = D0;
+bool accepted = false;
 
 void setup()
 {
@@ -41,46 +42,81 @@ void setup()
 
 void loop()
 {
+  while(!accepted)
+  {
+    Serial.println("waiting for acceptance...");
+    checkConnection();
+    sendHandshakePacket();
+    accepted = true;
+  }
+
   checkConnection();
   digitalWrite(pin_LED, getLedStatus());
 
-
-
-  /*byte result[2];
-  byte buffer = tcpClient.read()
-  while(buffer )
-  if(result > -1) Serial.println(result, HEX);*/
-
-  //Serial.println("done");
+  Serial.println("done");
   
   delay(50);
 }
 
 void checkConnection()
 {
-  //Serial.println("checking connection...");
+  Serial.println("checking connection...");
   if(!tcpClient.connected())
   {
-    //Serial.println("reconnecting...");
+    Serial.println("reconnecting...");
     tcpClient.stop();
-    if(!tcpClient.connect(ip, port))
+    int connection = tcpClient.connect(ip, port);
+    if(connection != 1)
     {
-      //Serial.println("reconnect failed...");
+      Serial.println("reconnect failed...");
       delay(500);
       return;
     }
   }
 }
 
+void sendHandshakePacket()
+{
+  char packet[1];
+  packet[0] = (char) NODE_ID;
+  while(1)
+  {
+    Serial.print("sending handshake..."); Serial.println(packet[0], HEX);
+    tcpClient.write(packet, 1);
+    Serial.println("waiting for ack");
+    delay(100); //necessary?
+    char ack = tcpClient.read();
+    Serial.println(ack, HEX);
+    if(ack == 1)
+    {
+      Serial.println("ack: success!");
+      break;
+    }
+    delay(500);
+  }
+}
+
 bool getLedStatus()
 {
-  int data_length = 1;
+  int data_length = -1;
+  while(data_length == -1)
+  {
+    data_length = (int) tcpClient.read();
+  }
+  Serial.print("datalength: "); Serial.println(data_length);
+  tcpClient.write(0x01);
+
   int packet_length = data_length + 7;
   int index_checksum = 1 + FRAME_HEAD_LENGTH + data_length;
   char* packet = (char*) malloc(2 + FRAME_HEAD_LENGTH + data_length + FRAME_CHECKSUM_LENGTH);
 
   tcpClient.readBytes(packet, packet_length);
-
+  for(int i = 0; i < packet_length; i++)
+  {
+    Serial.print(packet[i], HEX); Serial.print(" ");
+  }
+  Serial.println("");
+  Serial.print("led status: "); Serial.println(packet[FRAME_HEAD_LENGTH+1], HEX);
   bool result = (bool) packet[FRAME_HEAD_LENGTH + 1];
   return result;
 }
