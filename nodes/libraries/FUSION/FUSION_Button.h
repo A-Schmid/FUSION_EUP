@@ -1,3 +1,6 @@
+#ifndef FUSION_BUTTON_H
+#define FUSION_BUTTON_H
+
 #include "FUSION_MODULE.h"
 
 class FusionButton : public FusionModule
@@ -11,3 +14,5 @@ class FusionButton : public FusionModule
 
         void checkButtonState();
 };
+
+#endif

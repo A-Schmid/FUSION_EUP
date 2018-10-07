@@ -6,6 +6,7 @@
 #define INDEX_MSG_ID 2
 #define INDEX_NI 3
 #define INDEX_NMB_DATA 4
+#define INDEX_DATA 5
 
 #define FRAME_HEAD_LENGTH 4
 #define FRAME_CHECKSUM_LENGTH 2
@@ -13,7 +14,6 @@
 
 #include <stdlib.h>
 #include "FUSION_WIFI.h"
-#include "FUSION_MODULE.h"
 
 class FusionModule
 {
