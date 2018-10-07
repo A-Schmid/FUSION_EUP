@@ -1,9 +1,9 @@
 #define DEBUG 1
-#include "FUSION/src/FUSION_Button.h"
+#include "libraries/FUSION/FUSION_Button.h"
 
 bool wasDown = false;
 
-uint8_t buttonPin = 0;
+uint8_t buttonPin = D3;
 
 FusionButton button(buttonPin, 43);
 
