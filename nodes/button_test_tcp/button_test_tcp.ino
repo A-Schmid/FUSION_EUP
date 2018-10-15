@@ -1,5 +1,5 @@
 #define DEBUG 1
-#include "FUSION/src/FUSION_Button.h"
+#include "FUSION_Button.h"
 
 bool wasDown = false;
 
