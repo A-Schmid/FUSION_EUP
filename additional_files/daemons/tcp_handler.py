@@ -4,6 +4,7 @@ import datetime
 import os
 import sys
 import struct
+import select
 from threading import Thread
 
 ip_addr = "192.168.4.1"
@@ -18,6 +19,7 @@ except:
 
 sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock_tcp.setblocking(0)
+sock_tcp.settimeout(0.1)
 sock_tcp.bind((ip_addr, port))
 sock_tcp.listen(1)
 
@@ -80,15 +82,22 @@ def SendData_TCP(nodeId, data):
     client.sendall(packet)
 
 def tcp_receive(client):
+    print("recv...")
     try:
         data = client.recvfrom(1024)
     except socket.error:
+        print("se")
         return
+    except socket.timeout:
+        print("st")
+        return
+
+    print("receiving data...")
 
     pack = Packet(data)
 
     if(pack.checksum_ok == False):
-        continue
+        return
 
     fifo_path = fusion_path + "/node{}_in".format(pack.ni)
 
@@ -108,10 +117,12 @@ def tcp_receive(client):
 def HandleClients():
     while True:
         # TODO: security
-        client, addr = sock_tcp.accept()
         try:
+            client, addr = sock_tcp.accept()
             client_ni = client.recvfrom(1024) # data format?  
         except socket.error:
+            continue
+        except socket.timeout:
             continue
 
         client_ni = int.from_bytes(client_ni[0], "big")
@@ -127,7 +138,14 @@ clientHandler.start()
 while True:
     #print(clientList)
     for ni, client in clientList.items():
-        tcp_receive(client)
+        print(ni)
+        inputs = [client["client"]]
+        readable, writeable, exceptional = select.select(inputs, [], [])
+        if(len(readable > 0)):
+            print(client)
+            print(client["client"])
+            tcp_receive(client["client"])
+        print("sending...")
         #ni = client["ni"]
         path = fusion_path + "/node{}_out".format(ni)
         try:
