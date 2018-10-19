@@ -37,9 +37,11 @@ int FusionGPIO::parseMessage(char* message)
             break;
         case 3:
             result = dRead(pin);
+            sendData(result);
             break;
         case 4:
             result = aRead(pin);
+            sendData(result);
             break;
     }
     return result;
