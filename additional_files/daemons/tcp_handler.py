@@ -144,7 +144,7 @@ while True:
         #print(ni)
         inputs = [client["client"]]
         #print(inputs)
-        readable, writeable, exceptional = select.select(inputs, [], [], 1)
+        readable, writeable, exceptional = select.select(inputs, [], [], 0)
         #print("len readable: ", len(readable))
         if(len(readable) > 0):
             #print(client)
