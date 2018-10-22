@@ -5,6 +5,7 @@ import os
 import sys
 import struct
 import select
+import Queue
 from threading import Thread
 
 ip_addr = "192.168.4.1"
@@ -23,6 +24,43 @@ sock_tcp.settimeout(0.1)
 sock_tcp.bind((ip_addr, port))
 sock_tcp.listen(1)
 
+# -----------------------------------------------
+"""
+# source select code: https://pymotw.com/2/select/
+
+inputs = [sock_tcp]
+outputs = []
+msg_queues = {}
+
+while inputs:
+    readable, writeable, exceptional = select.select(inputs, outputs, inputs)
+
+    for socket in readable:
+        if socket is server:
+            connection, client_addr = socket.accept()
+            connection.setblocking(0)
+            inputs.append(connection)
+            msg_queues[connection] = Queue.Queue()
+        else:
+            data = socket.recv(1024)
+            if data:
+                # handle incoming data
+                pass
+                #msg_queues(socket).put(data)
+                #if socket not in outputs:
+                #    outputs.append(socket)
+            else:
+                if socket in outputs:
+                    outputs.remove(socket)
+                inputs.remove(socket)
+                socket.close()
+                del msg_queues[socket]
+"""
+
+
+
+
+# -----------------------------------------------
 clientList = {}
 
 class Packet():
@@ -119,6 +157,7 @@ def HandleClients():
         # TODO: security
         try:
             client, addr = sock_tcp.accept()
+            client.setblocking(0)
             client_ni = client.recvfrom(1024) # data format?  
         except socket.error:
             continue
