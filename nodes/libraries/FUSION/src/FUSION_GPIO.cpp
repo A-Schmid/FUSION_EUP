@@ -22,7 +22,6 @@ void FusionGPIO::update()
 int FusionGPIO::parseMessage(char* message)
 {
     unsigned int pin = message[1];
-    int result = -1;
     switch(message[0])
     {
         case 0:
@@ -36,12 +35,21 @@ int FusionGPIO::parseMessage(char* message)
             aWrite(pin, message[2]);
             break;
         case 3:
-            result = dRead(pin);
-            sendData(result);
+            bool result = dRead(pin);
+            char* data = (char*) malloc(2);
+            data[0] = (char) pin;
+            data[1] = (char) result;
+            sendData(data, 2);
+            free(data);
             break;
         case 4:
-            result = aRead(pin);
-            sendData(result);
+            unsigned int result = aRead(pin);
+            char* data = (char*) malloc(3);
+            data[0] = (char) pin;
+            data[1] = (char) (result >> 8);
+            data[2] = (char) (result);
+            sendData(data, 3);
+            free(data);
             break;
     }
     return result;

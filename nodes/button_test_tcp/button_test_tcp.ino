@@ -3,7 +3,7 @@
 
 bool wasDown = false;
 
-uint8_t buttonPin = 0;
+uint8_t buttonPin = D3;
 
 FusionButton button(buttonPin, 43);
 
