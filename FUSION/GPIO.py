@@ -30,10 +30,10 @@ class GPIO:
         self.writeToOutFile([0x02, pin, value])
         #TODO mapping of 0 to 1, two bytes for data
 
-    def digitalRead(self, pin, value):
-        self.writeToOutFile([0x03, pin, value])
+    def digitalRead(self, pin):
+        self.writeToOutFile([0x03, pin, 0])
         #TODO: return value
 
-    def analogRead(self, pin, value):
-        self.writeToOutFile([0x04, pin, value])
+    def analogRead(self, pin):
+        self.writeToOutFile([0x04, pin, 0])
         #TODO: return value
