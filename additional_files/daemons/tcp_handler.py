@@ -5,7 +5,7 @@ import os
 import sys
 import struct
 import select
-import Queue
+#import Queue
 from threading import Thread
 
 ip_addr = "192.168.4.1"
@@ -24,43 +24,6 @@ sock_tcp.settimeout(0.1)
 sock_tcp.bind((ip_addr, port))
 sock_tcp.listen(1)
 
-# -----------------------------------------------
-"""
-# source select code: https://pymotw.com/2/select/
-
-inputs = [sock_tcp]
-outputs = []
-msg_queues = {}
-
-while inputs:
-    readable, writeable, exceptional = select.select(inputs, outputs, inputs)
-
-    for socket in readable:
-        if socket is server:
-            connection, client_addr = socket.accept()
-            connection.setblocking(0)
-            inputs.append(connection)
-            msg_queues[connection] = Queue.Queue()
-        else:
-            data = socket.recv(1024)
-            if data:
-                # handle incoming data
-                pass
-                #msg_queues(socket).put(data)
-                #if socket not in outputs:
-                #    outputs.append(socket)
-            else:
-                if socket in outputs:
-                    outputs.remove(socket)
-                inputs.remove(socket)
-                socket.close()
-                del msg_queues[socket]
-"""
-
-
-
-
-# -----------------------------------------------
 clientList = {}
 
 class Packet():
@@ -103,7 +66,9 @@ def SendData_TCP(nodeId, data):
     header = length
     client.sendall(bytes([header]))
     print("header: ", header)
+    client.setblocking(1)
     ack = client.recvfrom(1024)
+    client.setblocking(0)
     print("ack: ", ack)
 
     # WIP!
@@ -120,7 +85,7 @@ def SendData_TCP(nodeId, data):
     client.sendall(packet)
 
 def tcp_receive(client):
-    print("recv...")
+    #print("recv...")
     try:
         data = client.recvfrom(1024)
     except socket.error:
@@ -130,7 +95,7 @@ def tcp_receive(client):
         print("st")
         return
 
-    print("receiving data...")
+    #print("receiving data...")
 
     pack = Packet(data)
 
@@ -151,13 +116,11 @@ def tcp_receive(client):
     outfile.close()
 
 
-
 def HandleClients():
     while True:
         # TODO: security
         try:
             client, addr = sock_tcp.accept()
-            client.setblocking(0)
             client_ni = client.recvfrom(1024) # data format?  
         except socket.error:
             continue
@@ -167,6 +130,7 @@ def HandleClients():
         client_ni = int.from_bytes(client_ni[0], "big")
         print("client found ", client_ni)
         client.send(bytes([0x01]))
+        client.setblocking(0)
         clientList[client_ni] = {"ni" : client_ni, "client" : client, "addr" : addr}
         time.sleep(0.1)
 
@@ -177,20 +141,24 @@ clientHandler.start()
 while True:
     #print(clientList)
     for ni, client in clientList.items():
-        print(ni)
+        #print(ni)
         inputs = [client["client"]]
-        readable, writeable, exceptional = select.select(inputs, [], [])
-        if(len(readable > 0)):
-            print(client)
-            print(client["client"])
+        #print(inputs)
+        readable, writeable, exceptional = select.select(inputs, [], [], 1)
+        #print("len readable: ", len(readable))
+        if(len(readable) > 0):
+            #print(client)
+            #print(client["client"])
             tcp_receive(client["client"])
-        print("sending...")
+        #print("sending...")
         #ni = client["ni"]
         path = fusion_path + "/node{}_out".format(ni)
+        if(not os.path.isfile(path)):
+            continue
         try:
             with open(path, "rb+") as outfile:
                 for line in outfile:
-                    print(line)
+                    #print(line)
                     data = []
                     for c in line[:-1]: # dont include the line break
                         data.append(int(c))
