@@ -1,9 +1,12 @@
 import threading
 import time
+import socket
+import sys
 from .core import *
 
 class button:
     def __init__(self, node_id):
+        self.__uds_path = '/dev/FUSION/node{}'.format(node_id)
         self.__path = '/dev/FUSION/node{}_in'.format(node_id)
         self.__index = {"ni" : 0, "heart_beat" : 1, "event" : 2, "time" : 3}
         self.__events = ["release", "press"]
@@ -21,15 +24,26 @@ class button:
         self.time = 0
         #self.running = False
 
+        self.__uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        
+        try:
+            self.__uds_sock.connect(self.__uds_path)
+        except socket.error as msg:
+            print("could not connect to UDS: ", msg) # daemon not running?
+            sys.exit(1)
+
         thread = threading.Thread(target=self.__update, args=())
         thread.daemon = True
         thread.start()
 
     def __get_sensor_data(self):
         self.__sensor_data = []
-        with open(self.__path) as data_file:
-            for line in data_file:
-                self.__sensor_data.append(line)
+        data = self.__uds_sock.recv(1024)
+        print(data)
+
+        #with open(self.__path) as data_file:
+        #    for line in data_file:
+        #        self.__sensor_data.append(line)
 
     def __update_sensor_data(self):
         self.node_id = int(self.__sensor_data[self.__index["ni"]])
@@ -55,6 +69,7 @@ class button:
     def __update(self):
         while(True):
             self.__get_sensor_data()
+            continue # TEMP
             try:
                 self.__update_sensor_data()
             except:
