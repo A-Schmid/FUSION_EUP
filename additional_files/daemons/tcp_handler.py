@@ -19,7 +19,6 @@ except OSError:
     if os.path.exists(uds_addr):
         raise
 
-
 tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #tcp_sock.setblocking(0)
 #tcp_sock.settimeout(0.1)
@@ -32,7 +31,7 @@ class Node():
     self.ni = 0
     self.initialized = False
     self.tcp_queue = []
-    self.udp_queue = []
+    self.uds_queue = []
 
     self.__init__(ni, tcpsock, udssock):
         self.ni = ni
@@ -40,8 +39,49 @@ class Node():
         self.uds_sock = udssock
         self.initialized = True
 
+    def start(self):
+        communicationHandler = Thread(target=self.__handle_communication)
+        communicationHandler.start()
+
     def __handle_communication(self):
-        pass
+        while(True):
+            readable, writeable, exceptional = select.select([uds_sock, tcp_sock], [uds_sock, tcp_sock], [], 0.1)
+
+            # read uds
+            if(uds_sock in readable):
+                try:
+                    data = uds_sock.recvfrom(1024)
+                    tcp_queue.append(data)
+                except:
+                    print("couldn't read uds sock")
+            # read tcp
+
+            if(tcp_sock in readable):
+                try:
+                    data = tcp_sock.recvfrom(1024)
+                    uds_queue.append(data)
+                except:
+                    print("couldn't read tcp sock")
+            # write uds
+
+            if(len(uds_queue) > 0 and uds_sock in writeable):
+                for data in uds_queue:
+                    try:
+                        # send length?
+                        uds_sock.sendall(data)
+                        uds_queue.remove(data)
+                    except:
+                        print("couldn't send to uds sock")
+
+            # write tcp
+            if(len(tcp_queue) > 0 and tcp_sock in writeable):
+                for data in tcp_queue:
+                    try:
+                        # send length?
+                        tcp_sock.sendall(data)
+                        uds_queue.remove(data)
+                    except:
+                        print("couldn't send to tcp sock")
 
 connected_clients = []
 
@@ -75,6 +115,7 @@ def HandleClients():
 
         client_object = Node(client_ni, client, uds_sock)
         connected_clients.append(client_object)
+        client_object.start()
         time.sleep(0.1)
 
 
