@@ -8,7 +8,7 @@ class button:
     def __init__(self, node_id):
         self.__uds_path = '/dev/FUSION/node{}'.format(node_id)
         self.__path = '/dev/FUSION/node{}_in'.format(node_id)
-        self.__index = {"ni" : 0, "heart_beat" : 1, "event" : 2, "time" : 3}
+        #self.__index = {"ni" : 0, "heart_beat" : 1, "event" : 2, "time" : 3}
         self.__events = ["release", "press"]
         self.__last_update = 0
         self.__callbacks = {}
@@ -19,13 +19,18 @@ class button:
         #self.__last_heart_beats = [0, 0, 0]
 
         self.node_id = node_id
-        self.heart_beat = 0
+        #self.heart_beat = 0
         self.event = "release"
         self.time = 0
         #self.running = False
 
+
+        # message queue for two-way??
+
         self.__uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.__uds_sock.setblocking(0)
         
+        # loop?
         try:
             self.__uds_sock.connect(self.__uds_path)
         except socket.error as msg:
@@ -37,14 +42,38 @@ class button:
         thread.start()
 
     def __get_sensor_data(self):
-        self.__sensor_data = []
-        data = self.__uds_sock.recv(1024)
-        print(data)
+        readable, writeable, exceptional = select.select([self.__uds_sock], [], [])
+        #self.__sensor_data = []
+        if(len(readable) > 0):
+            data = readable[0].recv(1024)
+            print(data)
+            self.__parse_data(data)
 
         #with open(self.__path) as data_file:
         #    for line in data_file:
         #        self.__sensor_data.append(line)
 
+    def __parse_data(self, data):
+        state = data[0]
+        self.event = self.__events[state]
+        self.time = time.time()
+
+        if(self.time == self.__last_update):
+            return
+
+        self.__last_update = self.time
+
+        for f in self.__callbacks["all"]:
+            f(self.event, self.time)
+
+        if(self.event == "press"):
+            for f in self.__callbacks["pressed"]:
+                f()
+        elif(self.event == "release"):
+            for f in self.__callbacks["released"]:
+                f()
+
+    # deprecated
     def __update_sensor_data(self):
         self.node_id = int(self.__sensor_data[self.__index["ni"]])
         self.heart_beat = int(self.__sensor_data[self.__index["heart_beat"]])
@@ -69,12 +98,13 @@ class button:
     def __update(self):
         while(True):
             self.__get_sensor_data()
+            time.sleep(self.__interval)
             continue # TEMP
+            # deprecated?
             try:
                 self.__update_sensor_data()
             except:
                 continue
-            time.sleep(self.__interval)
 
     def OnPress(self, callback):
         self.__callbacks["pressed"].append(callback)

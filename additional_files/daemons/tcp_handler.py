@@ -105,6 +105,7 @@ def HandleClients():
         #clientList[client_ni] = {"ni" : client_ni, "client" : client, "addr" : addr}
 
         uds_addr = "{}/node{}".format(uds_path, client_ni)
+        # maybe this has to go inside a loop, in case the node connects when the notebook is not running yet?
         try:
             uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             uds_sock.bind(uds_addr)
