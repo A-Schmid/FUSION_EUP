@@ -30,16 +30,19 @@ class button:
         self.__uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.__uds_sock.setblocking(0)
         
+        self.__wait_for_connection() # blocking!
+
+        thread = threading.Thread(target=self.__update, args=())
+        thread.daemon = True
+        thread.start()
+
+    def __wait_for_connection(self):
         # loop?
         try:
             self.__uds_sock.connect(self.__uds_path)
         except socket.error as msg:
             print("could not connect to UDS: ", msg) # daemon not running?
             sys.exit(1)
-
-        thread = threading.Thread(target=self.__update, args=())
-        thread.daemon = True
-        thread.start()
 
     def __get_sensor_data(self):
         readable, writeable, exceptional = select.select([self.__uds_sock], [], [])
