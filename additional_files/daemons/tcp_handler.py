@@ -2,6 +2,8 @@ import socket
 import sys
 import os
 import time
+import select
+from threading import Thread
 
 uds_path = "/tmp/FUSION"
 ip_addr = "192.168.4.1"
@@ -13,11 +15,6 @@ try:
 except:
     os.makedirs(uds_path)
 
-try:
-    os.unlink(uds_addr)
-except OSError:
-    if os.path.exists(uds_addr):
-        raise
 
 tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #tcp_sock.setblocking(0)
@@ -26,66 +23,89 @@ tcp_sock.bind((ip_addr, port_tcp))
 tcp_sock.listen(1)
 
 class Node():
-    self.tcp_sock = None
-    self.uds_sock = None
-    self.ni = 0
-    self.initialized = False
-    self.tcp_queue = []
-    self.uds_queue = []
+    tcp_sock = None
+    uds_sock = None
+    ni = 0
+    initialized = False
+    tcp_queue = []
+    uds_queue = []
 
-    self.__init__(ni, tcpsock, udssock):
+    def __init__(self, ni, tcpsock, udssock):
+        print("init...")
         self.ni = ni
         self.tcp_sock = tcpsock
         self.uds_sock = udssock
         self.initialized = True
 
     def start(self):
+        print("starting...")
         communicationHandler = Thread(target=self.__handle_communication)
         communicationHandler.start()
 
     def __handle_communication(self):
+        print("handle comm...")
         while(True):
-            readable, writeable, exceptional = select.select([uds_sock, tcp_sock], [uds_sock, tcp_sock], [], 0.1)
+            readable, writeable, exceptional = select.select([self.uds_sock, self.tcp_sock], [self.uds_sock, self.tcp_sock], [], 0.1)
+            """
+            if(len(readable) > 0):
+                print("avail")
+            if(self.tcp_sock in readable):
+                print("tcp")
+            if(self.uds_sock in readable):
+                print("uds")
+                """
+            #print(len(readable))
+            #print(self.tcp_sock in readable)
+            #time.sleep(1)
+            #continue
+            #print(self.uds_sock in readable, self.tcp_sock in readable)
 
             # read uds
-            if(uds_sock in readable):
+            # TODO handle disconnect
+            if(self.uds_sock in readable):
                 try:
-                    data = uds_sock.recvfrom(1024)
-                    tcp_queue.append(data)
-                except:
-                    print("couldn't read uds sock")
+                    data = self.uds_sock.recv(1024)
+                    self.tcp_queue.append(data)
+                except OSError as msg:
+                    print("couldn't read uds sock", msg)
             # read tcp
 
-            if(tcp_sock in readable):
+            if(self.tcp_sock in readable):
                 try:
-                    data = tcp_sock.recvfrom(1024)
-                    uds_queue.append(data)
+                    data = self.tcp_sock.recv(1024)
+                    self.uds_queue.append(data)
                 except:
                     print("couldn't read tcp sock")
+
+            #print(self.uds_sock in writeable, self.tcp_sock in writeable, len(self.uds_queue), len(self.tcp_queue))
             # write uds
 
-            if(len(uds_queue) > 0 and uds_sock in writeable):
-                for data in uds_queue:
+            if(len(self.uds_queue) > 0 and self.uds_sock in writeable):
+                #print("write uds")
+                for data in self.uds_queue:
                     try:
                         # send length?
-                        uds_sock.sendall(data)
-                        uds_queue.remove(data)
+                        self.uds_sock.sendall(data)
+                        self.uds_queue.remove(data)
                     except:
                         print("couldn't send to uds sock")
 
             # write tcp
-            if(len(tcp_queue) > 0 and tcp_sock in writeable):
-                for data in tcp_queue:
+            if(len(self.tcp_queue) > 0 and self.tcp_sock in writeable):
+                #print("write tcp")
+                for data in self.tcp_queue:
                     try:
                         # send length?
-                        tcp_sock.sendall(data)
-                        uds_queue.remove(data)
+                        self.tcp_sock.sendall(data)
+                        self.uds_queue.remove(data)
                     except:
                         print("couldn't send to tcp sock")
+            time.sleep(0.1)
 
 connected_clients = []
 
 def HandleClients():
+    print("handle clients...")
     while True:
         # TODO: security
         try:
@@ -105,6 +125,12 @@ def HandleClients():
         #clientList[client_ni] = {"ni" : client_ni, "client" : client, "addr" : addr}
 
         uds_addr = "{}/node{}".format(uds_path, client_ni)
+        try:
+            os.unlink(uds_addr)
+        except OSError:
+            if os.path.exists(uds_addr):
+                raise
+
         # maybe this has to go inside a loop, in case the node connects when the notebook is not running yet?
         try:
             uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -114,7 +140,10 @@ def HandleClients():
             print("uds sock connection failed")
             continue
 
-        client_object = Node(client_ni, client, uds_sock)
+        uds_conn, uds_addr  = uds_sock.accept()
+        uds_conn.setblocking(0)
+
+        client_object = Node(client_ni, client, uds_conn)
         connected_clients.append(client_object)
         client_object.start()
         time.sleep(0.1)
@@ -122,7 +151,7 @@ def HandleClients():
 
 clientHandler = Thread(target=HandleClients)
 clientHandler.start()
-
+print("derp")
 
 """
 while True:

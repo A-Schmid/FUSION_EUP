@@ -2,12 +2,13 @@ import threading
 import time
 import socket
 import sys
+import select
 from .core import *
 
 class button:
     def __init__(self, node_id):
-        self.__uds_path = '/dev/FUSION/node{}'.format(node_id)
-        self.__path = '/dev/FUSION/node{}_in'.format(node_id)
+        self.__uds_path = '/tmp/FUSION/node{}'.format(node_id)
+        self.__path = '/tmp/FUSION/node{}_in'.format(node_id)
         #self.__index = {"ni" : 0, "heart_beat" : 1, "event" : 2, "time" : 3}
         self.__events = ["release", "press"]
         self.__last_update = 0
@@ -41,11 +42,13 @@ class button:
         try:
             self.__uds_sock.connect(self.__uds_path)
         except socket.error as msg:
-            print("could not connect to UDS: ", msg) # daemon not running?
+            print("could not connect to UDS: ", msg, self.__uds_path) # daemon not running?
             sys.exit(1)
 
     def __get_sensor_data(self):
-        readable, writeable, exceptional = select.select([self.__uds_sock], [], [])
+        #print("gsd")
+        readable, writeable, exceptional = select.select([self.__uds_sock], [], [], 0.1)
+        #print(len(readable))
         #self.__sensor_data = []
         if(len(readable) > 0):
             data = readable[0].recv(1024)
@@ -57,7 +60,8 @@ class button:
         #        self.__sensor_data.append(line)
 
     def __parse_data(self, data):
-        state = data[0]
+        #print(data[0])
+        state = data[4]
         self.event = self.__events[state]
         self.time = time.time()
 
@@ -99,6 +103,7 @@ class button:
                 f()
 
     def __update(self):
+        #print("update")
         while(True):
             self.__get_sensor_data()
             time.sleep(self.__interval)
