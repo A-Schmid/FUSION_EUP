@@ -1,25 +1,31 @@
 import threading
 import time
+import socket
+import sys
+import select
 from .core import *
 
 digital_pins = [0, 2, 4, 5, 12, 13, 14, 15, 16]
 
 class GPIO:
     def __init__(self, node_id):
+        self.__uds_path = 'tmp/FUSION/node{}'.format(node_id)
+
         self.node_id = node_id
-        self.__out_path = '/dev/FUSION/node{}_out'.format(node_id)
-        self.__in_path = '/dev/FUSION/node{}_in'.format(node_id)
-        self.__index = {"ni" : 0, "heart_beat" : 1, "data" : 2, "time" : 3}
+        #self.__out_path = '/dev/FUSION/node{}_out'.format(node_id)
+        #self.__in_path = '/dev/FUSION/node{}_in'.format(node_id)
+        #self.__index = {"ni" : 0, "heart_beat" : 1, "data" : 2, "time" : 3}
         self.__last_update = 0
         self.__callbacks = {}
+        self.__connected = False
         for i in digital_pins:
             self.__callbacks[i] = {}
             self.__callbacks[i]["rise"] = []
             self.__callbacks[i]["fall"] = []
             self.__callbacks[i]["change"] = []
         self.__interval = 0.1
-        self.node_id = node_id
-        self.heart_beat = 0
+        #self.node_id = node_id
+        #self.heart_beat = 0
         self.time = 0
 
         thread = threading.Thread(tartget=self.__update, args=())

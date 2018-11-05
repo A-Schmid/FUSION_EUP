@@ -36,15 +36,24 @@ class Node():
         self.tcp_sock = tcpsock
         self.uds_sock = udssock
         self.initialized = True
+        self.active = False
 
     def start(self):
         print("starting...")
         communicationHandler = Thread(target=self.__handle_communication)
         communicationHandler.start()
 
+    def disconnect(self):
+        #TODO
+        self.active = False
+        self.tcp_sock.close()
+        self.uds_sock.close()
+        connected_clients.remove(self)
+        pass
+
     def __handle_communication(self):
         print("handle comm...")
-        while(True):
+        while(self.active):
             readable, writeable, exceptional = select.select([self.uds_sock, self.tcp_sock], [self.uds_sock, self.tcp_sock], [], 0.1)
             """
             if(len(readable) > 0):
@@ -65,6 +74,10 @@ class Node():
             if(self.uds_sock in readable):
                 try:
                     data = self.uds_sock.recv(1024)
+                    if(len(data) == 0):
+                        self.disconnect()
+                        #TODO handle DC
+                        print("disconnected uds")
                     self.tcp_queue.append(data)
                 except OSError as msg:
                     print("couldn't read uds sock", msg)
@@ -97,10 +110,11 @@ class Node():
                     try:
                         # send length?
                         self.tcp_sock.sendall(data)
-                        self.uds_queue.remove(data)
+                        self.tcp_queue.remove(data)
                     except:
                         print("couldn't send to tcp sock")
             time.sleep(0.1)
+        print("shutting down client ", self.ni)
 
 connected_clients = []
 
@@ -145,13 +159,13 @@ def HandleClients():
 
         client_object = Node(client_ni, client, uds_conn)
         connected_clients.append(client_object)
+        client_object.active = True
         client_object.start()
         time.sleep(0.1)
 
 
 clientHandler = Thread(target=HandleClients)
 clientHandler.start()
-print("derp")
 
 """
 while True:

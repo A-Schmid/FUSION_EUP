@@ -7,4 +7,4 @@ def onPress():
 
 btn.OnPress(onPress)
 
-time.sleep(15)
+time.sleep(5)
