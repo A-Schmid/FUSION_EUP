@@ -1,4 +1,5 @@
 import threading
+import struct
 import time
 import socket
 import sys
@@ -28,51 +29,160 @@ class GPIO:
         #self.heart_beat = 0
         self.time = 0
 
-        thread = threading.Thread(tartget=self.__update, args=())
-        thread.daemon = True
-        thread.start()
+        self.__uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.__uds_sock.setblocking(0)
+        
+        self.__wait_for_connection() # blocking!
+
+        # we don't need that i guess
+        #thread = threading.Thread(tartget=self.__update, args=())
+        #thread.daemon = True
+        #thread.start()
+
+    def __wait_for_connection(self):
+        # loop?
+        while self.__connected == False:
+            try:
+                self.__uds_sock.connect(self.__uds_path)
+                self.__connected = True
+            except socket.error as msg:
+                print("could not connect to UDS: ", msg, self.__uds_path) # daemon not running?
+                time.sleep(0.1)
+                #sys.exit(1)
 
     def __get_gpio_data(self):
         pass
 
+    def __get_data(self):
+        readable, writeable, exceptional = select.select([self.__uds_sock], [], [], 0.1)
+        if(len(readable) > 0):
+            data = readable[0].recv(1024)
+            self.__parse_data(data)
+
+    def __parse_data(self, data):
+        self.time = time.time()
+
+        if(self.time == self.__last_update):
+            return
+
+        self.__last_update = self.time
+        #TODO
+
     def __update(self):
         while(True):
-            self.__get_gpio_data()
+            self.__get_data()
             try:
                 self.__update_gpio_data()
             except:
                 continue
             time.sleep(self.__interval)
+            
+    def buildPacket(data):
+        length = len(data)
+        FRAME_BEGIN = 0xAA
+        FRAME_ID = 0
+        MSG_ID = 0
+        NI = 0
+        NMB_DATA = length
+        DATA = data 
+        CHECKSUM = 0x0405 #TODO
+        packet = struct.pack("<BBBBB{}BH".format(NMB_DATA), FRAME_BEGIN, FRAME_ID, MSG_ID, NI, NMB_DATA, *DATA, CHECKSUM) # TODO
 
-    def writeToOutFile(self, data):
-        with open(self.__out_path, "ab+") as f:
-            f.write(bytes(data))
-            f.write(b'\n')
-            #for d in data:
-            #    f.write(d)
-            #f.write("\n")
+    def requestAnswer(self, data):
+        length = len(data)
+        try:
+            self.__uds_sock.sendall(length)
+            self.__uds_sock.setblocking(1)
+            ack = self.__uds_sock.recv(1024)
+            self.__uds_sock.setblocking(0)
+            print(ack)
+            self.__uds_sock.sendall(buildPacket(data))
+            #wait for answer
+            self.__uds_sock.setblocking(1)
+            answer = self.__uds_sock.recv(1024)
+            self.__uds_sock.setblocking(0)
+            print(answer)
+            return answer
+        except:
+            print("sendMessage error")
+
+    def sendMessage(self, data):
+        length = len(data)
+        try:
+            # idea: length not needed? just use large enough buffer on esp
+            self.__uds_sock.sendall(length)
+            self.__uds_sock.setblocking(1)
+            ack = self.__uds_sock.recv(1024)
+            self.__uds_sock.setblocking(0)
+            print(ack)
+            self.__uds_sock.sendall(buildPacket(data))
+        except:
+            print("sendMessage error")
+
+        """
+        #send length
+        readable, writeable, exceptional = select.select([], [self.__uds_sock], [], 0.1)
+        while True:
+            if(len(writeable) > 0):
+                writeable[0].sendall(bytes(len(data)))
+                break
+
+        # wait for ack
+        readable, writeable, exceptional = select.select([self.__uds_sock], [], [], 0.1)
+        while True:
+            if(len(readable) > 0):
+                answer = readable[0].recvfrom(1024)
+                break
+
+        #send data
+        readable, writeable, exceptional = select.select([], [self.__uds_sock], [], 0.1)
+        while True:
+            if(len(writeable) > 0):
+                writeable[0].sendall(buildPacket(data))
+                break
+
+        # read answer
+        readable, writeable, exceptional = select.select([self.__uds_sock], [], [], 0.1)
+        while True:
+            if(len(readable) > 0):
+                answer = readable[0].recvfrom(1024)
+                break
+        """
+        # wait until writeable
+        # send length
+        # wait until readable
+        # read ack
+        # wait until writeable
+        # send pack
+        # wait until readable??
+        # read answer??
+
+    def receiveMessage(self):
+        pass
 
     def setDirection(self, pin, value):
-        self.writeToOutFile([0x00, pin, value])
+        self.sendMessage([0x00, pin, value])
 
     def setPinAsInput(self, pin):
-        self.writeToOutFile([0x00, pin, 0x00])
+        self.sendMessage([0x00, pin, 0x00])
         #TODO define INPUT and OUTPUT variables
 
     def setPinAsOutput(self, pin):
-        self.writeToOutFile([0x00, pin, 0x01])
+        self.sendMessage([0x00, pin, 0x01])
 
     def digitalWrite(self, pin, value):
-        self.writeToOutFile([0x01, pin, value])
+        self.sendMessage([0x01, pin, value])
 
     def analogWrite(self, pin, value):
-        self.writeToOutFile([0x02, pin, value])
+        self.sendMessage([0x02, pin, value])
         #TODO mapping of 0 to 1, two bytes for data
 
     def digitalRead(self, pin):
-        self.writeToOutFile([0x03, pin, 0])
+        answer = self.requestAnswer([0x03, pin, 0])
+        return answer
         #TODO: return value
 
     def analogRead(self, pin):
-        self.writeToOutFile([0x04, pin, 0])
+        answer = self.requestAnswer([0x04, pin, 0])
+        return answer
         #TODO: return value

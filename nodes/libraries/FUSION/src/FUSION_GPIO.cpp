@@ -15,6 +15,10 @@ void FusionGPIO::update()
 {
     char* data = (char*)malloc(3); 
     int data_length = readPacket(data);
+    for(int i = 0; i < 3; i++)
+    {
+        Serial.println(data[i]);
+    }
     parseMessage(data);
     free(data);
 }
@@ -22,6 +26,9 @@ void FusionGPIO::update()
 int FusionGPIO::parseMessage(char* message)
 {
     unsigned int pin = message[1];
+    char* data;
+    int result;
+
     switch(message[0])
     {
         case 0:
@@ -35,16 +42,16 @@ int FusionGPIO::parseMessage(char* message)
             aWrite(pin, message[2]);
             break;
         case 3:
-            bool result = dRead(pin);
-            char* data = (char*) malloc(2);
+            result = dRead(pin);
+            data = (char*) malloc(2);
             data[0] = (char) pin;
             data[1] = (char) result;
             sendData(data, 2);
             free(data);
             break;
         case 4:
-            unsigned int result = aRead(pin);
-            char* data = (char*) malloc(3);
+            result = aRead(pin);
+            data = (char*) malloc(3);
             data[0] = (char) pin;
             data[1] = (char) (result >> 8);
             data[2] = (char) (result);

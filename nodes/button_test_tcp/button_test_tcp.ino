@@ -12,6 +12,7 @@ void setup()
   pinMode(buttonPin, INPUT);
   Serial.begin(9600);
   button.initialize();
+  sendHandshake(43);
 }
 
 void loop()

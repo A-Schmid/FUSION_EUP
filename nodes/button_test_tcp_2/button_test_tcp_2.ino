@@ -17,6 +17,7 @@ void setup()
 
 void loop()
 {
+  Serial.println("loop");
   //gpio.sendData(gpio.dRead(buttonPin));
 
   gpio.update();
