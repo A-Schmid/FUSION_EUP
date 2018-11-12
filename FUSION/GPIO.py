@@ -1,55 +1,39 @@
-import threading
-import struct
-import time
-import socket
-import sys
-import select
-from .core import *
+#from .core import *
+from .module import *
 
 digital_pins = [0, 2, 4, 5, 12, 13, 14, 15, 16]
 
-class GPIO:
+class GPIO(Module):
     def __init__(self, node_id):
-        self.__uds_path = '/tmp/FUSION/node{}'.format(node_id)
+        Module.__init__(node_id)
+        #self.__uds_path = '/tmp/FUSION/node{}'.format(node_id)
 
-        self.node_id = node_id
+        #self.node_id = node_id
+
         #self.__out_path = '/dev/FUSION/node{}_out'.format(node_id)
         #self.__in_path = '/dev/FUSION/node{}_in'.format(node_id)
         #self.__index = {"ni" : 0, "heart_beat" : 1, "data" : 2, "time" : 3}
-        self.__last_update = 0
-        self.__callbacks = {}
-        self.__connected = False
+
+        #self.__callbacks = {}
+        #self.__connected = False
         for i in digital_pins:
             self.__callbacks[i] = {}
             self.__callbacks[i]["rise"] = []
             self.__callbacks[i]["fall"] = []
             self.__callbacks[i]["change"] = []
-        self.__interval = 0.1
+        #self.__interval = 0.1
         #self.node_id = node_id
         #self.heart_beat = 0
-        self.time = 0
+        #self.time = 0
 
-        self.__uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.__uds_sock.setblocking(0)
+        #self.__uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        #self.__uds_sock.setblocking(0)
         
+        self.__uds_connect()
         self.__wait_for_connection() # blocking!
+        #self.__start_update_thread()
 
-        # we don't need that i guess
-        #thread = threading.Thread(tartget=self.__update, args=())
-        #thread.daemon = True
-        #thread.start()
-
-    def __wait_for_connection(self):
-        # loop?
-        while self.__connected == False:
-            try:
-                self.__uds_sock.connect(self.__uds_path)
-                self.__connected = True
-            except socket.error as msg:
-                print("could not connect to UDS: ", msg, self.__uds_path) # daemon not running?
-                time.sleep(0.1)
-                #sys.exit(1)
-
+    # TODO whats that?
     def __get_gpio_data(self):
         pass
 
@@ -120,44 +104,6 @@ class GPIO:
         except OSError as msg:
             print("sendMessage error", msg)
 
-        """
-        #send length
-        readable, writeable, exceptional = select.select([], [self.__uds_sock], [], 0.1)
-        while True:
-            if(len(writeable) > 0):
-                writeable[0].sendall(bytes(len(data)))
-                break
-
-        # wait for ack
-        readable, writeable, exceptional = select.select([self.__uds_sock], [], [], 0.1)
-        while True:
-            if(len(readable) > 0):
-                answer = readable[0].recvfrom(1024)
-                break
-
-        #send data
-        readable, writeable, exceptional = select.select([], [self.__uds_sock], [], 0.1)
-        while True:
-            if(len(writeable) > 0):
-                writeable[0].sendall(buildPacket(data))
-                break
-
-        # read answer
-        readable, writeable, exceptional = select.select([self.__uds_sock], [], [], 0.1)
-        while True:
-            if(len(readable) > 0):
-                answer = readable[0].recvfrom(1024)
-                break
-        """
-        # wait until writeable
-        # send length
-        # wait until readable
-        # read ack
-        # wait until writeable
-        # send pack
-        # wait until readable??
-        # read answer??
-
     def receiveMessage(self):
         pass
 
@@ -187,3 +133,6 @@ class GPIO:
         answer = self.requestAnswer([0x04, pin, 0])
         return answer
         #TODO: return value
+
+    def info(self):
+        print("GPIO")

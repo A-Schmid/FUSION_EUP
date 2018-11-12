@@ -1,4 +1,5 @@
 import time
+from .config import *
 
 #default: seconds
 def wait(sleep_time):

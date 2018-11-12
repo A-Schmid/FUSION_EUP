@@ -1,4 +1,5 @@
 from math import *
+from .config import *
 from .core import *
 from .bme280 import bme280
 from .visualize import Plot
