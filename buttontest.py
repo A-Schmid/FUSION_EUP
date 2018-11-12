@@ -1,5 +1,5 @@
 import time
-from ../FUSION import *
+from FUSION import *
 btn = button(43)
 
 def onPress():

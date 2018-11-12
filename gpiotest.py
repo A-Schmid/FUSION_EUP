@@ -1,5 +1,6 @@
 import time
-from ../FUSION import *
+from FUSION import *
+
 btn = GPIO(43)
 
 btn.setDirection(0, 0)

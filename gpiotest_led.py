@@ -1,5 +1,5 @@
 import time
-from ../FUSION import *
+from FUSION import *
 led = GPIO(43)
 
 led.setDirection(16, 1)

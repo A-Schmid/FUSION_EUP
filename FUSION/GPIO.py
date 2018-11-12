@@ -1,44 +1,28 @@
 #from .core import *
+import struct
 from .module import *
 
 digital_pins = [0, 2, 4, 5, 12, 13, 14, 15, 16]
 
 class GPIO(Module):
     def __init__(self, node_id):
-        Module.__init__(node_id)
-        #self.__uds_path = '/tmp/FUSION/node{}'.format(node_id)
+        Module.__init__(self, node_id)
 
-        #self.node_id = node_id
-
-        #self.__out_path = '/dev/FUSION/node{}_out'.format(node_id)
-        #self.__in_path = '/dev/FUSION/node{}_in'.format(node_id)
-        #self.__index = {"ni" : 0, "heart_beat" : 1, "data" : 2, "time" : 3}
-
-        #self.__callbacks = {}
-        #self.__connected = False
         for i in digital_pins:
-            self.__callbacks[i] = {}
-            self.__callbacks[i]["rise"] = []
-            self.__callbacks[i]["fall"] = []
-            self.__callbacks[i]["change"] = []
-        #self.__interval = 0.1
-        #self.node_id = node_id
-        #self.heart_beat = 0
-        #self.time = 0
-
-        #self.__uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        #self.__uds_sock.setblocking(0)
+            self._callbacks[i] = {}
+            self._callbacks[i]["rise"] = []
+            self._callbacks[i]["fall"] = []
+            self._callbacks[i]["change"] = []
         
-        self.__uds_connect()
-        self.__wait_for_connection() # blocking!
-        #self.__start_update_thread()
+        self._uds_connect()
+        self._wait_for_connection() # blocking!
 
     # TODO whats that?
     def __get_gpio_data(self):
         pass
 
     def __get_data(self):
-        readable, writeable, exceptional = select.select([self.__uds_sock], [], [], 0.1)
+        readable, writeable, exceptional = select.select([self._uds_sock], [], [], 0.1)
         if(len(readable) > 0):
             data = readable[0].recv(1024)
             self.__parse_data(data)
@@ -52,14 +36,14 @@ class GPIO(Module):
         self.__last_update = self.time
         #TODO
 
-    def __update(self):
+    def _update(self):
         while(True):
             self.__get_data()
             try:
                 self.__update_gpio_data()
             except:
                 continue
-            time.sleep(self.__interval)
+            time.sleep(self._interval)
             
     def buildPacket(self, data):
         length = len(data)
@@ -76,31 +60,28 @@ class GPIO(Module):
     def requestAnswer(self, data):
         length = len(data)
         try:
-            self.__uds_sock.sendall(bytes([length]))
-            self.__uds_sock.setblocking(1)
-            ack = self.__uds_sock.recv(1024)
-            self.__uds_sock.setblocking(0)
-            #print(ack)
-            self.__uds_sock.sendall(self.buildPacket(data))
+            self._uds_sock.sendall(bytes([length]))
+            self._uds_sock.setblocking(1)
+            ack = self._uds_sock.recv(1024)
+            self._uds_sock.setblocking(0)
+            self._uds_sock.sendall(self.buildPacket(data))
             #wait for answer
-            self.__uds_sock.setblocking(1)
-            answer = self.__uds_sock.recv(1024)
-            self.__uds_sock.setblocking(0)
-            #print(answer)
+            self._uds_sock.setblocking(1)
+            answer = self._uds_sock.recv(1024)
+            self._uds_sock.setblocking(0)
             return answer
         except:
-            print("sendMessage error")
+            print("requestAnswer error")
 
     def sendMessage(self, data):
         length = len(data)
         try:
             # idea: length not needed? just use large enough buffer on esp
-            self.__uds_sock.sendall(bytes([length]))
-            self.__uds_sock.setblocking(1)
-            ack = self.__uds_sock.recv(1024)
-            self.__uds_sock.setblocking(0)
-            #print(ack)
-            self.__uds_sock.sendall(self.buildPacket(data))
+            self._uds_sock.sendall(bytes([length]))
+            self._uds_sock.setblocking(1)
+            ack = self._uds_sock.recv(1024)
+            self._uds_sock.setblocking(0)
+            self._uds_sock.sendall(self.buildPacket(data))
         except OSError as msg:
             print("sendMessage error", msg)
 
@@ -127,12 +108,10 @@ class GPIO(Module):
     def digitalRead(self, pin):
         answer = self.requestAnswer([0x03, pin, 0])
         return answer
-        #TODO: return value
 
     def analogRead(self, pin):
         answer = self.requestAnswer([0x04, pin, 0])
         return answer
-        #TODO: return value
 
     def info(self):
         print("GPIO")
