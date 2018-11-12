@@ -10,7 +10,7 @@ digital_pins = [0, 2, 4, 5, 12, 13, 14, 15, 16]
 
 class GPIO:
     def __init__(self, node_id):
-        self.__uds_path = 'tmp/FUSION/node{}'.format(node_id)
+        self.__uds_path = '/tmp/FUSION/node{}'.format(node_id)
 
         self.node_id = node_id
         #self.__out_path = '/dev/FUSION/node{}_out'.format(node_id)
@@ -77,7 +77,7 @@ class GPIO:
                 continue
             time.sleep(self.__interval)
             
-    def buildPacket(data):
+    def buildPacket(self, data):
         length = len(data)
         FRAME_BEGIN = 0xAA
         FRAME_ID = 0
@@ -87,21 +87,22 @@ class GPIO:
         DATA = data 
         CHECKSUM = 0x0405 #TODO
         packet = struct.pack("<BBBBB{}BH".format(NMB_DATA), FRAME_BEGIN, FRAME_ID, MSG_ID, NI, NMB_DATA, *DATA, CHECKSUM) # TODO
+        return packet
 
     def requestAnswer(self, data):
         length = len(data)
         try:
-            self.__uds_sock.sendall(length)
+            self.__uds_sock.sendall(bytes([length]))
             self.__uds_sock.setblocking(1)
             ack = self.__uds_sock.recv(1024)
             self.__uds_sock.setblocking(0)
-            print(ack)
-            self.__uds_sock.sendall(buildPacket(data))
+            #print(ack)
+            self.__uds_sock.sendall(self.buildPacket(data))
             #wait for answer
             self.__uds_sock.setblocking(1)
             answer = self.__uds_sock.recv(1024)
             self.__uds_sock.setblocking(0)
-            print(answer)
+            #print(answer)
             return answer
         except:
             print("sendMessage error")
@@ -110,14 +111,14 @@ class GPIO:
         length = len(data)
         try:
             # idea: length not needed? just use large enough buffer on esp
-            self.__uds_sock.sendall(length)
+            self.__uds_sock.sendall(bytes([length]))
             self.__uds_sock.setblocking(1)
             ack = self.__uds_sock.recv(1024)
             self.__uds_sock.setblocking(0)
-            print(ack)
-            self.__uds_sock.sendall(buildPacket(data))
-        except:
-            print("sendMessage error")
+            #print(ack)
+            self.__uds_sock.sendall(self.buildPacket(data))
+        except OSError as msg:
+            print("sendMessage error", msg)
 
         """
         #send length
