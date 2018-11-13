@@ -5,6 +5,11 @@ btn = button(43)
 def onPress():
     print("press")
 
-btn.OnPress(onPress)
+def onRelease():
+    print("release")
 
-time.sleep(5)
+btn.OnPress(onPress)
+btn.OnRelease(onRelease)
+
+while(True):
+    time.sleep(5)
