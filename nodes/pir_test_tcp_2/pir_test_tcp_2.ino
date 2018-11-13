@@ -17,5 +17,5 @@ void loop()
 {
   sensor.checkSensorState();
 
-  delay(500);
+  delay(sensor.wait_time);
 }

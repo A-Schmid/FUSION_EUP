@@ -20,5 +20,5 @@ void loop()
 {
   button.checkButtonState();
 
-  delay(50);
+  delay(button.wait_time);
 }

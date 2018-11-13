@@ -14,28 +14,25 @@ FusionPir::FusionPir(unsigned int sensor_pin, unsigned int ni) : FusionModule(ni
 
 void FusionPir::checkSensorState()
 {
-    //while(1)
-    //{
-        bool motion = digitalRead(pin);
-        Serial.println(motion == HIGH);
+    bool motion = digitalRead(pin);
+    Serial.println(motion == HIGH);
 
-        if(motion == HIGH)
+    if(motion == HIGH)
+    {
+        if(isTracked == false)
         {
-            if(isTracked == false)
-            {
-                Serial.println("enter");
-                isTracked = true;
-                sendData(true);
-            }
+            Serial.println("enter");
+            isTracked = true;
+            sendData(true);
         }
-        else
+    }
+    else
+    {
+        if(isTracked == true)
         {
-            if(isTracked == true)
-            {
-                Serial.println("leave");
-                isTracked = false;
-                sendData(false);
-            }
+            Serial.println("leave");
+            isTracked = false;
+            sendData(false);
         }
-    //}
+    }
 }

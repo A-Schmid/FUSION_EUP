@@ -14,27 +14,22 @@ FusionButton::FusionButton(unsigned int button_pin, unsigned int ni) : FusionMod
 
 void FusionButton::checkButtonState()
 {
-    while(1)
+    bool buttonDown = digitalRead(pin);
+
+    if(buttonDown == LOW)
     {
-        bool buttonDown = digitalRead(pin);
-
-        if(buttonDown == LOW)
+        if(wasDown == false)
         {
-            if(wasDown == false)
-            {
-                wasDown = true;
-                sendData(true);
-            }
+            wasDown = true;
+            sendData(true);
         }
-        else
+    }
+    else
+    {
+        if(wasDown == true)
         {
-            if(wasDown == true)
-            {
-                wasDown = false;
-                sendData(false);
-            }
+            wasDown = false;
+            sendData(false);
         }
-
-        delay(wait_time);
     }
 }
