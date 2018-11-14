@@ -39,7 +39,7 @@ int FusionGPIO::parseMessage(char* message)
             dWrite(pin, message[2]);
             break;
         case 2:
-            aWrite(pin, message[2]);
+            aWrite(pin, ((message[2] << 8) | message[3]));
             break;
         case 3:
             result = dRead(pin);
