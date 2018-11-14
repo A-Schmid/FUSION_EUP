@@ -107,11 +107,13 @@ class GPIO(Module):
 
     def digitalRead(self, pin):
         answer = self.requestAnswer([0x03, pin, 0])
-        return answer
+        data = answer[5]
+        return data
 
     def analogRead(self, pin):
         answer = self.requestAnswer([0x04, pin, 0])
-        return answer
+        data = (answer[6] << 8) | answer[7]
+        return data
 
     def info(self):
         print("GPIO")
