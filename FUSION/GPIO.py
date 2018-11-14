@@ -75,6 +75,8 @@ class GPIO(Module):
 
     def sendMessage(self, data):
         length = len(data)
+        print(data)
+        print(length)
         try:
             # idea: length not needed? just use large enough buffer on esp
             self._uds_sock.sendall(bytes([length]))
@@ -102,7 +104,9 @@ class GPIO(Module):
         self.sendMessage([0x01, pin, value])
 
     def analogWrite(self, pin, value):
-        self.sendMessage([0x02, pin, value])
+        valueL = value & 0xFF
+        valueH = (value >> 8) & 0xFF
+        self.sendMessage([0x02, pin, valueH, valueL])
         #TODO mapping of 0 to 1, two bytes for data
 
     def digitalRead(self, pin):
