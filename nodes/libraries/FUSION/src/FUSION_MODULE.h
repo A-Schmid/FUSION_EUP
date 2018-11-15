@@ -13,6 +13,8 @@
 #define FRAME_BEGIN 0xAA
 
 #include <stdlib.h>
+#include "Adafruit_Sensor.h"
+#include <DHT.h>
 #include "FUSION_WIFI.h"
 
 class FusionModule
