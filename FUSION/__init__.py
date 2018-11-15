@@ -11,3 +11,4 @@ from .filelog import *
 from .udp import *
 from .button import *
 from .GPIO import *
+from .DHT11 import *
