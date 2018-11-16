@@ -15,10 +15,7 @@ try:
 except:
     os.makedirs(uds_path)
 
-
 tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#tcp_sock.setblocking(0)
-#tcp_sock.settimeout(0.1)
 tcp_sock.bind((ip_addr, port_tcp))
 tcp_sock.listen(1)
 
@@ -30,18 +27,46 @@ class Node():
     tcp_queue = []
     uds_queue = []
 
-    def __init__(self, ni, tcpsock, udssock):
+    def __init__(self, ni, tcpsock):
         print("init...")
         self.ni = ni
         self.tcp_sock = tcpsock
-        self.uds_sock = udssock
         self.initialized = True
         self.active = False
+
+        connectionHandler = Thread(target=self.__connect_uds)
+        connectionHandler.start()
 
     def start(self):
         print("starting...")
         communicationHandler = Thread(target=self.__handle_communication)
         communicationHandler.start()
+
+    def __connect_uds(self):
+        print("connecting uds...")
+        uds_addr = "{}/node{}".format(uds_path, self.ni)
+        try:
+            os.unlink(uds_addr)
+        except OSError:
+            if os.path.exists(uds_addr):
+                raise
+
+        # maybe this has to go inside a loop, in case the node connects when the notebook is not running yet?
+        print("{} - trying to connect uds...".format(self.ni))
+        try:
+            uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            uds_sock.bind(uds_addr)
+            uds_sock.listen(1)
+        except:
+            print("uds sock connection failed")
+        time.sleep(0.1)
+
+        self.uds_sock, self.uds_addr = uds_sock.accept()
+        self.uds_sock.setblocking(0)
+
+        self.active = True
+        connected_clients.append(self)
+        self.start()
 
     def disconnect(self):
         #TODO
@@ -55,19 +80,6 @@ class Node():
         print("handle comm...")
         while(self.active):
             readable, writeable, exceptional = select.select([self.uds_sock, self.tcp_sock], [self.uds_sock, self.tcp_sock], [], 0.1)
-            """
-            if(len(readable) > 0):
-                print("avail")
-            if(self.tcp_sock in readable):
-                print("tcp")
-            if(self.uds_sock in readable):
-                print("uds")
-                """
-            #print(len(readable))
-            #print(self.tcp_sock in readable)
-            #time.sleep(1)
-            #continue
-            #print(self.uds_sock in readable, self.tcp_sock in readable)
 
             # read uds
             # TODO handle disconnect
@@ -90,7 +102,6 @@ class Node():
                 except:
                     print("couldn't read tcp sock")
 
-            #print(self.uds_sock in writeable, self.tcp_sock in writeable, len(self.uds_queue), len(self.tcp_queue))
             # write uds
 
             if(len(self.uds_queue) > 0 and self.uds_sock in writeable):
@@ -136,31 +147,8 @@ def HandleClients():
         print("client found ", client_ni)
         client.send(bytes([0x01]))
         client.setblocking(0)
-        #clientList[client_ni] = {"ni" : client_ni, "client" : client, "addr" : addr}
 
-        uds_addr = "{}/node{}".format(uds_path, client_ni)
-        try:
-            os.unlink(uds_addr)
-        except OSError:
-            if os.path.exists(uds_addr):
-                raise
-
-        # maybe this has to go inside a loop, in case the node connects when the notebook is not running yet?
-        try:
-            uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            uds_sock.bind(uds_addr)
-            uds_sock.listen(1)
-        except:
-            print("uds sock connection failed")
-            continue
-
-        uds_conn, uds_addr  = uds_sock.accept()
-        uds_conn.setblocking(0)
-
-        client_object = Node(client_ni, client, uds_conn)
-        connected_clients.append(client_object)
-        client_object.active = True
-        client_object.start()
+        client_object = Node(client_ni, client)
         time.sleep(0.1)
 
 
