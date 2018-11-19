@@ -16,6 +16,7 @@ except:
     os.makedirs(uds_path)
 
 tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 tcp_sock.bind((ip_addr, port_tcp))
 tcp_sock.listen(1)
 
@@ -55,6 +56,7 @@ class Node():
         print("{} - trying to connect uds...".format(self.ni))
         try:
             uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            uds_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # doesnt work as expected
             uds_sock.bind(uds_addr)
             uds_sock.listen(1)
         except:
@@ -136,9 +138,6 @@ def HandleClients():
         try:
             client, addr = tcp_sock.accept()
             handshake = client.recvfrom(1024) # data format?  
-            if(int.from_bytes(handshake[INDEX_MSG_TYPE], "big") != MSG_TYPE_HANDSHAKE):
-                print("clienthandler: received non-handshake packet")
-                continue
         except socket.error:
             print("tcp socket error")
             continue
@@ -146,7 +145,15 @@ def HandleClients():
             print("tcp socket timeout")
             continue
 
-        client_ni = int.from_bytes(handshake[INDEX_DATA], "big")
+        try:
+            if(handshake[0][1] != 0):
+                print("clienthandler: received non-handshake packet")
+                continue
+        except:
+            print("corrupted handshake packet")
+            continue
+
+        client_ni = handshake[0][5] #int.from_bytes(handshake[INDEX_DATA], "big")
         print("client found ", client_ni)
         client.send(bytes([0x01]))
         client.setblocking(0)
