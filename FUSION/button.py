@@ -1,5 +1,7 @@
 from .module import *
 
+INDEX_EVENT = INDEX_DATA
+
 class button(Module):
     def __init__(self, node_id):
         Module.__init__(self, node_id)
@@ -23,7 +25,7 @@ class button(Module):
             self.__parse_data(data)
 
     def __parse_data(self, data):
-        state = data[5] #TODO constant for data index
+        state = data[INDEX_EVENT]
         self.event = self.__events[state]
         self.time = time.time()
 

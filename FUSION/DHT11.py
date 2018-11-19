@@ -1,5 +1,8 @@
 from .module import *
 
+INDEX_HUMIDITY = INDEX_DATA
+INDEX_TEMPERATURE = INDEX_DATA + 1
+
 class DHT11(Module):
     def __init__(self, node_id):
         Module.__init__(self, node_id)
@@ -22,8 +25,8 @@ class DHT11(Module):
             self.__parse_data(data)
 
     def __parse_data(self, data):
-        self.humidity = data[5] #TODO constant for data index
-        self.temperature = data[6]
+        self.humidity = data[INDEX_HUMIDITY] #TODO constant for data index
+        self.temperature = data[INDEX_TEMPERATURE]
         self.time = time.time()
         self.__last_update = self.time
         for f in self._callbacks["all"]:
