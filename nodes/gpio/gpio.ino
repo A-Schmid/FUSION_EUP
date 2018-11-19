@@ -1,8 +1,6 @@
 #define DEBUG 1
 #include "FUSION_GPIO.h"
 
-#define NODE_ID 40
-
 FusionGPIO gpio(NODE_ID);
 
 uint8_t buttonPin = 0;

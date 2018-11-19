@@ -1,8 +1,6 @@
 //#include "src/FUSION/FUSION_GPIO.h"
 #include "FUSION_GPIO.h"
 
-#define NODE_ID 42
-
 FusionGPIO gpio(NODE_ID);
 
 void setup()

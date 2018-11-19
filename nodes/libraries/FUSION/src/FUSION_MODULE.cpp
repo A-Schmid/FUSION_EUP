@@ -18,12 +18,22 @@ void FusionModule::initialize()
 
 void FusionModule::createPacket(char* data, int data_length)
 {
+    createPacket(data, data_length, MSG_TYPE_PACKET);
+}
+
+void FusionModule::createHandshakePacket(char* data, int data_length)
+{
+    createPacket(data, data_length, MSG_TYPE_HANDSHAKE);
+}
+
+void FusionModule::createPacket(char* data, int data_length, int type)
+{
 	packetLength = data_length + 7;
 	int index_checksum = 1 + FRAME_HEAD_LENGTH + data_length;
 	packet = (char*) malloc(2 + FRAME_HEAD_LENGTH + data_length + FRAME_CHECKSUM_LENGTH);
 	
 	packet[INDEX_FRAME_BEGIN] = FRAME_BEGIN;
-	packet[INDEX_FRAME_ID] = 0;
+	packet[INDEX_MSG_TYPE] = type;
 	packet[INDEX_MSG_ID] = 0;
 	packet[INDEX_NI] = nodeId;
 	packet[INDEX_NMB_DATA] = data_length;

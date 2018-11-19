@@ -1,8 +1,6 @@
 #define DEBUG 1
 #include "FUSION_DHT11.h"
 
-#define NODE_ID 41
-
 uint8_t sensorPin = D4;
 
 FusionDHT11 sensor(NODE_ID, sensorPin);
