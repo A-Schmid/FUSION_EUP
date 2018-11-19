@@ -120,8 +120,6 @@ class GPIO(Module):
 
     def analogRead(self, pin):
         answer = self.requestAnswer([0x04, pin, 0])
-        print(INDEX_AREAD_VALUE_HIGH, INDEX_AREAD_VALUE_LOW)
-        print(answer)
         data = (answer[INDEX_AREAD_VALUE_HIGH] << 8) | answer[INDEX_AREAD_VALUE_LOW]
         return data
 
