@@ -22,8 +22,12 @@ class DHT11(Module):
             self.__parse_data(data)
 
     def __parse_data(self, data):
-        self.humidity = data[5] #TODO constant for data index
-        self.temperature = data[6]
+        try:
+            self.humidity = data[5] #TODO constant for data index
+            self.temperature = data[6]
+        except:
+            print("could not parse data")
+            return
         self.time = time.time()
         self.__last_update = self.time
         for f in self._callbacks["all"]:

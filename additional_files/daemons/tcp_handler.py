@@ -38,12 +38,12 @@ class Node():
         connectionHandler.start()
 
     def start(self):
-        print("starting...")
+        print("{} - starting...".format(self.ni))
         communicationHandler = Thread(target=self.__handle_communication)
         communicationHandler.start()
 
     def __connect_uds(self):
-        print("connecting uds...")
+        print("{} - connecting uds...".format(self.ni))
         uds_addr = "{}/node{}".format(uds_path, self.ni)
         try:
             os.unlink(uds_addr)
@@ -77,9 +77,9 @@ class Node():
         pass
 
     def __handle_communication(self):
-        print("handle comm...")
+        print("{} - handle comm...".format(self.ni))
         while(self.active):
-            readable, writeable, exceptional = select.select([self.uds_sock, self.tcp_sock], [self.uds_sock, self.tcp_sock], [], 0.1)
+            readable, writeable, exceptional = select.select([self.uds_sock, self.tcp_sock], [self.uds_sock, self.tcp_sock], [], 0.5) # 0.1
 
             # read uds
             # TODO handle disconnect
@@ -89,10 +89,10 @@ class Node():
                     if(len(data) == 0):
                         self.disconnect()
                         #TODO handle DC
-                        print("disconnected uds")
+                        print("{} - disconnected uds".format(self.ni))
                     self.tcp_queue.append(data)
                 except OSError as msg:
-                    print("couldn't read uds sock", msg)
+                    print("{} - couldn't read uds sock".format(self.ni), msg)
             # read tcp
 
             if(self.tcp_sock in readable):
@@ -100,7 +100,7 @@ class Node():
                     data = self.tcp_sock.recv(1024)
                     self.uds_queue.append(data)
                 except:
-                    print("couldn't read tcp sock")
+                    print("{} - couldn't read tcp sock".format(self.ni))
 
             # write uds
 
@@ -112,7 +112,7 @@ class Node():
                         self.uds_sock.sendall(data)
                         self.uds_queue.remove(data)
                     except:
-                        print("couldn't send to uds sock")
+                        print("{} - couldn't send to uds sock".format(self.ni))
 
             # write tcp
             if(len(self.tcp_queue) > 0 and self.tcp_sock in writeable):
@@ -123,7 +123,7 @@ class Node():
                         self.tcp_sock.sendall(data)
                         self.tcp_queue.remove(data)
                     except:
-                        print("couldn't send to tcp sock")
+                        print("{} - couldn't send to tcp sock".format(self.ni))
             time.sleep(0.1)
         print("shutting down client ", self.ni)
 
