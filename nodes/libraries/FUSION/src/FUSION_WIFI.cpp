@@ -85,7 +85,7 @@ void sendHandshake(int node_id)
 
         Serial.print("sending handshake..."); Serial.println(handshakePacket[5], HEX);
         
-        tcpClient.write(handshakePacket, 1);
+        tcpClient.write(handshakePacket, 9);
         
         Serial.println("waiting for ack");
         
@@ -104,7 +104,7 @@ void sendHandshake(int node_id)
         delay(500);
     }
 
-    free(handshakePacket);
+    //free(handshakePacket);
 }
 
 bool checkConnection()
