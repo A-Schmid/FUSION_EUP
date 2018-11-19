@@ -21,11 +21,6 @@ void FusionModule::createPacket(char* data, int data_length)
     createPacket(data, data_length, MSG_TYPE_PACKET);
 }
 
-void FusionModule::createHandshakePacket(char* data, int data_length)
-{
-    createPacket(data, data_length, MSG_TYPE_HANDSHAKE);
-}
-
 void FusionModule::createPacket(char* data, int data_length, int type)
 {
 	packetLength = data_length + 7;

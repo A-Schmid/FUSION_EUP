@@ -16,7 +16,6 @@ class FusionModule
 
         void initialize();
         void createPacket(char* data, int data_length);
-        void createHandshakePacket(char* data, int data_length);
         void createPacket(char* data, int data_length, int type);
         void freePacket();
         void sendData(char* data, int data_length);

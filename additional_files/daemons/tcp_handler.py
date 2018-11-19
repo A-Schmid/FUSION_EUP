@@ -135,7 +135,10 @@ def HandleClients():
         # TODO: security
         try:
             client, addr = tcp_sock.accept()
-            client_ni = client.recvfrom(1024) # data format?  
+            handshake = client.recvfrom(1024) # data format?  
+            if(int.from_bytes(handshake[INDEX_MSG_TYPE], "big") != MSG_TYPE_HANDSHAKE):
+                print("clienthandler: received non-handshake packet")
+                continue
         except socket.error:
             print("tcp socket error")
             continue
@@ -143,7 +146,7 @@ def HandleClients():
             print("tcp socket timeout")
             continue
 
-        client_ni = int.from_bytes(client_ni[0], "big")
+        client_ni = int.from_bytes(handshake[INDEX_DATA], "big")
         print("client found ", client_ni)
         client.send(bytes([0x01]))
         client.setblocking(0)

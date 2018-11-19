@@ -66,17 +66,26 @@ bool sendPacket(char* data, unsigned int length, unsigned int mode)
 void sendHandshake(int node_id)
 {
     if(accepted) return;
-
-    char packet[1];
-    packet[0] = (char) node_id;
     
+    // TODO this is not nice
+    char handshakePacket[9];
+    handshakePacket[0] = FRAME_BEGIN;
+    handshakePacket[1] = MSG_TYPE_HANDSHAKE;
+    handshakePacket[2] = 0;
+    handshakePacket[3] = node_id;
+    handshakePacket[4] = 1;
+    handshakePacket[5] = node_id;
+    handshakePacket[6] = 1;
+    handshakePacket[7] = 1;
+    handshakePacket[8] = 0;
+
     while(1)
     {
         if(!checkConnection()) continue;
 
-        Serial.print("sending handshake..."); Serial.println(packet[0], HEX);
+        Serial.print("sending handshake..."); Serial.println(handshakePacket[5], HEX);
         
-        tcpClient.write(packet, 1);
+        tcpClient.write(handshakePacket, 1);
         
         Serial.println("waiting for ack");
         
@@ -94,6 +103,8 @@ void sendHandshake(int node_id)
         }
         delay(500);
     }
+
+    free(handshakePacket);
 }
 
 bool checkConnection()
@@ -137,7 +148,6 @@ int readPacket(char* data)
     }
 
     Serial.println("");
-    Serial.print("led status: "); Serial.println(packet[FRAME_HEAD_LENGTH+1], HEX);
 
     return data_length;
 }
