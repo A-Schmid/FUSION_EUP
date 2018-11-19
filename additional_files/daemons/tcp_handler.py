@@ -57,11 +57,18 @@ class Node():
         try:
             uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             uds_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # doesnt work as expected
+            print("bind...")
             uds_sock.bind(uds_addr)
+            print("listen...")
             uds_sock.listen(1)
+            print("success!")
         except:
             print("uds sock connection failed")
         time.sleep(0.1)
+        
+        # TODO reconnect gets stuck here because the library has to connect again
+        #      what it normally does in the constructor. this could be fixed by
+        #      sending a "invalidating" packet over the socket BEFORE connecting.
 
         self.uds_sock, self.uds_addr = uds_sock.accept()
         self.uds_sock.setblocking(0)
