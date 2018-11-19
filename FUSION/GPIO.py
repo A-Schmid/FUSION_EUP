@@ -54,7 +54,7 @@ class GPIO(Module):
         FRAME_BEGIN = 0xAA
         MSG_TYPE = MSG_TYPE_PACKET
         MSG_ID = 0 #TODO
-        NI = self.ni
+        NI = self.node_id
         NMB_DATA = length
         DATA = data 
         CHECKSUM = 0x0405 #TODO
@@ -120,6 +120,8 @@ class GPIO(Module):
 
     def analogRead(self, pin):
         answer = self.requestAnswer([0x04, pin, 0])
+        print(INDEX_AREAD_VALUE_HIGH, INDEX_AREAD_VALUE_LOW)
+        print(answer)
         data = (answer[INDEX_AREAD_VALUE_HIGH] << 8) | answer[INDEX_AREAD_VALUE_LOW]
         return data
 
