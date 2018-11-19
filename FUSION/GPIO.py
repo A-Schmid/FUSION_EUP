@@ -3,6 +3,10 @@ import struct
 from .module import *
 
 digital_pins = [0, 2, 4, 5, 12, 13, 14, 15, 16]
+INDEX_DREAD_VALUE = INDEX_DATA
+INDEX_AREAD_PIN = INDEX_DATA
+INDEX_AREAD_VALUE_HIGH = INDEX_DATA + 1
+INDEX_AREAD_VALUE_LOW = INDEX_DATA + 2
 
 class GPIO(Module):
     def __init__(self, node_id):
@@ -48,13 +52,13 @@ class GPIO(Module):
     def buildPacket(self, data):
         length = len(data)
         FRAME_BEGIN = 0xAA
-        FRAME_ID = 0
-        MSG_ID = 0
-        NI = 0
+        MSG_TYPE = MSG_TYPE_PACKET
+        MSG_ID = 0 #TODO
+        NI = self.ni
         NMB_DATA = length
         DATA = data 
         CHECKSUM = 0x0405 #TODO
-        packet = struct.pack("<BBBBB{}BH".format(NMB_DATA), FRAME_BEGIN, FRAME_ID, MSG_ID, NI, NMB_DATA, *DATA, CHECKSUM) # TODO
+        packet = struct.pack("<BBBBB{}BH".format(NMB_DATA), FRAME_BEGIN, MSG_TYPE, MSG_ID, NI, NMB_DATA, *DATA, CHECKSUM) # TODO
         return packet
 
     def requestAnswer(self, data):
@@ -111,12 +115,12 @@ class GPIO(Module):
 
     def digitalRead(self, pin):
         answer = self.requestAnswer([0x03, pin, 0])
-        data = answer[5]
+        data = answer[INDEX_DREAD_VALUE]
         return data
 
     def analogRead(self, pin):
         answer = self.requestAnswer([0x04, pin, 0])
-        data = (answer[6] << 8) | answer[7]
+        data = (answer[INDEX_AREAD_VALUE_HIGH] << 8) | answer[INDEX_AREAD_VALUE_LOW]
         return data
 
     def info(self):
