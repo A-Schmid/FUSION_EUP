@@ -44,8 +44,6 @@ class GPIO(Module):
 
     def sendMessage(self, data):
         length = len(data)
-        print(data)
-        print(length)
         try:
             # idea: length not needed? just use large enough buffer on esp
             length_packet = Packet(1, 0, self.node_id, [length])

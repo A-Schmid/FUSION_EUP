@@ -20,20 +20,11 @@ class DHT11(Module):
 
     def __get_sensor_data(self):
         readable, writeable, exceptional = select.select([self._uds_sock], [], [], 0.1)
-        print(len(readable))
         if(len(readable) > 0):
             data = readable[0].recv(1024)
             self.__parse_data(data)
 
     def __parse_data(self, data):
-        # TODO move to module?
-        print(data)
-        if(data[INDEX_MSG_TYPE] == MSG_TYPE_INVALIDATE):
-            print("{} uds invalidated, trying to reconnect...".format(self.node_id))
-            self._connected = False
-            self._wait_for_connection()
-            print("reconnected maybe")
-
         try:
             self.humidity = data[INDEX_HUMIDITY] #TODO constant for data index
             self.temperature = data[INDEX_TEMPERATURE]

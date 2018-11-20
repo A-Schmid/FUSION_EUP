@@ -47,11 +47,6 @@ class Node():
         print("{} - connecting uds...".format(self.ni))
         uds_addr = "{}/node{}".format(uds_path, self.ni)
 
-        if(self.active == True):
-            print("sending invalidation...")
-            self.uds_sock.sendall([0xAA, 0x03])
-            print("sent invalidation!")
-
         try:
             os.unlink(uds_addr)
         except OSError:
@@ -71,10 +66,6 @@ class Node():
         except:
             print("uds sock connection failed")
         time.sleep(0.1)
-        
-        # TODO reconnect gets stuck here because the library has to connect again
-        #      what it normally does in the constructor. this could be fixed by
-        #      sending a "invalidating" packet over the socket BEFORE connecting.
 
         self.uds_sock, self.uds_addr = uds_sock.accept()
         self.uds_sock.setblocking(0)
@@ -84,7 +75,6 @@ class Node():
         self.start()
 
     def disconnect(self):
-        #TODO
         self.active = False
         self.tcp_sock.close()
         self.uds_sock.close()
@@ -170,6 +160,17 @@ def HandleClients():
         print("client found ", client_ni)
         client.send(bytes([0x01]))
         client.setblocking(0)
+
+        # handle reconnects: overwrite tcp sock of existing client with same ni
+        exit_flag = False
+        for cli in connected_clients:
+            if(cli.ni == client_ni):
+                print("reconnect: ", client_ni)
+                cli.tcp_sock = client
+                exit_flag = True
+
+        if(exit_flag == True):
+            continue
 
         client_object = Node(client_ni, client)
         time.sleep(0.1)
