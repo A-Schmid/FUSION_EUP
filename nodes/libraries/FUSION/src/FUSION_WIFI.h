@@ -28,5 +28,6 @@ bool sendPacket(char* data, unsigned int length, unsigned int mode);
 void sendHandshake(int node_id);
 bool checkConnection();
 int readPacket(char* data);
+int readLengthPacket();
 
 #endif // FUSION_WIFI_H

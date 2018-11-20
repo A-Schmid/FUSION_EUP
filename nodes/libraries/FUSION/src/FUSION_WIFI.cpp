@@ -126,10 +126,9 @@ bool checkConnection()
 int readPacket(char* data)
 {
     int data_length = -1;
-    while(data_length == -1)
-    {
-        data_length = (int) tcpClient.read();
-    }
+
+    data_length = readLengthPacket();
+
     Serial.print("datalength: "); Serial.println(data_length);
     tcpClient.write(0x01);
 
@@ -150,4 +149,15 @@ int readPacket(char* data)
     Serial.println("");
 
     return data_length;
+}
+
+int readLengthPacket()
+{
+    int length = 2 + FRAME_HEAD_LENGTH + 1 + FRAME_CHECKSUM_LENGTH;
+    char* packet = (char*) malloc(length);
+    tcpClient.readBytes(packet, length);
+    // TODO checksum stuff here
+    int result = packet[INDEX_DATA];
+    free(packet);
+    return result;
 }

@@ -25,6 +25,7 @@ class GPIO(Module):
     def __get_gpio_data(self):
         pass
 
+"""
     def __get_data(self):
         readable, writeable, exceptional = select.select([self._uds_sock], [], [], 0.1)
         if(len(readable) > 0):
@@ -48,7 +49,8 @@ class GPIO(Module):
             except:
                 continue
             time.sleep(self._interval)
-            
+"""
+
     def buildPacket(self, data):
         length = len(data)
         FRAME_BEGIN = 0xAA
@@ -64,11 +66,13 @@ class GPIO(Module):
     def requestAnswer(self, data):
         length = len(data)
         try:
-            self._uds_sock.sendall(bytes([length]))
+            length_packet = Packet(1, 0, self.node_id, [length])
+            packet = Packet(2, 0, self.node_id, data)
+            self._uds_sock.sendall(length_packet.serialize()) #bytes([length]))
             self._uds_sock.setblocking(1)
             ack = self._uds_sock.recv(1024)
             self._uds_sock.setblocking(0)
-            self._uds_sock.sendall(self.buildPacket(data))
+            self._uds_sock.sendall(packet.serialize())
             #wait for answer
             self._uds_sock.setblocking(1)
             answer = self._uds_sock.recv(1024)
@@ -83,11 +87,15 @@ class GPIO(Module):
         print(length)
         try:
             # idea: length not needed? just use large enough buffer on esp
-            self._uds_sock.sendall(bytes([length]))
+            length_packet = Packet(1, 0, self.node_id, [length])
+            packet = Packet(2, 0, self.node_id, data)
+            self._uds_sock.sendall(length_packet.serialize()) #bytes([length]))
+            #self._uds_sock.sendall(bytes([length]))
             self._uds_sock.setblocking(1)
             ack = self._uds_sock.recv(1024)
             self._uds_sock.setblocking(0)
-            self._uds_sock.sendall(self.buildPacket(data))
+            self._uds_sock.sendall(packet.serialize())
+            #self._uds_sock.sendall(self.buildPacket(data))
         except OSError as msg:
             print("sendMessage error", msg)
 

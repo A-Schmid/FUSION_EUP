@@ -17,13 +17,6 @@ class Module():
         self._uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self._uds_sock.setblocking(0)
         
-        # i have no idea why this ever worked in the first place \_O_/
-        #try:
-        #    self._uds_sock.connect(self._uds_path)
-        #except socket.error as msg:
-        #    print("could not connect to UDS: ", msg) # daemon not running?
-        #    sys.exit(1)
-    
     def _wait_for_connection(self):
         # loop?
         while self._connected == False:

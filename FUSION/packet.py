@@ -1,20 +1,30 @@
+import struct
+from .config import *
+
 class Packet():
-    def __init__(self, data_string):
-        self.raw_data = data_string
-        try:
-            self.deserialize()
-        except:
-            #this is not how a checksum works, but better than nothing for now
-            self.checksum_ok = False
-    def getData(self):
-        return self.data
-    def getRawData(self):
-        return self.raw_data
-    def deserialize(self):
-        self.raw_bytes = list(self.raw_data[0])
-        self.ni = self.raw_bytes[3]
-        self.heartbeat = self.raw_bytes[1]
-        self.data_length = self.raw_bytes[4]
-        self.data = self.raw_bytes[5:5 + self.data_length]
-        self.checksum = self.raw_bytes[5 + self.data_length:7+self.data_length]
-        self.checksum_ok = True
+    def __init__(self, msg_type = 2, msg_id = 0, node_id = 0, data = []):
+        self.msg_type = msg_type
+        self.msg_id = 0
+        self.node_id = node_id
+        self.data = data
+        self.data_length = len(data)
+        self.checksum = self.generate_checksum()
+        pass
+    
+    def generate_checksum(self): # TODO
+        checksum = 0
+        return checksum
+
+    def serialize(self): # TODO
+        serialized = struct.pack("<BBBBB{}BH".format(self.data_length), 0xAA, self.msg_type, self.msg_id, self.node_id, self.data_length, *self.data, self.checksum) # TODO
+        return serialized
+
+    @classmethod
+    def deserialize(cls, data):
+        msg_type = data[INDEX_MSG_TYPE]
+        msg_id = data[INDEX_MSG_ID]
+        node_id = data[INDEX_NI]
+        data_length = data[INDEX_NMB_DATA]
+        msg_data = data[INDEX_DATA : (INDEX_DATA + data_length)]
+        # TODO something something checksum
+        return cls(msg_type, msg_id, node_id, msg_data)
