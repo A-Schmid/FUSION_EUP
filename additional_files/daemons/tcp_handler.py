@@ -46,6 +46,12 @@ class Node():
     def __connect_uds(self):
         print("{} - connecting uds...".format(self.ni))
         uds_addr = "{}/node{}".format(uds_path, self.ni)
+
+        if(self.active == True):
+            print("sending invalidation...")
+            self.uds_sock.sendall([0xAA, 0x03])
+            print("sent invalidation!")
+
         try:
             os.unlink(uds_addr)
         except OSError:
