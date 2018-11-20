@@ -1,6 +1,7 @@
 #from .core import *
 import struct
 from .module import *
+from .packet import *
 
 digital_pins = [0, 2, 4, 5, 12, 13, 14, 15, 16]
 INDEX_DREAD_VALUE = INDEX_DATA
@@ -24,32 +25,6 @@ class GPIO(Module):
     # TODO whats that?
     def __get_gpio_data(self):
         pass
-
-"""
-    def __get_data(self):
-        readable, writeable, exceptional = select.select([self._uds_sock], [], [], 0.1)
-        if(len(readable) > 0):
-            data = readable[0].recv(1024)
-            self.__parse_data(data)
-
-    def __parse_data(self, data):
-        self.time = time.time()
-
-        if(self.time == self.__last_update):
-            return
-
-        self.__last_update = self.time
-        #TODO
-
-    def _update(self):
-        while(True):
-            self.__get_data()
-            try:
-                self.__update_gpio_data()
-            except:
-                continue
-            time.sleep(self._interval)
-"""
 
     def buildPacket(self, data):
         length = len(data)
@@ -127,8 +102,13 @@ class GPIO(Module):
         return data
 
     def analogRead(self, pin):
-        answer = self.requestAnswer([0x04, pin, 0])
-        data = (answer[INDEX_AREAD_VALUE_HIGH] << 8) | answer[INDEX_AREAD_VALUE_LOW]
+        answer = 0
+        data = -1
+        try:
+            answer = self.requestAnswer([0x04, pin, 0])
+            data = (answer[INDEX_AREAD_VALUE_HIGH] << 8) | answer[INDEX_AREAD_VALUE_LOW]
+        except:
+            print("analogRead - something went wrong... answer: ", answer)
         return data
 
     def info(self):
