@@ -1,6 +1,7 @@
 #from .core import *
 import struct
 from .module import *
+from .packet import *
 
 digital_pins = [0, 2, 4, 5, 12, 13, 14, 15, 16]
 INDEX_DREAD_VALUE = INDEX_DATA
