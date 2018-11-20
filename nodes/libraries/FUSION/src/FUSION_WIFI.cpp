@@ -122,24 +122,39 @@ bool checkConnection()
     return true;
 }
 
-
 int readPacket(char* data)
 {
-    int data_length = -1;
-
-    data_length = readLengthPacket();
+    int data_length = readLengthPacket();
 
     Serial.print("datalength: "); Serial.println(data_length);
     tcpClient.write(0x01);
 
     int packet_length = data_length + 7;
-    int index_checksum = 1 + FRAME_HEAD_LENGTH + data_length;
     char* packet = (char*) malloc(2 + FRAME_HEAD_LENGTH + data_length + FRAME_CHECKSUM_LENGTH);
 
     tcpClient.readBytes(packet, packet_length);
+    /*int i = 0;
+    int buffer = -1;
+    while(1)
+    {
+        buffer = tcpClient.read();
+        Serial.println(buffer, HEX);
 
-    //*data = (char*) malloc(data_length);
-    //memcpy(*data, packet + INDEX_DATA, data_length);
+        if(buffer == -1)
+        {
+            packet_length = i;
+            data_length = packet_length - 7;
+            // TODO prevent negative values
+            break;
+        }
+
+        packet[i] = buffer;
+        i++;
+        // TODO prevent overflow
+    }
+
+    Serial.println("done");*/
+
     for(int i = 0; i < data_length; i++)
     {
         data[i] = packet[INDEX_DATA + i];
