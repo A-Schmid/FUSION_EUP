@@ -86,6 +86,9 @@ class Node():
         while(self.active):
             readable, writeable, exceptional = select.select([self.uds_sock, self.tcp_sock], [self.uds_sock, self.tcp_sock], [], 0.5) # 0.1
 
+            if(len(exceptional) > 0):
+                print("exceptional socket!", exceptional)
+
             # read uds
             # TODO handle disconnect
             if(self.uds_sock in readable):
@@ -98,17 +101,21 @@ class Node():
                     self.tcp_queue.append(data)
                 except OSError as msg:
                     print("{} - couldn't read uds sock".format(self.ni), msg)
-            # read tcp
 
+            # read tcp
             if(self.tcp_sock in readable):
                 try:
                     data = self.tcp_sock.recv(1024)
+                    try:
+                        if(data[3] != self.ni):
+                            print("{} wrong ni: {}".format(self.ni, data[3]))
+                    except:
+                        print("{} packet without msg_type".format(self.ni))
                     self.uds_queue.append(data)
                 except:
                     print("{} - couldn't read tcp sock".format(self.ni))
 
             # write uds
-
             if(len(self.uds_queue) > 0 and self.uds_sock in writeable):
                 #print("write uds")
                 for data in self.uds_queue:
@@ -117,7 +124,12 @@ class Node():
                         self.uds_sock.sendall(data)
                         self.uds_queue.remove(data)
                     except:
-                        print("{} - couldn't send to uds sock".format(self.ni))
+                        msg_ni = -1
+                        try:
+                            msg_ni = data[3]
+                        except:
+                            print("{} wrong message format".format(self.ni))
+                        print("{} - couldn't send to uds sock, msg_ni = {}, socket = {}".format(self.ni, msg_ni, self.uds_sock.getsockname()))
 
             # write tcp
             if(len(self.tcp_queue) > 0 and self.tcp_sock in writeable):
