@@ -27,7 +27,7 @@ class DHT11(Module):
     def __parse_data(self, data):
         try:
             if(data[INDEX_NI] != self.node_id):
-                print("{} wrong node id: {}".format(self.node_id, data[INDEX_NI]))
+                print("{} wrong node id: {} (FD: {})".format(self.node_id, data[INDEX_NI], self._uds_sock.fileno()))
                 return
             if(data[INDEX_MSG_TYPE] != MSG_TYPE_PACKET):
                 print("{} wrong message type: {}".format(self.node_id, data[INDEX_MSG_TYPE]))

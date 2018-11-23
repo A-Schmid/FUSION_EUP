@@ -2,6 +2,7 @@ test.ipynb
 test.py
 *.pyc
 *.swp
+*.swn
 *.swo
 .ipynb_checkpoints/
 nohup.out

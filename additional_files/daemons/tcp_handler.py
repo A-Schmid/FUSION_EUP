@@ -21,19 +21,15 @@ tcp_sock.bind((ip_addr, port_tcp))
 tcp_sock.listen(1)
 
 class Node():
-    tcp_sock = None
-    uds_sock = None
-    ni = 0
-    initialized = False
-    tcp_queue = []
-    uds_queue = []
-
     def __init__(self, ni, tcpsock):
         print("init...")
         self.ni = ni
         self.tcp_sock = tcpsock
         self.initialized = True
         self.active = False
+
+        self.tcp_queue = []
+        self.uds_queue = []
 
         connectionHandler = Thread(target=self.__connect_uds)
         connectionHandler.start()
@@ -68,6 +64,7 @@ class Node():
         time.sleep(0.1)
 
         self.uds_sock, self.uds_addr = uds_sock.accept()
+        print("accepted connection - node: {}, fd: {}, sockname: {}, peername: {}".format(self.ni, self.uds_sock.fileno(), self.uds_sock.getsockname(), self.uds_sock.getpeername()))
         self.uds_sock.setblocking(0)
 
         self.active = True
@@ -111,12 +108,22 @@ class Node():
                             print("{} wrong ni: {}".format(self.ni, data[3]))
                     except:
                         print("{} packet without msg_type".format(self.ni))
+                    #print(self.ni, data)
                     self.uds_queue.append(data)
                 except:
                     print("{} - couldn't read tcp sock".format(self.ni))
 
+            #for msg in self.uds_queue:
+            #    try:
+            #        msg_ni = msg[3]
+            #    except:
+            #        print("{} TEST wrong msg format".format(self.ni))
+            #    if(msg_ni != self.ni):
+            #        print("{} wrong message in queue: {}".format(self.ni, msg))
+
             # write uds
             if(len(self.uds_queue) > 0 and self.uds_sock in writeable):
+                #print(self.ni, len(self.uds_queue), self.uds_queue)
                 #print("write uds")
                 for data in self.uds_queue:
                     try:
@@ -129,7 +136,7 @@ class Node():
                             msg_ni = data[3]
                         except:
                             print("{} wrong message format".format(self.ni))
-                        print("{} - couldn't send to uds sock, msg_ni = {}, socket = {}".format(self.ni, msg_ni, self.uds_sock.getsockname()))
+                        print("{} - couldn't send to uds sock, msg_ni = {}, socket = {}, fd = {}".format(self.ni, msg_ni, self.uds_sock.getsockname(), self.uds_sock.fileno()))
 
             # write tcp
             if(len(self.tcp_queue) > 0 and self.tcp_sock in writeable):

@@ -23,6 +23,7 @@ class Module():
             try:
                 self._uds_sock.connect(self._uds_path)
                 self._connected = True
+                print("connection established - node: {}, fd: {}, sockname: {}, peername: {}".format(self.node_id, self._uds_sock.fileno(), self._uds_sock.getsockname(), self._uds_sock.getpeername()))
             except socket.error as msg:
                 print("could not connect to UDS: ", msg, self._uds_path) # daemon not running?
                 time.sleep(0.1)
