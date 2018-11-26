@@ -20,7 +20,7 @@ WiFiUDP udpClient;
 
 bool initWifi()
 {
-    if(wifi_initialized) return true;
+    if(wifi_initialized) return true; // check for WL_CONNECTED?
 
 	WiFi.mode(WIFI_STA); 
 	WiFi.begin(ssid, pw);
@@ -45,6 +45,7 @@ bool sendPacket(char* data, unsigned int length)
 
 bool sendPacket(char* data, unsigned int length, unsigned int mode)
 {
+    int bytesSent;
     switch(mode)
     {
         case WIFI_MODE_TCP:
@@ -52,7 +53,13 @@ bool sendPacket(char* data, unsigned int length, unsigned int mode)
             {
                 if(checkConnection()) break;
             }
-    	    tcpClient.write(data, length);
+    	    bytesSent = tcpClient.write(data, length);
+            if(bytesSent != length)
+            {
+                Serial.print("bytesSent don't match length: ");
+                Serial.print(bytesSent);
+                Serial.println(length);
+            }
             break;
         case WIFI_MODE_UDP:
             udpClient.beginPacket(ip, udp_port);
@@ -115,9 +122,10 @@ bool checkConnection()
 
         if(!tcpClient.connect(ip, tcp_port))
 	    {
-	    	delay(500);
+	    	//delay(500); // why the delay?
         	return false;
 	    }
+        sendHandshake(NODE_ID); // maybe this is the magic line of code
     }
     return true;
 }
@@ -133,27 +141,6 @@ int readPacket(char* data)
     char* packet = (char*) malloc(2 + FRAME_HEAD_LENGTH + data_length + FRAME_CHECKSUM_LENGTH);
 
     tcpClient.readBytes(packet, packet_length);
-    /*int i = 0;
-    int buffer = -1;
-    while(1)
-    {
-        buffer = tcpClient.read();
-        Serial.println(buffer, HEX);
-
-        if(buffer == -1)
-        {
-            packet_length = i;
-            data_length = packet_length - 7;
-            // TODO prevent negative values
-            break;
-        }
-
-        packet[i] = buffer;
-        i++;
-        // TODO prevent overflow
-    }
-
-    Serial.println("done");*/
 
     for(int i = 0; i < data_length; i++)
     {

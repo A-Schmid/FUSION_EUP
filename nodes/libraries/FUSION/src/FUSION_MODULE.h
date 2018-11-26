@@ -15,6 +15,7 @@ class FusionModule
         char* packet;
 
         void initialize();
+        void update();
         void createPacket(char* data, int data_length);
         void createPacket(char* data, int data_length, int type);
         void freePacket();

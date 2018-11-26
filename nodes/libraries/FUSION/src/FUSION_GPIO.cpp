@@ -13,6 +13,7 @@ FusionGPIO::FusionGPIO(unsigned int ni) : FusionModule(ni)
 
 void FusionGPIO::update()
 {
+    FusionModule::update();
     char* data = (char*)malloc(3); 
     int data_length = readPacket(data);
     for(int i = 0; i < 3; i++)

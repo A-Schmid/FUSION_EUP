@@ -107,19 +107,12 @@ class Node():
                         if(data[3] != self.ni):
                             print("{} wrong ni: {}".format(self.ni, data[3]))
                     except:
-                        print("{} packet without msg_type".format(self.ni))
+                        print("{} packet without msg_type: {}".format(self.ni, data))
+                        raise
                     #print(self.ni, data)
                     self.uds_queue.append(data)
                 except:
                     print("{} - couldn't read tcp sock".format(self.ni))
-
-            #for msg in self.uds_queue:
-            #    try:
-            #        msg_ni = msg[3]
-            #    except:
-            #        print("{} TEST wrong msg format".format(self.ni))
-            #    if(msg_ni != self.ni):
-            #        print("{} wrong message in queue: {}".format(self.ni, msg))
 
             # write uds
             if(len(self.uds_queue) > 0 and self.uds_sock in writeable):

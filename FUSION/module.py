@@ -1,3 +1,4 @@
+import atexit
 import threading
 import time
 import socket
@@ -12,6 +13,7 @@ class Module():
         self._callbacks = {}
         self._connected = False
         self.time = 0
+        atexit.register(self.onExit)
 
     def _uds_connect(self):
         self._uds_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -36,5 +38,14 @@ class Module():
     def _update(self):
         pass
 
+    def disconnect(self):
+        #TODO
+        pass
+
     def info(self):
         print("module")
+
+    def onExit(self):
+        #TODO
+        self.disconnect()
+        print("exit!", self.node_id)

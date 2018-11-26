@@ -44,8 +44,9 @@ class DHT11(Module):
 
     def _update(self):
         while(True):
-            self.__get_sensor_data()
-            time.sleep(self._interval)
+            if(self._connected):
+                self.__get_sensor_data()
+                time.sleep(self._interval)
 
     def getTemperature(self):
         return self.temperature

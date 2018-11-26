@@ -14,6 +14,7 @@ FusionDHT11::FusionDHT11(unsigned int ni, unsigned int sensorPin) : FusionModule
 
 void FusionDHT11::update()
 {
+    FusionModule::update();
     char* data = (char*)malloc(2); 
     data[0] = (char) dht->readHumidity();
     data[1] = (char) dht->readTemperature();

@@ -6,6 +6,9 @@
 
 #include "FUSION_MODULE.h"
 
+// initialize builtin reset function
+void(* resetFunc) (void) = 0;
+
 FusionModule::FusionModule(unsigned int ni)
 {
     nodeId = ni;
@@ -14,6 +17,11 @@ FusionModule::FusionModule(unsigned int ni)
 void FusionModule::initialize()
 {
     if(initWifi() == true) Serial.println("wifi initialized");
+}
+
+void FusionModule::update()
+{
+
 }
 
 void FusionModule::createPacket(char* data, int data_length)
