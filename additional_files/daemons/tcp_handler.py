@@ -162,7 +162,7 @@ def HandleClients():
 
         try:
             if(handshake[0][1] != 0):
-                print("clienthandler: received non-handshake packet")
+                print("clienthandler: received non-handshake packet", handshake[0])
                 continue
         except:
             print("corrupted handshake packet")
