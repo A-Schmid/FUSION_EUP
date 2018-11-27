@@ -90,7 +90,6 @@ void sendHandshake(int node_id)
 
     while(1)
     {
-        //if(!checkConnection()) continue;
         while(!tcpClient.connected()) delay(100);
 
         Serial.print("sending handshake..."); Serial.println(handshakePacket[5], HEX);
@@ -113,29 +112,22 @@ void sendHandshake(int node_id)
         }
         delay(500);
     }
-
-    //free(handshakePacket);
 }
 
 bool checkConnection()
 {
     if(!tcpClient.connected())
     {
-        //Serial.println("checkconn: not connected");
         accepted = false;
         tcpClient.stop();
 
         // was an if before, blocks now
         while(!tcpClient.connect(ip, tcp_port))
 	    {
-            //Serial.println("checkconn: failed");
 	    	delay(100); // why the delay?
-        	//return false;
 	    }
-        //Serial.println("checkconn: send HS...");
         sendHandshake(NODE_ID); // maybe this is the magic line of code
     }
-    //Serial.println("checkconn: success");
     return true;
 }
 

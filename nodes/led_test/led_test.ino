@@ -7,8 +7,6 @@ void setup()
 {
   Serial.begin(9600);
   gpio.initialize();
-
-  sendHandshake(NODE_ID);
 }
 
 void loop()

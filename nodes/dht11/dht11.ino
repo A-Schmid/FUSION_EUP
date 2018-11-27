@@ -9,7 +9,6 @@ void setup()
 {
     Serial.begin(9600);
     sensor.initialize();
-    //sendHandshake(NODE_ID);
 }
 
 void loop()

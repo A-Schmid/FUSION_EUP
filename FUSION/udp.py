@@ -39,13 +39,3 @@ class udp:
 
     def info(self):
         print("todo")
-"""
-        print("bme280 Sensor:\n" \
-              "node_id:     id of the sensor node\n" \
-              "heart_beat:  number incrementing each update\n" \
-              "temperature: ambient temperature in celsius\n" \
-              "pressure:    ambient pressure in Pa\n" \
-              "humidity:    ambient humidity in %RH\n" \
-              "info():      shows this menu\n" \
-              "running:     indicates if sensor is running\n")
-"""

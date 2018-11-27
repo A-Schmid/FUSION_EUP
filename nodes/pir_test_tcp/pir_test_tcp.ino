@@ -3,14 +3,13 @@
 
 uint8_t sensorPin = D3;
 
-FusionPir sensor(sensorPin, 43);
+FusionPir sensor(sensorPin, NODE_ID);
 
 void setup()
 {
   pinMode(sensorPin, INPUT);
   Serial.begin(9600);
   sensor.initialize();
-  sendHandshake(43);
 }
 
 void loop()
