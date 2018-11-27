@@ -109,15 +109,12 @@ class Node():
                     except:
                         print("{} packet without msg_type: {}".format(self.ni, data))
                         raise
-                    #print(self.ni, data)
                     self.uds_queue.append(data)
                 except:
                     print("{} - couldn't read tcp sock".format(self.ni))
 
             # write uds
             if(len(self.uds_queue) > 0 and self.uds_sock in writeable):
-                #print(self.ni, len(self.uds_queue), self.uds_queue)
-                #print("write uds")
                 for data in self.uds_queue:
                     try:
                         # send length?
@@ -133,7 +130,6 @@ class Node():
 
             # write tcp
             if(len(self.tcp_queue) > 0 and self.tcp_sock in writeable):
-                #print("write tcp")
                 for data in self.tcp_queue:
                     try:
                         # send length?

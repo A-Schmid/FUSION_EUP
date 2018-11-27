@@ -10,7 +10,6 @@ void setup()
     pinMode(buttonPin, INPUT);
     Serial.begin(9600);
     gpio.initialize();
-    sendHandshake(NODE_ID);
 }
 
 void loop()

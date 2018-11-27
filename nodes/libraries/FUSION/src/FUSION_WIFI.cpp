@@ -35,6 +35,8 @@ bool initWifi()
 
     wifi_initialized = true;
 
+    checkConnection();
+
     return true;
 }
 
@@ -88,7 +90,7 @@ void sendHandshake(int node_id)
 
     while(1)
     {
-        if(!checkConnection()) continue;
+        while(!tcpClient.connected()) delay(100);
 
         Serial.print("sending handshake..."); Serial.println(handshakePacket[5], HEX);
         
@@ -110,20 +112,19 @@ void sendHandshake(int node_id)
         }
         delay(500);
     }
-
-    //free(handshakePacket);
 }
 
 bool checkConnection()
 {
     if(!tcpClient.connected())
     {
+        accepted = false;
         tcpClient.stop();
 
-        if(!tcpClient.connect(ip, tcp_port))
+        // was an if before, blocks now
+        while(!tcpClient.connect(ip, tcp_port))
 	    {
-	    	//delay(500); // why the delay?
-        	return false;
+	    	delay(100); // why the delay?
 	    }
         sendHandshake(NODE_ID); // maybe this is the magic line of code
     }
