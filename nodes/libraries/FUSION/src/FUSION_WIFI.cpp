@@ -6,12 +6,6 @@
 
 #include "FUSION_WIFI.h"
 
-const char* ssid = "FUSION";
-const char* pw = "fusionjazz";
-const char* ip = "192.168.4.1";
-const unsigned int udp_port = 5005;
-const unsigned int tcp_port = 5006;
-
 bool wifi_initialized = false;
 bool accepted = false;
 
@@ -133,15 +127,23 @@ bool checkConnection()
 
 int readPacket(char* data)
 {
+    while(1)
+    {
+        if(checkConnection()) break;
+    }
+
     int data_length = readLengthPacket();
+    if(data_length == 0) return 0;
 
     Serial.print("datalength: "); Serial.println(data_length);
-    tcpClient.write(0x01);
+    char ack[4] = {0xaa, 0x04, 0x00, (char) NODE_ID};
+    tcpClient.write(ack, 4);
 
     int packet_length = data_length + 7;
     char* packet = (char*) malloc(2 + FRAME_HEAD_LENGTH + data_length + FRAME_CHECKSUM_LENGTH);
 
-    tcpClient.readBytes(packet, packet_length);
+    int readLen = tcpClient.readBytes(packet, packet_length);
+    if(readLen == 0) return 0;
 
     for(int i = 0; i < data_length; i++)
     {
@@ -158,7 +160,10 @@ int readLengthPacket()
 {
     int length = 2 + FRAME_HEAD_LENGTH + 1 + FRAME_CHECKSUM_LENGTH;
     char* packet = (char*) malloc(length);
-    tcpClient.readBytes(packet, length);
+    int readLen = 0;
+    readLen = tcpClient.readBytes(packet, length);
+    if(readLen == 0) return 0;
+
     // TODO checksum stuff here
     int result = packet[INDEX_DATA];
     free(packet);
