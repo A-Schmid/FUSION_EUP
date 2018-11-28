@@ -3,11 +3,11 @@
 
 FusionGPIO gpio(NODE_ID);
 
-uint8_t buttonPin = 0;
+//uint8_t buttonPin = 0;
 
 void setup()
 {
-    pinMode(buttonPin, INPUT);
+    //pinMode(buttonPin, INPUT);
     Serial.begin(9600);
     gpio.initialize();
 }
@@ -15,5 +15,5 @@ void setup()
 void loop()
 {
     gpio.update();
-    delay(50);
+    delay(500);
 }

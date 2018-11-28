@@ -22,6 +22,12 @@
 #define WIFI_MODE_UDP 1
 #define WIFI_MODE_TCP 2
 
+#define ssid "FUSION"
+#define pw "fusionjazz"
+#define ip "192.168.4.1"
+#define udp_port 5005
+#define tcp_port 5006
+
 bool initWifi();
 bool sendPacket(char* data, unsigned int length);
 bool sendPacket(char* data, unsigned int length, unsigned int mode);
