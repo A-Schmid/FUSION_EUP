@@ -4,7 +4,8 @@ from .module import *
 from .packet import *
 
 digital_pins = [0, 2, 4, 5, 12, 13, 14, 15, 16]
-INDEX_DREAD_VALUE = INDEX_DATA
+INDEX_DREAD_PIN = INDEX_DATA
+INDEX_DREAD_VALUE = INDEX_DATA + 1
 INDEX_AREAD_PIN = INDEX_DATA
 INDEX_AREAD_VALUE_HIGH = INDEX_DATA + 1
 INDEX_AREAD_VALUE_LOW = INDEX_DATA + 2
@@ -29,18 +30,22 @@ class GPIO(Module):
         try:
             length_packet = Packet(1, 0, self.node_id, [length])
             packet = Packet(2, 0, self.node_id, data)
+            print("recv: ", data)
             self._uds_sock.sendall(length_packet.serialize()) #bytes([length]))
             self._uds_sock.setblocking(1)
             ack = self._uds_sock.recv(1024)
             self._uds_sock.setblocking(0)
+            #time.sleep(0.1)
             self._uds_sock.sendall(packet.serialize())
             #wait for answer
             self._uds_sock.setblocking(1)
             answer = self._uds_sock.recv(1024)
             self._uds_sock.setblocking(0)
+            print("ra:", answer);
             return answer
         except:
             print("requestAnswer error")
+            return -1
 
     def sendMessage(self, data):
         length = len(data)
@@ -48,10 +53,12 @@ class GPIO(Module):
             # idea: length not needed? just use large enough buffer on esp
             length_packet = Packet(1, 0, self.node_id, [length])
             packet = Packet(2, 0, self.node_id, data)
+            print("send: ", data)
             self._uds_sock.sendall(length_packet.serialize()) 
             self._uds_sock.setblocking(1)
             ack = self._uds_sock.recv(1024)
             self._uds_sock.setblocking(0)
+            #time.sleep(0.1)
             self._uds_sock.sendall(packet.serialize())
         except OSError as msg:
             print("sendMessage error", msg)

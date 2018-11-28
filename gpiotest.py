@@ -1,12 +1,12 @@
 import time
 from FUSION import *
 
-btn = GPIO(43)
+btn = GPIO(42)
 
-btn.setDirection(0, 0)
+btn.setDirection(4, INPUT)
 
 while True:
-    print(btn.digitalRead(0))
+    print(btn.digitalRead(4))
     time.sleep(1)
 
 time.sleep(5)
