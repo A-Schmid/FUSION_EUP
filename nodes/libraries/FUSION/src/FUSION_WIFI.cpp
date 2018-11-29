@@ -127,6 +127,57 @@ bool checkConnection()
 
 int readPacket(char* data)
 {
+    Serial.println("rp start");
+    while(1)
+    {
+        if(checkConnection()) break;
+    }
+
+    char* packet = (char*) malloc(100);
+    int packet_length = 0;
+    int buffer = 0;
+
+    while(!tcpClient.available()) delay(10);
+    Serial.print("ava: "); Serial.println(tcpClient.available());
+
+    while(1)
+    {
+        buffer = tcpClient.read();
+        if(buffer == -1) break;
+        packet[packet_length] = (char) buffer;
+        packet_length++;
+        Serial.print(buffer, HEX); Serial.print(" ");
+    }
+
+    char data_length = packet_length - 7;//packet[INDEX_NMB_DATA];
+
+    Serial.println("");
+    Serial.print("pl: "); Serial.println(packet_length);
+    Serial.print("dl: "); Serial.println(data_length);
+
+    for(int i = 0; i < 7; i++)
+    {
+        Serial.print(packet[i], HEX); Serial.print(" ");
+    }
+    Serial.println("");
+
+    for(int i = 0; i < data_length; i++)
+    {
+        Serial.print(packet[INDEX_DATA + i], HEX); Serial.print(" ");
+        data[i] = packet[INDEX_DATA + i];
+    }
+
+    Serial.println("");
+
+    free(packet);
+
+    Serial.println("rp end");
+    return data_length;
+}
+/*
+int readPacketOld(char* data)
+{
+    Serial.println("rp start");
     while(1)
     {
         if(checkConnection()) break;
@@ -153,11 +204,13 @@ int readPacket(char* data)
 
     Serial.println("");
 
+    Serial.println("rp end");
     return data_length;
-}
+}*/
 
 int readLengthPacket()
 {
+    Serial.println("rlp start");
     int length = 2 + FRAME_HEAD_LENGTH + 1 + FRAME_CHECKSUM_LENGTH;
     char* packet = (char*) malloc(length);
     int readLen = 0;
@@ -166,6 +219,7 @@ int readLengthPacket()
 
     // TODO checksum stuff here
     int result = packet[INDEX_DATA];
-    free(packet);
+    //free(packet);
+    Serial.println("rlp end");
     return result;
 }

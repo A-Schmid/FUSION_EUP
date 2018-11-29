@@ -15,5 +15,5 @@ void setup()
 void loop()
 {
     gpio.update();
-    delay(500);
+    delay(50);
 }
