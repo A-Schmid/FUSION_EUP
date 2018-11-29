@@ -1,5 +1,7 @@
 #from .core import *
 import struct
+import select
+import time
 from .module import *
 from .packet import *
 
@@ -26,22 +28,10 @@ class GPIO(Module):
         self._wait_for_connection() # blocking!
 
     def requestAnswer(self, data):
-        length = len(data)
+        packet = Packet(2, 0, self.node_id, data)
         try:
-            length_packet = Packet(1, 0, self.node_id, [length])
-            packet = Packet(2, 0, self.node_id, data)
-            print("recv: ", data)
-            self._uds_sock.sendall(length_packet.serialize()) #bytes([length]))
-            self._uds_sock.setblocking(1)
-            ack = self._uds_sock.recv(1024)
-            self._uds_sock.setblocking(0)
-            #time.sleep(0.1)
-            self._uds_sock.sendall(packet.serialize())
-            #wait for answer
-            self._uds_sock.setblocking(1)
-            answer = self._uds_sock.recv(1024)
-            self._uds_sock.setblocking(0)
-            print("ra:", answer);
+            self._sendToUDS(packet.serialize())
+            answer = self._receiveFromUDS()
             return answer
         except:
             print("requestAnswer error")
@@ -49,22 +39,11 @@ class GPIO(Module):
 
     def sendMessage(self, data):
         length = len(data)
+        packet = Packet(2, 0, self.node_id, data)
         try:
-            # idea: length not needed? just use large enough buffer on esp
-            length_packet = Packet(1, 0, self.node_id, [length])
-            packet = Packet(2, 0, self.node_id, data)
-            print("send: ", data)
-            self._uds_sock.sendall(length_packet.serialize()) 
-            self._uds_sock.setblocking(1)
-            ack = self._uds_sock.recv(1024)
-            self._uds_sock.setblocking(0)
-            #time.sleep(0.1)
-            self._uds_sock.sendall(packet.serialize())
-        except OSError as msg:
-            print("sendMessage error", msg)
-
-    def receiveMessage(self):
-        pass
+            self._sendToUDS(packet.serialize())
+        except: 
+            print("sendMessage error")
 
     def setDirection(self, pin, value):
         self.sendMessage([0x00, pin, value])
@@ -86,11 +65,15 @@ class GPIO(Module):
 
     def digitalRead(self, pin):
         answer = self.requestAnswer([0x03, pin, 0])
+        if(answer == -1):
+            return -1
         data = answer[INDEX_DREAD_VALUE]
         return data
 
     def analogRead(self, pin):
         answer = self.requestAnswer([0x04, pin, 0])
+        if(answer == -1):
+            return -1
         data = (answer[INDEX_AREAD_VALUE_HIGH] << 8) | answer[INDEX_AREAD_VALUE_LOW]
         return data
 

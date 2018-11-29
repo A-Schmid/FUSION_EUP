@@ -35,6 +35,29 @@ class Module():
         thread.daemon = True
         thread.start()
 
+    def _sendToUDS(self, packet):
+        timeout = 10
+        while(True):
+            readable, writeable, exceptional = select.select([], [self._uds_sock], [], 0.5)
+            if(self._uds_sock in writeable):
+                break
+            timeout -= 1
+            if(timeout <= 0):
+                raise Exception("Timeout in sendToUDS")
+        self._uds_sock.sendall(packet)
+
+    def _receiveFromUDS(self):
+        timeout = 10
+        while(True):
+            readable, writeable, exceptional = select.select([self._uds_sock], [], [], 0.5)
+            if(self._uds_sock in readable):
+                break
+            timeout -= 1
+            if(timeout <= 0):
+                raise Exception("Timeout in receiveFromUDS")
+        answer = self._uds_sock.recv(1024)
+        return answer
+
     def _update(self):
         pass
 
