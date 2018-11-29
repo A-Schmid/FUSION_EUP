@@ -13,25 +13,19 @@ FusionGPIO::FusionGPIO(unsigned int ni) : FusionModule(ni)
 
 void FusionGPIO::update()
 {
-    Serial.println("update start");
     FusionModule::update();
+
     char* data = (char*)malloc(3); 
-    int data_length = 0;
-    //do
-    //{
-        data_length = readPacket(data);
-    //}
-    //while(data_length == 0);
-    //for(int i = 0; i < 3; i++)
-    //{
-    //    Serial.println(data[i]);
-    //}
+
+    int data_length = readPacket(data);
+
     if(data_length == 0)
     {
         return;
     }
+
     parseMessage(data);
-    Serial.println("update end");
+
     //free(data);
 }
 
@@ -91,7 +85,6 @@ void FusionGPIO::aWrite(unsigned int pin, unsigned int value)
 
 bool FusionGPIO::dRead(unsigned int pin)
 {
-    Serial.print("dRead: "); Serial.println(digitalRead(pin));
     return digitalRead(pin);
 }
 
