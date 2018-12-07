@@ -13,3 +13,4 @@ from .button import *
 from .GPIO import *
 from .DHT11 import *
 from .packet import * 
+from .email import *
