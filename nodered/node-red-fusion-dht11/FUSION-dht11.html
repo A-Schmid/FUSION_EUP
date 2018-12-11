@@ -1,6 +1,6 @@
 <!--
  Copyright 2016 Maxwell Hadley
- Modified by Andreas Schmid (2018)
+ Copyright 2018 Andreas Schmid
 
  Licensed under the BSD 2-clause license - see accompanying LICENSE file
 -->
@@ -23,7 +23,7 @@
 </script>
 
 <!-- Help text -->
-<script type="text/x-red" data-help-name="IPC-in">
+<script type="text/x-red" data-help-name="DHT11-in">
    <p>Listens for communication from another process, using a UNIX-domain socket or (on Windows) a named pipe.
    A message is generated for each line of text received.</p>
    <p>The node listens at the specified path:</p>
@@ -35,7 +35,7 @@
 
 <!-- Register node type  -->
 <script type="text/javascript">
-    RED.nodes.registerType('IPC-in', {
+    RED.nodes.registerType('DHT11-in', {
         category: 'input',
         defaults: {        
   			path: {value: '', required:true},
@@ -44,10 +44,10 @@
         },
 		color: "Silver",
         inputs: 0,
-        outputs: 1,
+        outputs: 2,
         icon: "ipc.png",
         label: function() {   
-            return this.name || "IPC";
+            return this.name || "DHT11";
         },
         labelStyle: function () {
             return this.name ? "node_label_italic" : "";
