@@ -1,0 +1,60 @@
+<!--
+ Copyright 2016 Maxwell Hadley
+ Copyright 2018 Andreas Schmid
+
+ Licensed under the BSD 2-clause license - see accompanying LICENSE file
+-->
+
+<!-- Edit dialog  -->
+
+<script type="text/x-red" data-template-name="digitalread-in">
+	<div class="form-row">
+        <label for="node-input-path"><i class="fa fa-bolt"></i> Path</label>
+        <input type="text" id="node-input-path" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pin"><i class="fa fa-tag"></i> Pin</label>
+        <input type="text" id="node-input-pin" placeholder="Pin">
+    </div>
+</script>
+
+<!-- Help text -->
+<script type="text/x-red" data-help-name="digitalread-in">
+   <p>Listens for communication from another process, using a UNIX-domain socket or (on Windows) a named pipe.
+   A message is generated for each line of text received.</p>
+   <p>The node listens at the specified path:</p>
+   <ul>
+   <li>On Unix & Linux, this is a filesystem location which must be writeable, and must not exist when the flow is deployed</li>
+   <li>On Windows, this is a named pipe, in the form <b>\\.\pipe\<i>pipename</i></b>, which must not exist when the flow is deployed</li>
+   </ul>
+</script>
+
+<!-- Register node type  -->
+<script type="text/javascript">
+    RED.nodes.registerType('digitalread-in', {
+        category: 'input',
+        defaults: {        
+  			path: {value: '', required:true},
+			topic: {value: ''},
+			name: {value: ''}
+        },
+		color: "Silver",
+        inputs: 0,
+        outputs: 1,
+        icon: "ipc.png",
+        label: function() {   
+            return this.name || "Digital Read";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+</script>
