@@ -69,10 +69,15 @@ module.exports = function(RED) {
 
         node.server.on("ready", function() {
             // set pin direction
-            var msg = new Buffer([0xaa, 0x02, 0x00, node.id, 0x03, 0x00, node.pin, 0x00, 0x00]);
+            var msg = Buffer.from([0xaa, 0x02, 0x00, node.id, 0x03, 0x00, node.pin, 0x00, 0x00]);
             node.server.write(msg);
         });
+            
+        node.server.on("connect", function() {
+            node.status({fill:"green", shape:"ring", text:"connected"});
+        });
 
+        /* // is this even needed?
         node.server.on('error', function (e) {
             // If the path exists, set status and retry at intervals
             if (e.code == 'EADDRINUSE') {
@@ -85,14 +90,15 @@ module.exports = function(RED) {
                         //node.server.listen(node.path);
                     }, 2000);
             }
-        });
+        });*/
 
         node.on("input", function (msg) {
-            var msg = new Buffer([0xaa, 0x02, 0x00, node.id, 0x03, 0x03, node.pin, 0x00, 0x00]);
+            var msg = Buffer.from([0xaa, 0x02, 0x00, node.id, 0x03, 0x03, node.pin, 0x00, 0x00]);
             node.server.write(msg);
         });
 
 		node.on("close", function () {
+            node.status({fill:"yellow", shape:"ring", text:"disconnected"});
             //node.server.close();
             // Boot off anyone connected to the socket
             node.server.unref();

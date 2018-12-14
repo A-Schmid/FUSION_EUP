@@ -49,7 +49,6 @@ module.exports = function(RED) {
             parts = node.stringBuffer.split(lineEnd);
             for (i = 0; i < parts.length - 1; i += 1) {
                 buf = parts[i].split('|');
-                console.log(buf);
                 msgTemp = {topic:node.topic + "Temperature", payload:buf[0]};
                 msgHumi = {topic:node.topic + "Humidity", payload:buf[1]};
                 //msg = {topic:node.topic, payload:parts[i]};
@@ -69,6 +68,9 @@ module.exports = function(RED) {
                 node.log("DHT11 on " + node.path + " - client disconnected");
         });
 
+        node.server.on("connect", function() {
+            node.status({fill:"green", shape:"ring", text:"connected"});
+        });
         node.server.on('error', function (e) {
             // If the path exists, set status and retry at intervals
             if (e.code == 'EADDRINUSE') {
@@ -84,6 +86,7 @@ module.exports = function(RED) {
         });
 
 		node.on("close", function () {
+            node.status({fill:"yellow", shape:"ring", text:"disconnected"});
             //node.server.close();
             // Boot off anyone connected to the socket
             node.server.unref();
