@@ -25,8 +25,6 @@ void FusionGPIO::update()
     }
 
     parseMessage(data);
-
-    //free(data);
 }
 
 int FusionGPIO::parseMessage(char* message)
