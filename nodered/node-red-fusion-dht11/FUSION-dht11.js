@@ -49,7 +49,6 @@ module.exports = function(RED) {
             parts = node.stringBuffer.split(lineEnd);
             for (i = 0; i < parts.length - 1; i += 1) {
                 buf = parts[i].split('|');
-                console.log(buf);
                 msgTemp = {topic:node.topic + "Temperature", payload:buf[0]};
                 msgHumi = {topic:node.topic + "Humidity", payload:buf[1]};
                 //msg = {topic:node.topic, payload:parts[i]};
@@ -58,26 +57,20 @@ module.exports = function(RED) {
             node.stringBuffer = parts[parts.length-1];
         };
 
-        console.log(node.path);
         node.server = net.createConnection({path: node.path}, () =>  {
             console.log("DHT11 init");
             if (debugOption) {
                 node.log("DHT11 on " + node.path + " - client connected");
             }
-            /*connection.on("data", node.parser);
-            if (debugOption) {
-                connection.on("end", function () {
-                    if (debugOption) {
-                        node.log("DHT11 on " + node.path + " - client disconnected");
-                    }
-                });
-            }*/
         });
         node.server.on("data", node.parser);
         node.server.on("end", function() {
                 node.log("DHT11 on " + node.path + " - client disconnected");
         });
 
+        node.server.on("connect", function() {
+            node.status({fill:"green", shape:"ring", text:"connected"});
+        });
         node.server.on('error', function (e) {
             // If the path exists, set status and retry at intervals
             if (e.code == 'EADDRINUSE') {
@@ -92,15 +85,9 @@ module.exports = function(RED) {
             }
         });
 
-		/*node.server.listen(node.path, function () {
-            if (debugOption){
-                node.log("DHT11 listening on " + node.path);
-            }
-                node.status({fill:"green", shape:"dot", text:"listening"})
-            });*/
-
 		node.on("close", function () {
-            node.server.close();
+            node.status({fill:"yellow", shape:"ring", text:"disconnected"});
+            //node.server.close();
             // Boot off anyone connected to the socket
             node.server.unref();
 		});

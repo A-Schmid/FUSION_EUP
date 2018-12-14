@@ -12,6 +12,10 @@
         <label for="node-input-path"><i class="fa fa-bolt"></i> Path</label>
         <input type="text" id="node-input-path" placeholder="">
     </div>
+	<div class="form-row">
+        <label for="node-input-id"><i class="fa fa-bolt"></i> ID</label>
+        <input type="text" id="node-input-id" placeholder="">
+    </div>
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
         <input type="text" id="node-input-topic" placeholder="Topic">
@@ -22,7 +26,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-pin"><i class="fa fa-tag"></i> Pin</label>
-        <input type="text" id="node-input-pin" placeholder="Pin">
+        <input type="text" id="node-input-pin" placeholder="">
     </div>
 </script>
 
@@ -43,11 +47,13 @@
         category: 'input',
         defaults: {        
   			path: {value: '', required:true},
+            id: {value: '', required:true},
 			topic: {value: ''},
-			name: {value: ''}
+			name: {value: ''},
+            pin: {value: '', required:true}
         },
 		color: "Silver",
-        inputs: 0,
+        inputs: 1,
         outputs: 1,
         icon: "ipc.png",
         label: function() {   
