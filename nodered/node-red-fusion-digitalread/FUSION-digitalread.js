@@ -57,7 +57,8 @@ module.exports = function(RED) {
         node.server = net.createConnection({path: node.path}, () =>  {
             // TODO: handshake and pin selection
             console.log(node.pin);
-            var msg = "asdf" + node.pin + "jkl";
+            // TODO node id in html
+            var msg = [0xaa, 0x02, 0x00, node.name, 0x03, 0x00, node.pin, 0x00, 0x00];
             node.server.write(msg);
             console.log("Digital Read init");
             if (debugOption) {
