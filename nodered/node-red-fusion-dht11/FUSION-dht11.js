@@ -58,20 +58,11 @@ module.exports = function(RED) {
             node.stringBuffer = parts[parts.length-1];
         };
 
-        console.log(node.path);
         node.server = net.createConnection({path: node.path}, () =>  {
             console.log("DHT11 init");
             if (debugOption) {
                 node.log("DHT11 on " + node.path + " - client connected");
             }
-            /*connection.on("data", node.parser);
-            if (debugOption) {
-                connection.on("end", function () {
-                    if (debugOption) {
-                        node.log("DHT11 on " + node.path + " - client disconnected");
-                    }
-                });
-            }*/
         });
         node.server.on("data", node.parser);
         node.server.on("end", function() {
@@ -92,15 +83,8 @@ module.exports = function(RED) {
             }
         });
 
-		/*node.server.listen(node.path, function () {
-            if (debugOption){
-                node.log("DHT11 listening on " + node.path);
-            }
-                node.status({fill:"green", shape:"dot", text:"listening"})
-            });*/
-
 		node.on("close", function () {
-            node.server.close();
+            //node.server.close();
             // Boot off anyone connected to the socket
             node.server.unref();
 		});

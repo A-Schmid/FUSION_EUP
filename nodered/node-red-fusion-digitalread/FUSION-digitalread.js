@@ -14,7 +14,7 @@ module.exports = function(RED) {
         fs = require("fs");
 
 // Set the ipc debug option from the environment variable
-	if (process.env.hasOwnProperty("RED_DEBUG") && process.env.RED_DEBUG.toLowerCase().indexOf("FUSION-dht11") >= 0)  {
+	if (process.env.hasOwnProperty("RED_DEBUG") && process.env.RED_DEBUG.toLowerCase().indexOf("FUSION-digitalread") >= 0)  {
 		debugOption = true;
 	}
 // Detect platform type and adjust defaults accordingly
@@ -22,13 +22,15 @@ module.exports = function(RED) {
         lineEnd = "\r\n";
     }
 
-    function dht11InNode(config) {
+    function digitalreadInNode(config) {
         RED.nodes.createNode(this, config);
 
         // node configuration
-		this.path = config.path;
+        this.path = config.path;
+		this.id = config.id;
         this.topic = config.topic;
 		this.name = config.name;
+        this.pin = config.pin;
 		var node = this;
 
         node.status({fill:"yellow", shape:"ring", text:"disconnected"});
@@ -38,7 +40,8 @@ module.exports = function(RED) {
         node.stringBuffer = "";
         node.parser = function (data) {
             //WIP
-            var value = data[5];
+            // TODO constant for index?
+            var value = data[6];
             if (debugOption) {
                 node.log("Digital Read on " + node.path + " - received data");
             }
@@ -46,28 +49,28 @@ module.exports = function(RED) {
             node.stringBuffer = node.stringBuffer + value + "\n";
             parts = node.stringBuffer.split(lineEnd);
             for (i = 0; i < parts.length - 1; i += 1) {
-                console.log(parts[i]);
                 msg = {topic:node.topic + "Value: ", payload:parts[i]};
                 node.send(msg); // send to different outputs
             }
             node.stringBuffer = parts[parts.length-1];
         };
 
-        console.log(node.path);
         node.server = net.createConnection({path: node.path}, () =>  {
-            // TODO: handshake and pin selection
-            console.log(node.pin);
-            // TODO node id in html
-            var msg = [0xaa, 0x02, 0x00, node.name, 0x03, 0x00, node.pin, 0x00, 0x00];
-            node.server.write(msg);
-            console.log("Digital Read init");
             if (debugOption) {
                 node.log("Digital Read on " + node.path + " - client connected");
             }
         });
+
         node.server.on("data", node.parser);
+
         node.server.on("end", function() {
                 node.log("Digital Read on " + node.path + " - client disconnected");
+        });
+
+        node.server.on("ready", function() {
+            // set pin direction
+            var msg = new Buffer([0xaa, 0x02, 0x00, node.id, 0x03, 0x00, node.pin, 0x00, 0x00]);
+            node.server.write(msg);
         });
 
         node.server.on('error', function (e) {
@@ -84,8 +87,13 @@ module.exports = function(RED) {
             }
         });
 
+        node.on("input", function (msg) {
+            var msg = new Buffer([0xaa, 0x02, 0x00, node.id, 0x03, 0x03, node.pin, 0x00, 0x00]);
+            node.server.write(msg);
+        });
+
 		node.on("close", function () {
-            node.server.close();
+            //node.server.close();
             // Boot off anyone connected to the socket
             node.server.unref();
 		});
