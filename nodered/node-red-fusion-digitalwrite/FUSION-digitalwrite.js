@@ -66,13 +66,15 @@ module.exports = function(RED) {
         node.server.on("data", node.parser);
 
         node.server.on("end", function() {
-                node.log("Digital Write on " + node.path + " - client disconnected");
+            node.log("Digital Write on " + node.path + " - client disconnected");
         });
 
         node.server.on("ready", function() {
             // set pin direction
-            var msg = Buffer.from([0xaa, 0x02, 0x00, node.id, 0x03, 0x00, node.pin, 0x01, 0x00]);
-            node.server.write(msg);
+            var packet = Buffer.from([0xaa, 0x02, 0x00, node.id, 0x03, 0x00, node.pin, 0x01, 0x00, 0x00]);
+            console.log("ready!");
+            console.log(packet);
+            node.server.write(packet);
         });
             
         node.server.on("connect", function() {
@@ -82,9 +84,8 @@ module.exports = function(RED) {
         node.on("input", function (msg) {
             var value = msg.payload;
             if(value != 0) value = 1;
-            console.log(value);
-            var msg = Buffer.from([0xaa, 0x02, 0x00, node.id, 0x03, 0x01, node.pin, value, 0x00]);
-            node.server.write(msg);
+            var packet = Buffer.from([0xaa, 0x02, 0x00, node.id, 0x03, 0x01, node.pin, value, 0x00, 0x00]);
+            node.server.write(packet);
         });
 
 		node.on("close", function () {
