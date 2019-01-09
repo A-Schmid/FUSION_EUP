@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "Adafruit_Sensor.h"
 #include <DHT.h>
+#include <Wire.h>
 #include "FUSION_WIFI.h"
 
 class FusionModule
