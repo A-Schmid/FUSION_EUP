@@ -59,15 +59,10 @@ void FusionBH1750::update()
     uint16_t value = 0;
     char* data = (char*) malloc(length); 
 
-    //BH1750_Init(BH1750address);
-    //delay(200);
-
     // TODO restricted to length of 2 right now
     if(read(data, length) == length)
     {
-        value = ((data[0] << 8) | data[1]) / 1.2; // TODO magic number
-        //Serial.print(val,DEC);     
-        //Serial.println("[lx]"); 
+        value = ((data[0] << 8) | data[1]); // TODO magic number
     }
 
     sendData(data, 2);

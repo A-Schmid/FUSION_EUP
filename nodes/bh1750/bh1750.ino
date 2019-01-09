@@ -12,5 +12,5 @@ void setup()
 void loop()
 {
     sensor.update();
-    delay(5000);
+    delay(50);
 }
