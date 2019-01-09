@@ -8,6 +8,6 @@ while True:
     light = sensor.getLightIntensity()
     #log_append_line(filename = "heizung_direkt.txt", message = "{};{};{}".format(dt, temperature, humidity))
     print(light)
-    time.sleep(5)
+    time.sleep(0.5)
 
 time.sleep(5)

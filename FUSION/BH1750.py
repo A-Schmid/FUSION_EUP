@@ -28,7 +28,7 @@ class BH1750(Module):
             if(data[INDEX_MSG_TYPE] != MSG_TYPE_PACKET):
                 print("{} wrong message type: {}".format(self.node_id, data[INDEX_MSG_TYPE]))
                 return
-            self.light_intensity = data[INDEX_DATA] #TODO constant for data index
+            self.light_intensity = int(((data[INDEX_DATA] << 8) | data[INDEX_DATA + 1]) / 1.2) #TODO constant for data index
         except:
             print("could not parse data")
             return
