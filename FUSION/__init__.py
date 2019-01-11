@@ -15,3 +15,4 @@ from .DHT11 import *
 from .BH1750 import *
 from .packet import * 
 from .email import *
+from .tone import *

@@ -3,10 +3,10 @@ from FUSION import *
 
 btn = GPIO(40)
 
-btn.setDirection(0, 0)
+btn.setDirection(A0, INPUT)
 
 while True:
-    print(btn.analogRead(0))
+    print(btn.analogRead(A0))
     time.sleep(0.01)
 
 time.sleep(5)
