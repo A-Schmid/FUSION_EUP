@@ -1,0 +1,28 @@
+ * installer überarbeiten (meta-package?) und testen
+ * platformIO/uploader auf RPi einrichten
+ * parameter für uploader definieren
+ * anständige config
+ * auf zweitem RPi from scratch installieren -> mit nach hause nehmen?
+ * auf MQTT umsteigen?
+ * checksumme einbauen
+ * weitere nodes erstellen:
+   * servo
+   * pulssensor
+   * accelerometer
+   * gyroskop
+   * ambient noise
+   * noninvasive ac current sensor (https://www.ebay.de/itm/SCT-013-15A-20A-30A-50A-100A-Non-invasive-AC-current-sensor-Current-Transformer-/272613836650)?
+   * LCD-display
+   * neoPixel
+   * ...
+ * nodeRED-nodes implementieren
+ * test-skripts anders organisieren/löschen
+ * udp nochmal anschauen
+ * "streaming-modus" für tcp module?
+ * nice to have: lora, gsm
+ * wenn aufgeräumt ist: zwischenrealease?
+ * github-issues statt zettelwirtschaft und txt-files?
+ * doku schreiben -> format?
+ * stromverbrauch testen/optimieren
+ * drahtlose reichweite testen
+ * mehr plattformen unterstützen?
