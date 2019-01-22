@@ -20,6 +20,7 @@ pip install numpy
 pip install bokeh
 pip install bringbuf
 pip install pyserial
+pip install paho-mqtt
 echo "configuring jupyter..."
 configure jupyter
 jupyter notebook --generate-config
