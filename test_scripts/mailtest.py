@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 import smtplib
 
 print("setting up server")

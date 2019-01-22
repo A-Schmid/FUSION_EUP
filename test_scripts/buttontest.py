@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 import time
 from FUSION import *
 btn = button(43)

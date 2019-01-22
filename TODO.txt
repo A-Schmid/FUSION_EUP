@@ -1,9 +1,26 @@
+### für die community ###
+
  * installer überarbeiten (meta-package?) und testen
  * platformIO/uploader auf RPi einrichten
- * parameter für uploader definieren
+   * parameter für uploader definieren
+   * mehr plattformen unterstützen? (zB arduino mit wifi-shield)
  * anständige config
- * auf zweitem RPi from scratch installieren -> mit nach hause nehmen?
+ -> auf zweitem RPi from scratch installieren
+ * wenn aufgeräumt ist: zwischenrealease?
+ * doku schreiben -> format?
+
+
+### designentscheidungen ###
+
  * auf MQTT umsteigen?
+   -> eher am schluss
+ * test-skripts anders organisieren/löschen
+ * "streaming-modus" für tcp module?
+ * github-issues statt zettelwirtschaft und txt-files?
+
+
+### depperlarbeit ###
+
  * checksumme einbauen
  * weitere nodes erstellen:
    * servo
@@ -16,13 +33,13 @@
    * neoPixel
    * ...
  * nodeRED-nodes implementieren
- * test-skripts anders organisieren/löschen
- * udp nochmal anschauen
- * "streaming-modus" für tcp module?
+
+
+### ausprobieren / testen / messen ###
+
  * nice to have: lora, gsm
- * wenn aufgeräumt ist: zwischenrealease?
- * github-issues statt zettelwirtschaft und txt-files?
- * doku schreiben -> format?
  * stromverbrauch testen/optimieren
+   * knopfzellen!!
+   -> shield?
  * drahtlose reichweite testen
- * mehr plattformen unterstützen?
+   * ext. antenne vs "normal"
