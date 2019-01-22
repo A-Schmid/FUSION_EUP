@@ -24,7 +24,7 @@
 
 #define ssid "FUSION"
 #define pw "fusionjazz"
-#define ip "192.168.4.1"
+#define IP "192.168.4.1"
 #define udp_port 5005
 #define tcp_port 5006
 

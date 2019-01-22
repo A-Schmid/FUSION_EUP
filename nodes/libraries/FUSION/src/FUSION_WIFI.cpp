@@ -58,7 +58,7 @@ bool sendPacket(char* data, unsigned int length, unsigned int mode)
             }
             break;
         case WIFI_MODE_UDP:
-            udpClient.beginPacket(ip, udp_port);
+            udpClient.beginPacket(IP, udp_port);
             udpClient.write(data, length);
             udpClient.endPacket();
             break;
@@ -116,7 +116,7 @@ bool checkConnection()
         tcpClient.stop();
 
         // was an if before, blocks now
-        while(!tcpClient.connect(ip, tcp_port))
+        while(!tcpClient.connect(IP, tcp_port))
 	    {
 	    	delay(100); // why the delay?
 	    }
