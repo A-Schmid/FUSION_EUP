@@ -16,6 +16,7 @@ class FusionMQTT
         char* topic_name;
         void init();
         void send(char* dataType, char* data, unsigned int length);
+        void update();
 
     private:
         WiFiClient wifiClient;
