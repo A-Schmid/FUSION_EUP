@@ -14,7 +14,7 @@ FusionMQTT::FusionMQTT()
 
     topic_network = "FUSION";
     topic_location = "1104";
-    topic_name = "testi";
+    topic_name = STR(NODE_NAME);
 }
 
 void FusionMQTT::init()
@@ -32,10 +32,9 @@ void FusionMQTT::init()
 
     while (!mqttClient.connected())
     {
-        if (!mqttClient.connect("ESP8266Client")) {
-
+        if (!mqttClient.connect("ESP8266Client"))
+        {
             delay(100);
-
         }
     }
 }
@@ -48,3 +47,7 @@ void FusionMQTT::send(char* dataType, char* data, unsigned int length)
     mqttClient.loop();
 }
 
+void FusionMQTT::update()
+{
+    mqttClient.loop();
+}
