@@ -6,7 +6,17 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("FUSION/#")
 
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+    #print("---")
+    #print(int.from_bytes(msg.payload, "big", signed=False))
+    #print(msg)
+    #print(msg.payload)
+    #print(type(msg.payload))
+    #print(len(msg.payload))
+    #print(ord(msg.payload))
+    #data = msg.payload.decode()
+    #data = struct.unpack("<cc", msg.payload)
+    #print(data)
+    print("{} {}".format(msg.topic, msg.payload))
 
 client = mqtt.Client()
 client.on_connect = on_connect
