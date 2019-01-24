@@ -4,6 +4,7 @@ import time
 import socket
 import sys
 import select
+import paho.mqtt.client as mqtt
 from .core import *
 
 class Module():

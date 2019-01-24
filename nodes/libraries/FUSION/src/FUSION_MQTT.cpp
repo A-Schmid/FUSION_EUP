@@ -39,11 +39,11 @@ void FusionMQTT::init()
     }
 }
 
-void FusionMQTT::send(char* dataType, char* data, unsigned int length)
+void FusionMQTT::send(char* dataType, uint8_t* data, unsigned int length)
 {
     char topic[128];
     snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, dataType);
-    mqttClient.publish(topic, data, length);
+    mqttClient.publish(topic, data, length, false);
     mqttClient.loop();
 }
 
