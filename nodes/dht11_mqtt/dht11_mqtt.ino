@@ -18,21 +18,12 @@ void setup()
 
 void loop()
 {
-    char humi = sensor->readHumidity();
-    char temp = sensor->readTemperature();
-    char* test = "a";
-    char* test2 = (char*)malloc(1);
-    test2[0] = 15;
-    char* test3 = (char*)malloc(3);
-    test3[0] = 0xAA;
-    test3[1] = 0xBB;
-    test3[2] = 0xCC;
+    uint8_t humi = sensor->readHumidity();
+    uint8_t temp = sensor->readTemperature();
     mqtt.send("temperature", &temp, 1);
     mqtt.send("humidity", &humi, 1);
-    mqtt.send("test", test, 1);
-    mqtt.send("test2", test2, 1);
-    mqtt.send("test3", test3, 3);
-    //Serial.print("humi "); Serial.println(humi, DEC);
-    //Serial.print("temp "); Serial.println(temp, DEC);
+    mqtt.send("test", "hallo");
+    Serial.print("humi "); Serial.println(humi, DEC);
+    Serial.print("temp "); Serial.println(temp, DEC);
     delay(5000);
 }

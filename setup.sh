@@ -13,7 +13,7 @@ python3 -m venv fusion-env
 source fusion-env/bin/activate
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python3 get-pip.py
-install required packages
+echo "install required packages"
 pip install --upgrade pip
 pip install jupyter
 pip install numpy
