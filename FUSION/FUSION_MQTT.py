@@ -1,4 +1,5 @@
 from .core import *
+import struct
 import paho.mqtt.client as mqtt
 
 class FUSION_MQTT():
@@ -12,7 +13,7 @@ class FUSION_MQTT():
 
         self.data = dict()
         self._data_types = dict()
-        
+
         self.mqtt_network = node_network
         self.mqtt_location = node_location
         self.mqtt_name = node_name
@@ -20,22 +21,30 @@ class FUSION_MQTT():
         self._mqtt = mqtt.Client()
         self._mqtt.on_connect = self.on_connect
         self._mqtt.on_message = self.on_message
+        
+        self._mqtt.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEPALIVE)
+
+        print("mqtt connected")
 
         self._mqtt.loop_start()
 
-    def add_data_entry(self, data_entry, data_type=None):
-        self.data_entries.append(data_entry)
-        self.data[entry] = None
-        self._data_types[entry] = data_type
-        self._callbacks[entry] = []
+        print("loop started")
 
-    def on_connect(self, client, userdata, msg, result_code):
+    def add_data_entry(self, data_entry, data_type=None):
+        print("data entry: " + data_entry)
+        self.data_entries.append(data_entry)
+        self.data[data_entry] = None
+        self._data_types[data_entry] = data_type
+        self._callbacks[data_entry] = []
+
+    def on_connect(self, client, userdata, flags, result_code):
+        #print("on_connect: " + result_code)
         self._mqtt.subscribe("{}/{}/{}/#".format(self.mqtt_network, self.mqtt_location, self.mqtt_name))
 
     def on_message(self, client, userdata, msg):
         for entry in self.data_entries:
             if(msg.topic.split("/")[-1] == entry):
-                self.data[entry] = self._decode_message(msg.payload, self._data_types[entry])
+                self.data[entry] = self._decode_message(msg.payload, self._data_types[entry]) 
                 for callback in self._callbacks[entry]:
                     callback()
         for callback in self._callbacks["all"]:
@@ -64,7 +73,7 @@ class FUSION_MQTT():
     def get(self, data_entry):
         return self.data[data_entry]
 
-    def OnUpdate(self, data_entry=None, callback):
+    def OnUpdate(self, callback, data_entry=None):
         if(data_entry == None):
             self._callbacks["all"].append(callback)
         elif(data_entry in self.data_entries):
