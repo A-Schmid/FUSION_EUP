@@ -16,6 +16,7 @@ class FusionMQTT
         char* topic_name;
         void init();
         void send(char* dataType, uint8_t* data, unsigned int length);
+        void send(char* dataType, const char* data);
         void update();
 
     private:
