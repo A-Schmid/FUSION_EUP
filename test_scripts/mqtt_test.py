@@ -16,6 +16,7 @@ def on_message(client, userdata, msg):
     #data = msg.payload.decode()
     #data = struct.unpack("<cc", msg.payload)
     #print(data)
+    print(msg.topic)
     print("{} {}".format(msg.topic, msg.payload))
 
 client = mqtt.Client()
