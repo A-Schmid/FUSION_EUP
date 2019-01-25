@@ -2,7 +2,7 @@ from .core import *
 import paho.mqtt.client as mqtt
 
 class FUSION_MQTT():
-    def __init__(self, node_network=MQTT_DEFAULT_NETWORK, node_location=MQTT_DEFAULT_LOCATION, node_name):
+    def __init__(self, node_name, node_network=MQTT_DEFAULT_NETWORK, node_location=MQTT_DEFAULT_LOCATION):
         self.__last_update = 0
 
         self.data_entries = []
