@@ -2,7 +2,7 @@ from .core import *
 import paho.mqtt.client as mqtt
 
 class FUSION_MQTT():
-    def __init__(self, node_network=MQTT_DEFAULT_NETWORK, node_location=MQTT_DEFAULT_LOCATION, node_name):
+    def __init__(self, node_name, node_network=MQTT_DEFAULT_NETWORK, node_location=MQTT_DEFAULT_LOCATION):
         self.__last_update = 0
 
         self.data_entries = []
@@ -23,16 +23,16 @@ class FUSION_MQTT():
 
         self._mqtt.loop_start()
 
-    def self.add_data_entry(data_entry, data_type=None):
+    def add_data_entry(self, data_entry, data_type=None):
         self.data_entries.append(data_entry)
         self.data[entry] = None
         self._data_types[entry] = data_type
         self._callbacks[entry] = []
 
-    def self.on_connect(client, userdata, msg, result_code):
+    def on_connect(self, client, userdata, msg, result_code):
         self._mqtt.subscribe("{}/{}/{}/#".format(self.mqtt_network, self.mqtt_location, self.mqtt_name))
 
-    def self.on_message(client, userdata, msg):
+    def on_message(self, client, userdata, msg):
         for entry in self.data_entries:
             if(msg.topic.split("/")[-1] == entry):
                 self.data[entry] = self._decode_message(msg.payload, self._data_types[entry])
@@ -41,7 +41,7 @@ class FUSION_MQTT():
         for callback in self._callbacks["all"]:
             callback()
 
-    def self._decode_message(data, data_type):
+    def _decode_message(self, data, data_type):
         if(data_type == bool):
             return struct.unpack("<?", data)[0]
         elif(data_type == int):
@@ -61,7 +61,7 @@ class FUSION_MQTT():
         elif(data_type == str):
             return data.decode("UTF-8")
 
-    def self.get(data_entry):
+    def get(self, data_entry):
         return self.data[data_entry]
 
     def OnUpdate(self, data_entry=None, callback):
