@@ -6,6 +6,5 @@ class DHT11_MQTT(FUSION_MQTT):
         self.add_data_entry("temperature", int)
         self.add_data_entry("humidity", int)
 
-
     def info(self):
         print("DHT11 Digital Humidity and Temperature Sensor")
