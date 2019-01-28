@@ -1,5 +1,4 @@
 #define DEBUG 1
-#include "FUSION_MODULE.h"
 #include "FUSION_MQTT.h"
 
 uint8_t sensorPin = D4;
@@ -22,8 +21,5 @@ void loop()
     uint8_t temp = sensor->readTemperature();
     mqtt.send("temperature", &temp, 1);
     mqtt.send("humidity", &humi, 1);
-    //mqtt.send("test", "hallo");
-    Serial.print("humi "); Serial.println(humi, DEC);
-    Serial.print("temp "); Serial.println(temp, DEC);
-    delay(5000);
+    delay(update_time);
 }
