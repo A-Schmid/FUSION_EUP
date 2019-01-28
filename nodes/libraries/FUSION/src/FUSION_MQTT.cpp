@@ -59,3 +59,16 @@ void FusionMQTT::update()
 {
     mqttClient.loop();
 }
+
+void FusionMQTT::callback(char* topic, byte* payload, unsigned int length)
+{
+    for(void (*cb)(byte*, int) : callbacks[topic])
+    {
+        cb(payload, length);
+    }
+}
+
+void FusionMQTT::registerCallback(void (*callback_function)(byte*, int), char* topic)
+{
+   callbacks[topic].push_back(callback_function);
+}

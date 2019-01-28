@@ -3,9 +3,13 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include "FUSION_UTILS.h"
 
-#define XSTR(x) #x
-#define STR(x) XSTR(x)
+#include <stdlib.h>
+#include "Adafruit_Sensor.h"
+#include <DHT.h>
+#include <Wire.h>
+#include <map>
 
 class FusionMQTT
 {
@@ -18,6 +22,7 @@ class FusionMQTT
         void send(char* dataType, uint8_t* data, unsigned int length);
         void send(char* dataType, const char* data);
         void update();
+        void registerCallback(void (*callback_function)(byte*, int), char* topic);
 
     private:
         WiFiClient wifiClient;
@@ -26,6 +31,8 @@ class FusionMQTT
         char* wifi_password;
         char* mqtt_server;
         unsigned int mqtt_port;
+        std::map<std::string, std::vector<void (*)(byte*, int)>> callbacks;
+        void callback(char* topic, byte* payload, unsigned int length);
 };
 
 #endif

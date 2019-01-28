@@ -50,6 +50,9 @@ class FUSION_MQTT():
         for callback in self._callbacks["all"]:
             callback()
 
+    def send_message(self, topic, payload=None, qos=0, retain=False):
+        self._mqtt.publish("{}/{}/{}/{}".format(self.mqtt_network, self.mqtt_location, self.mqtt_name, topic), payload, qos, retain)
+
     def _decode_message(self, data, data_type):
         if(data_type == bool):
             return struct.unpack("<?", data)[0]
