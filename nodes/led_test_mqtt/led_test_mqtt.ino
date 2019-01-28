@@ -28,13 +28,16 @@ void setup()
     mqtt = FusionMQTT();
     mqtt.init();
 
-    mqtt.registerCallback(&switchLed1, "led1");
-    mqtt.registerCallback(&switchLed2, "led2");
-    mqtt.registerCallback(&switchLed3, "led3");
+    delay(3000);
+
+    mqtt.registerCallback(&switchLed1, "FUSION/1104/led/led1");
+    mqtt.registerCallback(&switchLed2, "FUSION/1104/led/led2");
+    mqtt.registerCallback(&switchLed3, "FUSION/1104/led/led3");
 }
 
 void loop()
 {
+    Serial.println("loop");
     mqtt.update(); 
     delay(update_time);
 }

@@ -30,6 +30,8 @@ void FusionMQTT::init()
 
     mqttClient.setServer(mqtt_server, mqtt_port);
 
+    mqttClient.setCallback(std::bind(&FusionMQTT::callback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
     while (!mqttClient.connected())
     {
         if (!mqttClient.connect("ESP8266Client"))
@@ -37,6 +39,12 @@ void FusionMQTT::init()
             delay(100);
         }
     }
+
+    // member variable maybe?
+    char topic[128];
+    snprintf(topic, 128, "%s/%s/%s/#", topic_network, topic_location, topic_name);
+    mqttClient.subscribe(topic);
+    Serial.println("initialized");
 }
 
 void FusionMQTT::send(char* dataType, uint8_t* data, unsigned int length)
@@ -70,5 +78,6 @@ void FusionMQTT::callback(char* topic, byte* payload, unsigned int length)
 
 void FusionMQTT::registerCallback(void (*callback_function)(byte*, int), char* topic)
 {
-   callbacks[topic].push_back(callback_function);
+    Serial.println(topic);
+    callbacks[topic].push_back(callback_function);
 }

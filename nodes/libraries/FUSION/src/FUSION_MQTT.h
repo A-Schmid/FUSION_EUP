@@ -23,6 +23,7 @@ class FusionMQTT
         void send(char* dataType, const char* data);
         void update();
         void registerCallback(void (*callback_function)(byte*, int), char* topic);
+        void callback(char* topic, byte* payload, unsigned int length);
 
     private:
         WiFiClient wifiClient;
@@ -32,7 +33,6 @@ class FusionMQTT
         char* mqtt_server;
         unsigned int mqtt_port;
         std::map<std::string, std::vector<void (*)(byte*, int)>> callbacks;
-        void callback(char* topic, byte* payload, unsigned int length);
 };
 
 #endif
