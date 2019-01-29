@@ -6,6 +6,7 @@
 #include <DHT.h>
 #include <Wire.h>
 #include "FUSION_WIFI.h"
+#include "FUSION_MQTT.h"
 
 class FusionModule
 {

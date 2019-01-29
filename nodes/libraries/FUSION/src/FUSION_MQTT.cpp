@@ -7,10 +7,6 @@
 
 FusionMQTT::FusionMQTT()
 {
-    wifi_ssid = STR(WIFI_SSID);
-    wifi_password = STR(WIFI_PASSWORD);
-    mqtt_server = STR(MQTT_SERVER);
-    mqtt_port = MQTT_PORT;
 
     topic_network = "FUSION";
     topic_location = "1104";
@@ -45,6 +41,14 @@ void FusionMQTT::init()
     snprintf(topic, 128, "%s/%s/%s/#", topic_network, topic_location, topic_name);
     mqttClient.subscribe(topic);
     Serial.println("initialized");
+}
+
+void FusionMQTT::send(char* dataType, uint16_t data)
+{
+    uint8_t *bytes = (uint8_t*) malloc(2);
+    bytes[0] = data >> 8;
+    bytes[1] = data & 0xFF;
+    send(dataType, bytes, 2);
 }
 
 void FusionMQTT::send(char* dataType, uint8_t* data, unsigned int length)

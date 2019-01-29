@@ -5,11 +5,12 @@
 #endif
 
 #include "FUSION_BH1750.h"
+#include "Wire.h"
 
-FusionBH1750::FusionBH1750(unsigned int ni, int addr) : FusionModule(ni)
+FusionBH1750::FusionBH1750()
 {
     length = 2;
-    address = addr;
+    address = I2C_ADDR;
 
     init();
     // TODO
@@ -50,8 +51,22 @@ void FusionBH1750::write()
     // TODO
 }
 
+uint16_t FusionBH1750::readLightIntensity()
+{
+    uint16_t value = 0;
+    char* data = (char*) malloc(length); 
+
+    if(read(data, length) == length)
+    {
+        value = ((data[0] << 8) | data[1]);
+    }
+    
+    return value;
+}
+
 void FusionBH1750::update()
 {
+        /*
     // TODO
     FusionModule::update();
 
@@ -69,5 +84,6 @@ void FusionBH1750::update()
     free(data);
 
     delay(150); // TODO maybe shorter is ok?
+    */
 }
 

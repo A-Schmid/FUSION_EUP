@@ -16,7 +16,17 @@ FusionModule::FusionModule(unsigned int ni)
 
 void FusionModule::initialize()
 {
-    if(initWifi() == true) Serial.println("wifi initialized");
+    if(protocol == PROTOCOL_WIFI)
+    {
+        Serial.println("WIFI MODE");
+        if(initWifi() == true) Serial.println("wifi initialized");
+    }
+
+    if(protocol == PROTOCOL_MQTT)
+    {
+        Serial.println("MQTT MODE");
+        mqtt.init();
+    }
 }
 
 void FusionModule::update()
@@ -58,9 +68,17 @@ void FusionModule::freePacket()
 
 void FusionModule::sendData(char* data, int data_length)
 {
-    createPacket(data, data_length);
-    sendPacket(packet, packetLength);
-    freePacket();
+    if(protocol == PROTOCOL_WIFI)
+    {
+        createPacket(data, data_length);
+        sendPacket(packet, packetLength);
+        freePacket();
+    }
+
+    if(protocol == PROTOCOL_MQTT)
+    {
+
+    }
 }
 
 void FusionModule::sendData(char data)
