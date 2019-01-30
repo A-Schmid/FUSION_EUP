@@ -12,6 +12,7 @@ class FusionModule
 {
     public:
         FusionModule(unsigned int ni);
+        FusionMQTT mqtt;
         unsigned int nodeId;
         unsigned int packetLength;
         char* packet;
@@ -21,10 +22,16 @@ class FusionModule
         void createPacket(char* data, int data_length);
         void createPacket(char* data, int data_length, int type);
         void freePacket();
+
         void sendData(char* data, int data_length);
         void sendData(char data);
         void sendData(int data);
         void sendData(bool data);
+
+        void sendData(const char* topic_data, char* data, int data_length);
+        void sendData(const char* topic_data, char data);
+        void sendData(const char* topic_data, int data);
+        void sendData(const char* topic_data, bool data);
         //TODO: all data types
 };
 

@@ -43,26 +43,34 @@ void FusionMQTT::init()
     Serial.println("initialized");
 }
 
-void FusionMQTT::send(char* dataType, uint16_t data)
+void FusionMQTT::send(const char* topic_data, uint16_t data)
 {
     uint8_t *bytes = (uint8_t*) malloc(2);
     bytes[0] = data >> 8;
     bytes[1] = data & 0xFF;
-    send(dataType, bytes, 2);
+    send(topic_data, bytes, 2);
 }
 
-void FusionMQTT::send(char* dataType, uint8_t* data, unsigned int length)
+void FusionMQTT::send(const char* topic_data, char* data, unsigned int length)
 {
     char topic[128];
-    snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, dataType);
+    snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
+    mqttClient.publish(topic, (uint8_t*) data, length, false);
+    mqttClient.loop();
+}
+
+void FusionMQTT::send(const char* topic_data, uint8_t* data, unsigned int length)
+{
+    char topic[128];
+    snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
     mqttClient.publish(topic, data, length, false);
     mqttClient.loop();
 }
 
-void FusionMQTT::send(char* dataType, const char* data)
+void FusionMQTT::send(const char* topic_data, const char* data)
 {
     char topic[128];
-    snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, dataType);
+    snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
     mqttClient.publish(topic, data, false);
     mqttClient.loop();
 }

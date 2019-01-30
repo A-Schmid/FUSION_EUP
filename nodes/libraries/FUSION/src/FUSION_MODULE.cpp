@@ -77,7 +77,7 @@ void FusionModule::sendData(char* data, int data_length)
 
     if(protocol == PROTOCOL_MQTT)
     {
-
+        mqtt.send("undefined", data, data_length);
     }
 }
 
@@ -107,4 +107,47 @@ void FusionModule::sendData(bool data)
         data_pack[i] = (char) (data >> (i * sizeof(char) * 8));
     }
     sendData(data_pack, length);
+}
+
+void FusionModule::sendData(const char* topic_data, char* data, int data_length)
+{
+    if(protocol == PROTOCOL_WIFI)
+    {
+        createPacket(data, data_length);
+        sendPacket(packet, packetLength);
+        freePacket();
+    }
+
+    if(protocol == PROTOCOL_MQTT)
+    {
+        mqtt.send(topic_data, data, data_length);
+    }
+}
+
+void FusionModule::sendData(const char* topic_data, char data)
+{
+    char data_pack[1] = {data};
+    sendData(topic_data, data_pack, 1);
+}
+
+void FusionModule::sendData(const char* topic_data, int data)
+{
+    unsigned int length = sizeof(data);
+    char data_pack[length];
+    for(int i = 0; i < length; i++)
+    {
+        data_pack[i] = (char) (data >> (i * sizeof(char) * 8));
+    }
+    sendData(topic_data, data_pack, length);
+}
+
+void FusionModule::sendData(const char* topic_data, bool data)
+{
+    unsigned int length = sizeof(data);
+    char data_pack[length];
+    for(int i = 0; i < length; i++)
+    {
+        data_pack[i] = (char) (data >> (i * sizeof(char) * 8));
+    }
+    sendData(topic_data, data_pack, length);
 }
