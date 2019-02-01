@@ -6,7 +6,7 @@
 
 #include "FUSION_DHT11.h"
 
-FusionDHT11::FusionDHT11(unsigned int ni, unsigned int sensorPin) : FusionModule(ni)
+FusionDHT11::FusionDHT11(unsigned int sensorPin) : FusionModule()
 {
     dht = new DHT(sensorPin, 11, 6);
     dht->begin();
@@ -23,7 +23,7 @@ void FusionDHT11::update()
         sendData(data, 2);
         free(data);
     }
-    else
+    else if(protocol == PROTOCOL_MQTT)
     {
         sendData("humidity", (char) dht->readHumidity());
         sendData("temperature", (char) dht->readTemperature());

@@ -8,3 +8,5 @@ char* mqtt_server = STR(MQTT_SERVER);
 int mqtt_port = MQTT_PORT;
 
 char* protocol = STR(PROTOCOL);
+
+int node_id = NODE_ID;

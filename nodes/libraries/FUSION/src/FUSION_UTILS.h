@@ -7,6 +7,8 @@
 #define PROTOCOL_WIFI "WIFI"
 #define PROTOCOL_MQTT "MQTT"
 
+#define TOPIC_UNDEFINED "undefined"
+
 extern int update_time;
 
 extern char* wifi_ssid;
@@ -15,5 +17,7 @@ extern char* mqtt_server;
 extern int mqtt_port;
 
 extern char* protocol;
+
+extern int node_id;
 
 #endif

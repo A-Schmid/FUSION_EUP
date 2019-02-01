@@ -6,10 +6,9 @@
 
 #include "FUSION_Button.h"
 
-FusionButton::FusionButton(unsigned int button_pin, unsigned int ni) : FusionModule(ni)
+FusionButton::FusionButton(unsigned int button_pin) : FusionModule()
 {
     pin = button_pin;
-    wait_time = 50;
 }
 
 void FusionButton::checkButtonState()

@@ -6,7 +6,7 @@
 class FusionTone : public FusionModule
 {
     public:
-        FusionTone(unsigned int ni, unsigned int p_pin);
+        FusionTone(unsigned int p_pin);
 
         unsigned int pin;
 

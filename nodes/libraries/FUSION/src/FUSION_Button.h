@@ -6,7 +6,7 @@
 class FusionButton : public FusionModule
 {
     public:
-        FusionButton(unsigned int button_pin, unsigned int ni);
+        FusionButton(unsigned int button_pin);
 
         unsigned int pin;
         bool wasDown;

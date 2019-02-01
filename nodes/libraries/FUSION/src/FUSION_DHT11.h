@@ -6,7 +6,7 @@
 class FusionDHT11 : public FusionModule
 {
     public:
-        FusionDHT11(unsigned int ni, unsigned int sensorPin);
+        FusionDHT11(unsigned int sensorPin);
 
         DHT* dht;
 

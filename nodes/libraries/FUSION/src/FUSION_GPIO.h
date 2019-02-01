@@ -6,7 +6,7 @@
 class FusionGPIO : public FusionModule
 {
     public:
-        FusionGPIO(unsigned int ni);
+        FusionGPIO();
 
         void update();
         int parseMessage(char* message);

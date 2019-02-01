@@ -6,7 +6,7 @@
 
 #include "FUSION_GPIO.h"
 
-FusionGPIO::FusionGPIO(unsigned int ni) : FusionModule(ni)
+FusionGPIO::FusionGPIO() : FusionModule()
 {
     
 }

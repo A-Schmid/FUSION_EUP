@@ -7,17 +7,19 @@
 #include "FUSION_BH1750.h"
 #include "Wire.h"
 
-FusionBH1750::FusionBH1750()
+FusionBH1750::FusionBH1750() : FusionModule()
 {
     length = 2;
     address = I2C_ADDR;
 
-    init();
+    //init();
     // TODO
 }
 
-void FusionBH1750::init()
+void FusionBH1750::initialize()
 {
+    FusionModule::initialize();
+
     Wire.begin();
 
     delay(200); // TODO magic number
@@ -66,7 +68,6 @@ uint16_t FusionBH1750::readLightIntensity()
 
 void FusionBH1750::update()
 {
-        /*
     // TODO
     FusionModule::update();
 
@@ -80,10 +81,14 @@ void FusionBH1750::update()
         value = ((data[0] << 8) | data[1]); // TODO magic number
     }
 
-    sendData(data, 2);
+    if(protocol == PROTOCOL_WIFI)
+    {
+        sendData(data, 2);
+    }
+    else if(protocol == PROTOCOL_MQTT)
+    {
+        sendData("light_intensity", value);
+    }
     free(data);
-
-    delay(150); // TODO maybe shorter is ok?
-    */
 }
 

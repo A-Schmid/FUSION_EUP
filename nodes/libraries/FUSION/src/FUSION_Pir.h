@@ -6,7 +6,7 @@
 class FusionPir : public FusionModule
 {
     public:
-        FusionPir(unsigned int sensor_pin, unsigned int ni);
+        FusionPir(unsigned int sensor_pin);
 
         unsigned int pin;
         bool isTracked;

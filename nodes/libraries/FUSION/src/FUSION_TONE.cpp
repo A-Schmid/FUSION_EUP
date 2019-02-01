@@ -6,7 +6,7 @@
 
 #include "FUSION_TONE.h"
 
-FusionTone::FusionTone(unsigned int ni, unsigned int p_pin) : FusionModule(ni)
+FusionTone::FusionTone(unsigned int p_pin) : FusionModule()
 {
     pin = p_pin;
 }

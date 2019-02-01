@@ -6,7 +6,7 @@
 
 #include "FUSION_Pir.h"
 
-FusionPir::FusionPir(unsigned int sensor_pin, unsigned int ni) : FusionModule(ni)
+FusionPir::FusionPir(unsigned int sensor_pin) : FusionModule()
 {
     pin = sensor_pin;
     wait_time = 50;

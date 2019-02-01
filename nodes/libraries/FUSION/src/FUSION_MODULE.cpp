@@ -9,9 +9,9 @@
 // initialize builtin reset function
 void(* resetFunc) (void) = 0;
 
-FusionModule::FusionModule(unsigned int ni)
+FusionModule::FusionModule()
 {
-    nodeId = ni;
+    nodeId = node_id;
 }
 
 void FusionModule::initialize()
@@ -66,47 +66,34 @@ void FusionModule::freePacket()
     free(packet);
 }
 
-void FusionModule::sendData(char* data, int data_length)
+void FusionModule::sendData(bool data)
 {
-    if(protocol == PROTOCOL_WIFI)
-    {
-        createPacket(data, data_length);
-        sendPacket(packet, packetLength);
-        freePacket();
-    }
-
-    if(protocol == PROTOCOL_MQTT)
-    {
-        mqtt.send("undefined", data, data_length);
-    }
-}
-
-void FusionModule::sendData(char data)
-{
-    char data_pack[1] = {data};
-    sendData(data_pack, 1);
+    sendData(TOPIC_UNDEFINED, data);
 }
 
 void FusionModule::sendData(int data)
 {
-    unsigned int length = sizeof(data);
-    char data_pack[length];
-    for(int i = 0; i < length; i++)
-    {
-        data_pack[i] = (char) (data >> (i * sizeof(char) * 8));
-    }
-    sendData(data_pack, length);
+    sendData(TOPIC_UNDEFINED, data);
 }
 
-void FusionModule::sendData(bool data)
+void FusionModule::sendData(uint8_t data)
 {
-    unsigned int length = sizeof(data);
-    char data_pack[length];
-    for(int i = 0; i < length; i++)
-    {
-        data_pack[i] = (char) (data >> (i * sizeof(char) * 8));
-    }
-    sendData(data_pack, length);
+    sendData(TOPIC_UNDEFINED, data);
+}
+
+void FusionModule::sendData(uint16_t data)
+{
+    sendData(TOPIC_UNDEFINED, data);
+}
+
+void FusionModule::sendData(char data)
+{
+    sendData(TOPIC_UNDEFINED, data);
+}
+
+void FusionModule::sendData(char* data, int length)
+{
+    sendData(TOPIC_UNDEFINED, data, length);
 }
 
 void FusionModule::sendData(const char* topic_data, char* data, int data_length)
@@ -130,9 +117,26 @@ void FusionModule::sendData(const char* topic_data, char data)
     sendData(topic_data, data_pack, 1);
 }
 
+void FusionModule::sendData(const char* topic_data, uint8_t data)
+{
+    char data_pack[1] = {(char) data};
+    sendData(topic_data, data_pack, 1);
+}
+
 void FusionModule::sendData(const char* topic_data, int data)
 {
     unsigned int length = sizeof(data);
+    char data_pack[length];
+    for(int i = 0; i < length; i++)
+    {
+        data_pack[i] = (char) (data >> (i * sizeof(char) * 8));
+    }
+    sendData(topic_data, data_pack, length);
+}
+
+void FusionModule::sendData(const char* topic_data, uint16_t data)
+{
+    unsigned int length = sizeof(uint16_t);
     char data_pack[length];
     for(int i = 0; i < length; i++)
     {
