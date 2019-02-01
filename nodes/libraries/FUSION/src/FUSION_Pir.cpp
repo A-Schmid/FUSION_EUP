@@ -23,7 +23,7 @@ void FusionPir::checkSensorState()
         {
             Serial.println("enter");
             isTracked = true;
-            sendData(true);
+            sendData("enter", true);
         }
     }
     else
@@ -32,7 +32,7 @@ void FusionPir::checkSensorState()
         {
             Serial.println("leave");
             isTracked = false;
-            sendData(false);
+            sendData("enter", false);
         }
     }
 }
