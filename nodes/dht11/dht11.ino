@@ -3,16 +3,17 @@
 
 uint8_t sensorPin = D4;
 
-FusionDHT11 sensor(NODE_ID, sensorPin);
+FusionDHT11 sensor(sensorPin);
 
 void setup()
 {
     Serial.begin(9600);
+    //sensor = FusionDHT11(D4);
     sensor.initialize();
 }
 
 void loop()
 {
     sensor.update();
-    delay(5000);
+    delay(update_time);
 }
