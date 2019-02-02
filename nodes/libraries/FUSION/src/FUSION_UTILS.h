@@ -8,6 +8,7 @@
 #define PROTOCOL_MQTT "MQTT"
 
 #define TOPIC_UNDEFINED "undefined"
+#define TOPIC_MAXLENGTH 128
 
 extern int update_time;
 

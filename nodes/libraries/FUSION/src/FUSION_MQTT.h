@@ -24,7 +24,7 @@ class FusionMQTT
         void send(const char* topic_data, char* data, unsigned int length);
         void send(const char* topic_data, const char* data);
         void update();
-        void registerCallback(void (*callback_function)(byte*, int), char* topic);
+        void registerCallback(void (*callback_function)(char*, byte*, int), char* topic_data);
         void callback(char* topic, byte* payload, unsigned int length);
 
     private:

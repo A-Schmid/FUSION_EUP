@@ -3,17 +3,17 @@
 
 FusionMQTT mqtt;
 
-void switchLed1(byte* payload, int length)
+void switchLed1(char* topic, byte* payload, int length)
 {
     digitalWrite(16, payload[0]);
 }
 
-void switchLed2(byte* payload, int length)
+void switchLed2(char* topic, byte* payload, int length)
 {
     digitalWrite(12, payload[0]);
 }
 
-void switchLed3(byte* payload, int length)
+void switchLed3(char* topic, byte* payload, int length)
 {
     digitalWrite(15, payload[0]);
 }

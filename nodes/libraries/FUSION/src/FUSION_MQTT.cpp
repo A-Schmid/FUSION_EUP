@@ -37,8 +37,8 @@ void FusionMQTT::init()
     }
 
     // member variable maybe?
-    char topic[128];
-    snprintf(topic, 128, "%s/%s/%s/#", topic_network, topic_location, topic_name);
+    char topic[TOPIC_MAXLENGTH];
+    snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/#", topic_network, topic_location, topic_name);
     mqttClient.subscribe(topic);
     Serial.println("initialized");
 }
@@ -53,24 +53,24 @@ void FusionMQTT::send(const char* topic_data, uint16_t data)
 
 void FusionMQTT::send(const char* topic_data, char* data, unsigned int length)
 {
-    char topic[128];
-    snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
+    char topic[TOPIC_MAXLENGTH];
+    snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
     mqttClient.publish(topic, (uint8_t*) data, length, false);
     mqttClient.loop();
 }
 
 void FusionMQTT::send(const char* topic_data, uint8_t* data, unsigned int length)
 {
-    char topic[128];
-    snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
+    char topic[TOPIC_MAXLENGTH];
+    snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
     mqttClient.publish(topic, data, length, false);
     mqttClient.loop();
 }
 
 void FusionMQTT::send(const char* topic_data, const char* data)
 {
-    char topic[128];
-    snprintf(topic, 128, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
+    char topic[TOPIC_MAXLENGTH];
+    snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
     mqttClient.publish(topic, data, false);
     mqttClient.loop();
 }
@@ -82,14 +82,16 @@ void FusionMQTT::update()
 
 void FusionMQTT::callback(char* topic, byte* payload, unsigned int length)
 {
-    for(void (*cb)(byte*, int) : callbacks[topic])
+    for(void (*cb)(char*, byte*, int) : callbacks[topic])
     {
-        cb(payload, length);
+        cb(topic, payload, length);
     }
 }
 
-void FusionMQTT::registerCallback(void (*callback_function)(byte*, int), char* topic)
+void FusionMQTT::registerCallback(void (*callback_function)(char*, byte*, int), char* topic_data)
 {
-    Serial.println(topic);
+    char topic[TOPIC_MAXLENGTH];
+    snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
+
     callbacks[topic].push_back(callback_function);
 }

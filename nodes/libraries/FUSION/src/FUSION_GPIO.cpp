@@ -83,7 +83,7 @@ void FusionGPIO::aWrite(unsigned int pin, unsigned int value)
 
 bool FusionGPIO::dRead(unsigned int pin)
 {
-    return digitalRead(pin);
+    digitalRead(pin);
 }
 
 unsigned int FusionGPIO::aRead(unsigned int pin)
