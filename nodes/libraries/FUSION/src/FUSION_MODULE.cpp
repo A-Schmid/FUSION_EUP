@@ -31,7 +31,10 @@ void FusionModule::initialize()
 
 void FusionModule::update()
 {
-
+    if(protocol == PROTOCOL_MQTT)
+    {
+        mqtt.update();
+    }
 }
 
 void FusionModule::createPacket(char* data, int data_length)

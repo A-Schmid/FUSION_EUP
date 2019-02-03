@@ -9,6 +9,7 @@
 FusionPin::FusionPin(unsigned int pin_id) : FusionModule()
 {
     pin = pin_id;
+    isAnalog = (pin == A0);
     directionSet = false;
 }
 
@@ -31,6 +32,12 @@ void FusionPin::initialize(bool dir)
     mqtt.registerCallback(&mqttCallback, topic);
 }
 
+void FusionPin::update()
+{
+    FusionModule::update();
+    if(streamOn) streamData();
+}
+
 void FusionPin::mqttCallback(char* topic, byte* payload, int length)
 {
     uint16_t data;
@@ -43,6 +50,12 @@ void FusionPin::mqttCallback(char* topic, byte* payload, int length)
     else if(topic.find("analogRead" != -1) aRead();
     else if(topic.find("analogWrite" != -1) aRead(data);
     else if(topic.find("setDirection" != -1) setDirection((bool) data);
+    else if(topic.find("streamData" != -1)
+    {
+        streamOn = true;
+        streamDelay = data;
+        streamTimer = millis();
+    }
 }
 
 void FusionPin::dWrite(bool value)
@@ -67,6 +80,16 @@ uint16_t FusionPin::aRead()
     uint16_t data = analogRead(pin);
     sendData(topic_pin, data);
     return data;
+}
+
+void FusionPin::streamData()
+{
+    long time = millis();
+    if(time - streamTimer >= streamDelay)
+    {
+        streamTimer = time;
+        isAnalog ? aRead() : dRead();
+    }
 }
 
 void FusionPin::setDirection(bool dir)

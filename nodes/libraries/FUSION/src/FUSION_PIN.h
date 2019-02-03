@@ -11,6 +11,8 @@ class FusionPin : public FusionModule
         void initialize();
         void initialize(bool dir);
 
+        void update();
+
         unsigned int pin;
 
         void dWrite(bool value);
@@ -18,6 +20,8 @@ class FusionPin : public FusionModule
 
         void aWrite(uint16_t value);
         uint16_t aRead();
+
+        void streamData();
         
         void setDirection(bool dir);
         void setInterrupt(unsigned int edge);
@@ -28,9 +32,14 @@ class FusionPin : public FusionModule
 
     private:
         const char* topic_pin;
+        const bool isAnalog;
         bool directionSet;
         bool direction;
         uint16_t lastValue;
+
+        bool streamOn;
+        int streamDelay;
+        long streamTimer;
 
         void mqttCallback(byte* payload, int length);
         
