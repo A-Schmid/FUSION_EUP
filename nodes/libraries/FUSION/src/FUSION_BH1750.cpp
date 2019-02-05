@@ -87,7 +87,7 @@ void FusionBH1750::update()
     }
     else if(protocol == PROTOCOL_MQTT)
     {
-        sendData("light_intensity", value);
+        sendData(value, "light_intensity");
     }
     free(data);
 }

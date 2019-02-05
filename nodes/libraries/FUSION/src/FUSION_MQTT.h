@@ -19,13 +19,17 @@ class FusionMQTT
         char* topic_location;
         char* topic_name;
         void init();
-        void send(const char* topic_data, uint16_t data);
-        void send(const char* topic_data, uint8_t* data, unsigned int length);
-        void send(const char* topic_data, char* data, unsigned int length);
-        void send(const char* topic_data, const char* data);
+        void send(uint16_t data, const char* topic_data);
+        void send(uint8_t* data, unsigned int length, const char* topic_data);
+        void send(char* data, unsigned int length, const char* topic_data);
+        void send(const char* data, const char* topic_data);
         void update();
-        void registerCallback(void (*callback_function)(char*, byte*, int), char* topic_data);
-        void callback(char* topic, byte* payload, unsigned int length);
+
+        void callback(char* topic, uint8_t* payload, unsigned int length);
+
+        //void registerCallback(void (*callback_function)(char*, byte*, int), char* topic_data);
+
+        void registerCallback(std::function<void(char*, uint8_t*, unsigned int)> callback_function, char* topic);
 
     private:
         WiFiClient wifiClient;
@@ -34,7 +38,8 @@ class FusionMQTT
         //char* wifi_password;
         //char* mqtt_server;
         //unsigned int mqtt_port;
-        std::map<std::string, std::vector<void (*)(byte*, int)>> callbacks;
+        //std::map<std::string, std::vector<void (*)(char*, byte*, int)>> callbacks;
+        std::map<std::string, std::vector<std::function<void(char*, uint8_t*, unsigned int)>>> callbacks;
 };
 
 #endif

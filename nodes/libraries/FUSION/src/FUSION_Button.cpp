@@ -20,7 +20,7 @@ void FusionButton::checkButtonState()
         if(wasDown == false)
         {
             wasDown = true;
-            sendData("button_state", true);
+            sendData(true, "button_state");
         }
     }
     else
@@ -28,7 +28,7 @@ void FusionButton::checkButtonState()
         if(wasDown == true)
         {
             wasDown = false;
-            sendData("button_state", false);
+            sendData(false, "button_state");
         }
     }
 }

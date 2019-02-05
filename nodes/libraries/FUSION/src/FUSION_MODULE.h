@@ -28,14 +28,14 @@ class FusionModule
         void sendData(uint8_t data);
         void sendData(uint16_t data);
         void sendData(bool data);
-        void sendData(char* data, int length);
+        void sendData(char* data, unsigned int length);
 
-        void sendData(const char* topic_data, char* data, int data_length);
-        void sendData(const char* topic_data, char data);
-        void sendData(const char* topic_data, int data);
-        void sendData(const char* topic_data, uint8_t data);
-        void sendData(const char* topic_data, uint16_t data);
-        void sendData(const char* topic_data, bool data);
+        void sendData(char* data, int data_length, const char* topic_data);
+        void sendData(char data, const char* topic_data);
+        void sendData(int data, const char* topic_data);
+        void sendData(uint8_t data, const char* topic_data);
+        void sendData(uint16_t data, const char* topic_data);
+        void sendData(bool data, const char* topic_data);
         //TODO: all data types
 };
 

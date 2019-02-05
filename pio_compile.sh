@@ -11,6 +11,7 @@ do
             PIN)       PIN=${VALUE} ;;     
             DELAY)     DELAY=${VALUE} ;;
             PROTOCOL)  PROTOCOL=${VALUE} ;;
+            ACTION)    ACTION=${VALUE} ;;
             *)   
     esac    
 done
@@ -24,7 +25,13 @@ cd nodes/pio
 export PLATFORMIO_BUILD_FLAGS="-DNODE_NAME=\"$NODE_NAME\" -DNODE_ID=$NODE_ID -DPIN=$PIN -DWIFI_SSID=\"$WIFI_SSID\" -DWIFI_PASSWORD=\"$WIFI_PASSWORD\" -DMQTT_SERVER=\"$MQTT_SERVER\" -DMQTT_PORT=$MQTT_PORT -DMQTT_TOPIC_NETWORK=\"$MQTT_TOPIC_NETWORK\" -DMQTT_TOPIC_LOCATION=\"$MQTT_TOPIC_LOCATION\" -DDELAY=$DELAY -DPROTOCOL=\"$PROTOCOL\""
 
 echo $PLATFORMIO_BUILD_FLAGS
-platformio run --target upload
+if [ $ACTION = "debug" ]; then
+    echo "debug..."
+    platformio run --target debug
+else
+    platformio run --target upload
+fi
+
 rm -r src/*
 cd ../..
 

@@ -25,8 +25,8 @@ void FusionDHT11::update()
     }
     else if(protocol == PROTOCOL_MQTT)
     {
-        sendData("humidity", (char) dht->readHumidity());
-        sendData("temperature", (char) dht->readTemperature());
+        sendData((char) dht->readHumidity(), "humidity");
+        sendData((char) dht->readTemperature(), "temperature");
     }
 }
 

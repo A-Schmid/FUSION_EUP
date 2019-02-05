@@ -31,8 +31,8 @@ class FusionPin : public FusionModule
         void onFall();
 
     private:
-        const char* topic_pin;
-        const bool isAnalog;
+        char* topic_pin;
+        bool isAnalog;
         bool directionSet;
         bool direction;
         uint16_t lastValue;
@@ -41,7 +41,7 @@ class FusionPin : public FusionModule
         int streamDelay;
         long streamTimer;
 
-        void mqttCallback(byte* payload, int length);
+        void mqttCallback(char* topic, byte* payload, int length);
         
         //void registerCallbacks();
 };
