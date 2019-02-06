@@ -86,30 +86,11 @@ void FusionMQTT::callback(char* topic, uint8_t* payload, unsigned int length)
     {
         cb(topic, payload, length);
     }
-
-    /*
-    for(void (*cb)(char*, byte*, int) : callbacks[topic])
-    {
-        cb(topic, payload, length);
-    }
-    */
 }
-
-// TODO move to std::functions everywhere!
-/*
-void FusionMQTT::registerCallback(void (*callback_function)(char*, byte*, int), char* topic_data)
-{
-    char topic[TOPIC_MAXLENGTH];
-    snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
-
-    callbacks[topic].push_back(callback_function);
-}
-*/
 
 // TODO test this!
 void FusionMQTT::registerCallback(std::function<void(char*, uint8_t*, unsigned int)> callback_function, char* topic_data)
 {
-
     char topic[TOPIC_MAXLENGTH];
     snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
 

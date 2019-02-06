@@ -16,25 +16,10 @@ FusionPin::FusionPin(unsigned int pin_id) : FusionModule()
 void FusionPin::initialize()
 {
     FusionModule::initialize();
-    //registerCallbacks();
     
     snprintf(topic_pin, 2, "%d", pin);
 
-    char topic[16];
-    snprintf(topic, 16, "%d/#", pin);
-
-    //mqtt.registerCallback(this->mqttCallback, topic);
-    //
-    //
-    //#if defined(ESP8266) || defined(ESP32)
-    //#include <functional>
-    //#define MQTT_CALLBACK_SIGNATURE std::function<void(char*, uint8_t*, unsigned int)> callback
-    //#else
-    //#define MQTT_CALLBACK_SIGNATURE void (*callback)(char*, uint8_t*, unsigned int)
-    //#endif
-
-    // TODO test this!
-    mqtt.registerCallback(std::bind(&FusionPin::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), topic);
+    registerCallbacks();
 }
 
 void FusionPin::initialize(bool dir)
@@ -49,12 +34,23 @@ void FusionPin::update()
     if(streamOn) streamData();
 }
 
+void FusionPin::registerCallbacks()
+{
+    char* commands[] = {"digitalRead", "digitalWrite", "analogRead", "analogWrite", "setDirection", "streamData"};
+
+    for(char* command : commands)
+    {
+        // TODO test this!
+        mqtt.registerCallback(std::bind(&FusionPin::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), command);
+    }
+}
+
 void FusionPin::mqttCallback(char* topic, byte* payload, int length)
 {
     uint16_t data;
 
-    if(length == 1) data = payload[0];
-    else if(length == 2) data = (payload[1] << 8) | payload[0];
+    if(length == 1) data = payload[0] - '0';
+    else if(length == 2) data = ((payload[1] - '0') << 8) | (payload[0] - '0');
 
     if(strstr(topic, "digitalRead")) dRead();
     else if(strstr(topic, "digitalWrite")) dWrite((bool) data);
@@ -67,18 +63,6 @@ void FusionPin::mqttCallback(char* topic, byte* payload, int length)
         streamDelay = data;
         streamTimer = millis();
     }
-    /*
-    if(topic.find("digitalRead") != -1) dRead();
-    else if(topic.find("digitalWrite") != -1) dWrite((bool) data);
-    else if(topic.find("analogRead") != -1) aRead();
-    else if(topic.find("analogWrite") != -1) aRead(data);
-    else if(topic.find("setDirection") != -1) setDirection((bool) data);
-    else if(topic.find("streamData") != -1)
-    {
-        streamOn = true;
-        streamDelay = data;
-        streamTimer = millis();
-    }*/
 }
 
 void FusionPin::dWrite(bool value)
@@ -89,7 +73,7 @@ void FusionPin::dWrite(bool value)
 bool FusionPin::dRead()
 {
     bool data = digitalRead(pin);
-    sendData(data, topic_pin);
+    sendData(data, "digitalReadResult");
     return data;
 }
 
@@ -101,7 +85,7 @@ void FusionPin::aWrite(uint16_t value)
 uint16_t FusionPin::aRead()
 {
     uint16_t data = analogRead(pin);
-    sendData(data, topic_pin);
+    sendData(data, "analogReadResult");
     return data;
 }
 
@@ -117,7 +101,7 @@ void FusionPin::streamData()
 
 void FusionPin::setDirection(bool dir)
 {
-    pinMode(pin, direction);
+    pinMode(pin, dir);
 
     direction = dir;
     directionSet = true;
