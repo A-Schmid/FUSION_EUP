@@ -4,7 +4,7 @@ test.py
 *.swp
 *.swn
 *.swo
-#.ipynb_checkpoints/
+.ipynb_checkpoints/
 nohup.out
 FUSION/__pycache__/
 log/
