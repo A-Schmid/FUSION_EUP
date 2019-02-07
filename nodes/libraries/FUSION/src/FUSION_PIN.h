@@ -42,7 +42,18 @@ class FusionPin : public FusionModule
         long streamTimer;
 
         void registerCallbacks();
+
+        //static void attachInterrupts();
+
         void mqttCallback(char* topic, byte* payload, int length);
+
+        static void interruptHandler_change();
+        static void interruptHandler_rise();
+        static void interruptHandler_fall();
+
+        static std::vector<FusionPin*> interruptPins_change;
+        static std::vector<FusionPin*> interruptPins_rise;
+        static std::vector<FusionPin*> interruptPins_fall;
 };
 
 #endif

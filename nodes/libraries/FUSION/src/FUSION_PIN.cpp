@@ -114,12 +114,18 @@ void FusionPin::setInterrupt(unsigned int edge)
     switch(edge)
     {
         case CHANGE:
-            //attachInterrupt(digitalPinToInterrupt(pin), std::bind(&FusionPin::onChange, this));
+            attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_change, edge);
+            interruptPins_change.push_back(this);
+            //attachInterrupt(digitalPinToInterrupt(pin), std::bind(&FusionPin::onChange, this), edge);
             break;
         case RISING:
+            attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_rise, edge);
+            interruptPins_rise.push_back(this);
             //attachInterrupt(digitalPinToInterrupt(pin), onRise, edge);
             break;
         case FALLING:
+            attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_fall, edge);
+            interruptPins_fall.push_back(this);
             //attachInterrupt(digitalPinToInterrupt(pin), onFall, edge);
             break;
     }
@@ -141,4 +147,28 @@ void FusionPin::onRise()
 void FusionPin::onFall()
 {
     sendData("fall", topic_pin);
+}
+
+void FusionPin::interruptHandler_change()
+{
+    for(FusionPin* p : interruptPins_change)
+    {
+        p->onChange();
+    }
+}
+
+void FusionPin::interruptHandler_rise()
+{
+    for(FusionPin* p : interruptPins_rise)
+    {
+        p->onRise();
+    }
+}
+
+void FusionPin::interruptHandler_fall()
+{
+    for(FusionPin* p : interruptPins_fall)
+    {
+        p->onFall();
+    }
 }
