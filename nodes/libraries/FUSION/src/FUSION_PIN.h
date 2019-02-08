@@ -51,6 +51,7 @@ class FusionPin : public FusionModule
         static void interruptHandler_rise();
         static void interruptHandler_fall();
 
+        //std::vector<FusionPin*> testVec;
         static std::vector<FusionPin*> interruptPins_change;
         static std::vector<FusionPin*> interruptPins_rise;
         static std::vector<FusionPin*> interruptPins_fall;

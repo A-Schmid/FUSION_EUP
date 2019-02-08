@@ -6,6 +6,10 @@
 
 #include "FUSION_PIN.h"
 
+std::vector<FusionPin*> FusionPin::interruptPins_change;
+std::vector<FusionPin*> FusionPin::interruptPins_rise;
+std::vector<FusionPin*> FusionPin::interruptPins_fall;
+
 FusionPin::FusionPin(unsigned int pin_id) : FusionModule()
 {
     pin = pin_id;
@@ -36,7 +40,7 @@ void FusionPin::update()
 
 void FusionPin::registerCallbacks()
 {
-    char* commands[] = {"digitalRead", "digitalWrite", "analogRead", "analogWrite", "setDirection", "streamData"};
+    char* commands[] = {"digitalRead", "digitalWrite", "analogRead", "analogWrite", "setDirection", "setInterrupt", "streamData"};
 
     for(char* command : commands)
     {
@@ -57,6 +61,7 @@ void FusionPin::mqttCallback(char* topic, byte* payload, int length)
     else if(strstr(topic, "analogRead")) aRead();
     else if(strstr(topic, "analogWrite")) aWrite(data);
     else if(strstr(topic, "setDirection")) setDirection((bool) data);
+    else if(strstr(topic, "setInterrupt")) setInterrupt((unsigned int) data);
     else if(strstr(topic, "streamData"))
     {
         streamOn = true;
@@ -116,17 +121,14 @@ void FusionPin::setInterrupt(unsigned int edge)
         case CHANGE:
             attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_change, edge);
             interruptPins_change.push_back(this);
-            //attachInterrupt(digitalPinToInterrupt(pin), std::bind(&FusionPin::onChange, this), edge);
             break;
         case RISING:
             attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_rise, edge);
             interruptPins_rise.push_back(this);
-            //attachInterrupt(digitalPinToInterrupt(pin), onRise, edge);
             break;
         case FALLING:
             attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_fall, edge);
             interruptPins_fall.push_back(this);
-            //attachInterrupt(digitalPinToInterrupt(pin), onFall, edge);
             break;
     }
 
@@ -136,17 +138,17 @@ void FusionPin::setInterrupt(unsigned int edge)
 
 void FusionPin::onChange()
 {
-    sendData("change", topic_pin);
+    sendData(topic_pin, 2, "change");
 }
 
 void FusionPin::onRise()
 {
-    sendData("rise", topic_pin);
+    sendData(topic_pin, 2, "rise");
 }
 
 void FusionPin::onFall()
 {
-    sendData("fall", topic_pin);
+    sendData(topic_pin, 2, "fall");
 }
 
 void FusionPin::interruptHandler_change()
