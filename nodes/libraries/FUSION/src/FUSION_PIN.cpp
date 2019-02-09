@@ -6,9 +6,9 @@
 
 #include "FUSION_PIN.h"
 
-std::vector<FusionPin*> FusionPin::interruptPins_change;
-std::vector<FusionPin*> FusionPin::interruptPins_rise;
-std::vector<FusionPin*> FusionPin::interruptPins_fall;
+std::list<FusionPin*> FusionPin::interruptPins_change;
+std::list<FusionPin*> FusionPin::interruptPins_rise;
+std::list<FusionPin*> FusionPin::interruptPins_fall;
 
 FusionPin::FusionPin(unsigned int pin_id) : FusionModule()
 {
@@ -40,11 +40,10 @@ void FusionPin::update()
 
 void FusionPin::registerCallbacks()
 {
-    char* commands[] = {"digitalRead", "digitalWrite", "analogRead", "analogWrite", "setDirection", "setInterrupt", "streamData"};
+    char* commands[] = {"digitalRead", "digitalWrite", "analogRead", "analogWrite", "setDirection", "setInterrupt", "removeInterrupt", "streamData"};
 
     for(char* command : commands)
     {
-        // TODO test this!
         mqtt.registerCallback(std::bind(&FusionPin::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), command);
     }
 }
@@ -62,6 +61,7 @@ void FusionPin::mqttCallback(char* topic, byte* payload, int length)
     else if(strstr(topic, "analogWrite")) aWrite(data);
     else if(strstr(topic, "setDirection")) setDirection((bool) data);
     else if(strstr(topic, "setInterrupt")) setInterrupt((unsigned int) data);
+    else if(strstr(topic, "removeInterrupt")) removeInterrupt();
     else if(strstr(topic, "streamData"))
     {
         streamOn = true;
@@ -112,6 +112,14 @@ void FusionPin::setDirection(bool dir)
     directionSet = true;
 }
 
+void FusionPin::removeInterrupt()
+{
+    detachInterrupt(digitalPinToInterrupt(pin));
+    interruptSet_change = false;
+    interruptSet_rise = false;
+    interruptSet_fall = false;
+}
+
 void FusionPin::setInterrupt(unsigned int edge)
 {
     pinMode(pin, INPUT_PULLUP);
@@ -119,16 +127,22 @@ void FusionPin::setInterrupt(unsigned int edge)
     switch(edge)
     {
         case CHANGE:
+            if(interruptSet_change) return;
             attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_change, edge);
             interruptPins_change.push_back(this);
+            interruptSet_change = true;
             break;
         case RISING:
+            if(interruptSet_rise) return;
             attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_rise, edge);
             interruptPins_rise.push_back(this);
+            interruptSet_rise = true;
             break;
         case FALLING:
+            if(interruptSet_fall) return;
             attachInterrupt(digitalPinToInterrupt(pin), interruptHandler_fall, edge);
             interruptPins_fall.push_back(this);
+            interruptSet_fall = true;
             break;
     }
 
@@ -153,24 +167,51 @@ void FusionPin::onFall()
 
 void FusionPin::interruptHandler_change()
 {
-    for(FusionPin* p : interruptPins_change)
+    for(auto it = interruptPins_change.begin(); it != interruptPins_change.end();) 
     {
+        FusionPin *p = *it;
+
+        if(!p->interruptSet_change) 
+        {
+            it = interruptPins_change.erase(it);
+            continue;
+        }
+
         p->onChange();
+        ++it;
     }
 }
 
 void FusionPin::interruptHandler_rise()
 {
-    for(FusionPin* p : interruptPins_rise)
+    for(auto it = interruptPins_rise.begin(); it != interruptPins_rise.end();)
     {
+        FusionPin *p = *it;
+
+        if(!p->interruptSet_rise) 
+        {
+            it = interruptPins_rise.erase(it);
+            continue;
+        }
+
         p->onRise();
+        ++it;
     }
 }
 
 void FusionPin::interruptHandler_fall()
 {
-    for(FusionPin* p : interruptPins_fall)
+    for(auto it = interruptPins_fall.begin(); it != interruptPins_fall.end();)
     {
+        FusionPin *p = *it;
+
+        if(!p->interruptSet_fall) 
+        {
+            it = interruptPins_fall.erase(it);
+            continue;
+        }
+
         p->onFall();
+        ++it;
     }
 }

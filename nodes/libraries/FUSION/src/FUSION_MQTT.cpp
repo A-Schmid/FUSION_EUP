@@ -8,8 +8,8 @@
 FusionMQTT::FusionMQTT()
 {
 
-    topic_network = "FUSION";
-    topic_location = "1104";
+    topic_network = STR(MQTT_TOPIC_NETWORK); //"FUSION";
+    topic_location = STR(MQTT_TOPIC_LOCATION); //"1104";
     topic_name = STR(NODE_NAME);
 }
 

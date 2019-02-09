@@ -2,6 +2,7 @@
 #define FUSION_MODULE_H
 
 #include <stdlib.h>
+#include <list>
 #include "Adafruit_Sensor.h"
 #include <DHT.h>
 #include <Wire.h>
