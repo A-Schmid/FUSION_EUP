@@ -6,6 +6,10 @@
 
 #include "FUSION_PIN.h"
 
+// this abomination is needed because of how C++ handles member functions
+// in order to have callbacks on member functions for ISR interrupts,
+// we have to save all instances with callbacks in static data structures
+// and trigger them over a this pointer
 std::list<FusionPin*> FusionPin::interruptPins_change;
 std::list<FusionPin*> FusionPin::interruptPins_rise;
 std::list<FusionPin*> FusionPin::interruptPins_fall;
@@ -40,9 +44,18 @@ void FusionPin::update()
 
 void FusionPin::registerCallbacks()
 {
-    char* commands[] = {"digitalRead", "digitalWrite", "analogRead", "analogWrite", "setDirection", "setInterrupt", "removeInterrupt", "streamData"};
+    char* callbackCommands[] = {
+        "digitalRead",
+        "digitalWrite",
+        "analogRead",
+        "analogWrite",
+        "setDirection",
+        "setInterrupt",
+        "removeInterrupt",
+        "streamData"
+    };
 
-    for(char* command : commands)
+    for(char* command : callbackCommands)
     {
         mqtt.registerCallback(std::bind(&FusionPin::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), command);
     }
