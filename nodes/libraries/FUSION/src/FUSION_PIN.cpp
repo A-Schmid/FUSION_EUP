@@ -40,6 +40,7 @@ void FusionPin::update()
 
 void FusionPin::registerCallbacks()
 {
+    char* commands[] = {"digitalRead", "digitalWrite", "analogRead", "analogWrite", "setDirection", "setInterrupt", "removeInterrupt", "streamData"};
 
     for(char* command : commands)
     {
