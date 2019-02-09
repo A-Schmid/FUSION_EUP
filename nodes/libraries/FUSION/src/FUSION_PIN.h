@@ -25,25 +25,37 @@ class FusionPin : public FusionModule
         
         void setDirection(bool dir);
         void setInterrupt(unsigned int edge);
+        void removeInterrupt();
 
         void onChange();
         void onRise();
         void onFall();
 
     private:
-        char* topic_pin;
+        char topic_pin[2];
         bool isAnalog;
         bool directionSet;
         bool direction;
+        bool interruptSet_change;
+        bool interruptSet_rise;
+        bool interruptSet_fall;
         uint16_t lastValue;
 
         bool streamOn;
         int streamDelay;
         long streamTimer;
 
+        void registerCallbacks();
+
         void mqttCallback(char* topic, byte* payload, int length);
-        
-        //void registerCallbacks();
+
+        static void interruptHandler_change();
+        static void interruptHandler_rise();
+        static void interruptHandler_fall();
+
+        static std::list<FusionPin*> interruptPins_change;
+        static std::list<FusionPin*> interruptPins_rise;
+        static std::list<FusionPin*> interruptPins_fall;
 };
 
 #endif
