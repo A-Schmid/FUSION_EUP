@@ -32,6 +32,16 @@ class FusionPin : public FusionModule
         void onFall();
 
     private:
+    char* commands[] = {
+        "digitalRead",
+        "digitalWrite",
+        "analogRead",
+        "analogWrite",
+        "setDirection",
+        "setInterrupt",
+        "removeInterrupt",
+        "streamData"
+    };
         char topic_pin[2];
         bool isAnalog;
         bool directionSet;
