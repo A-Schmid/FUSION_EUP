@@ -36,10 +36,7 @@ class FusionPin : public FusionModule
         bool isAnalog;
         bool directionSet;
         bool direction;
-        bool interruptSet_change;
-        bool interruptSet_rise;
-        bool interruptSet_fall;
-        uint16_t lastValue;
+        //uint16_t lastValue;
 
         bool streamOn;
         int streamDelay;
@@ -48,6 +45,10 @@ class FusionPin : public FusionModule
         void registerCallbacks();
 
         void mqttCallback(char* topic, byte* payload, int length);
+
+        bool interruptSet_change;
+        bool interruptSet_rise;
+        bool interruptSet_fall;
 
         static void interruptHandler_change();
         static void interruptHandler_rise();
