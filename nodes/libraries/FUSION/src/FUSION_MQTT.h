@@ -19,10 +19,10 @@ class FusionMQTT
         char* topic_location;
         char* topic_name;
         void init();
-        void send(uint16_t data, const char* topic_data);
-        void send(uint8_t* data, unsigned int length, const char* topic_data);
-        void send(char* data, unsigned int length, const char* topic_data);
-        void send(const char* data, const char* topic_data);
+        void send(uint16_t data, char* topic_data);
+        void send(uint8_t* data, unsigned int length, char* topic_data);
+        void send(char* data, unsigned int length, char* topic_data);
+        void send(const char* data, char* topic_data);
         void update();
 
         void callback(char* topic, uint8_t* payload, unsigned int length);

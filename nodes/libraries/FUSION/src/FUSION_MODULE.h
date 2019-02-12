@@ -31,12 +31,12 @@ class FusionModule
         void sendData(bool data);
         void sendData(char* data, unsigned int length);
 
-        void sendData(char* data, int data_length, const char* topic_data);
-        void sendData(char data, const char* topic_data);
-        void sendData(int data, const char* topic_data);
-        void sendData(uint8_t data, const char* topic_data);
-        void sendData(uint16_t data, const char* topic_data);
-        void sendData(bool data, const char* topic_data);
+        void sendData(char* data, int data_length, char* topic_data);
+        void sendData(char data, char* topic_data);
+        void sendData(int data, char* topic_data);
+        void sendData(uint8_t data, char* topic_data);
+        void sendData(uint16_t data, char* topic_data);
+        void sendData(bool data, char* topic_data);
         //TODO: all data types
 };
 
