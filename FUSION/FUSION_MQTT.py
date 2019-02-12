@@ -39,6 +39,7 @@ class FUSION_MQTT():
 
     def on_connect(self, client, userdata, flags, result_code):
         #print("on_connect: " + result_code)
+        #self._mqtt.subscribe("{}/{}/{}/#".format(self.mqtt_network, self.mqtt_location, self.mqtt_name))
         self._mqtt.subscribe("{}/{}/{}/#".format(self.mqtt_network, self.mqtt_location, self.mqtt_name))
 
     def on_message(self, client, userdata, msg):

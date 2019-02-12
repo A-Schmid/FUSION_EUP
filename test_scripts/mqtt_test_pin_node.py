@@ -18,6 +18,8 @@ buttoni.OnUpdate(on_change, "change")
 buttoni.OnUpdate(on_rise, "rise")
 buttoni.OnUpdate(on_fall, "fall")
 
+buttoni.setInterrupt(1)
+
 #while(True):
 #    drehi.send_message("digitalWrite", 1)
 #    time.sleep(1)
