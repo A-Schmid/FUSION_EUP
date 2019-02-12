@@ -81,25 +81,25 @@ void FusionModule::sendData(int data)
 
 void FusionModule::sendData(uint8_t data)
 {
-    sendData(TOPIC_UNDEFINED, data);
+    sendData(data, TOPIC_UNDEFINED);
 }
 
 void FusionModule::sendData(uint16_t data)
 {
-    sendData(TOPIC_UNDEFINED, data);
+    sendData(data, TOPIC_UNDEFINED);
 }
 
 void FusionModule::sendData(char data)
 {
-    sendData(TOPIC_UNDEFINED, data);
+    sendData(data, TOPIC_UNDEFINED);
 }
 
 void FusionModule::sendData(char* data, unsigned int length)
 {
-    sendData(TOPIC_UNDEFINED, data);
+    sendData(data, TOPIC_UNDEFINED);
 }
 
-void FusionModule::sendData(char* data, int data_length, const char* topic_data)
+void FusionModule::sendData(char* data, int data_length, char* topic_data)
 {
     if(protocol == PROTOCOL_WIFI)
     {
@@ -114,19 +114,19 @@ void FusionModule::sendData(char* data, int data_length, const char* topic_data)
     }
 }
 
-void FusionModule::sendData(char data, const char* topic_data)
+void FusionModule::sendData(char data, char* topic_data)
 {
     char data_pack[1] = {data};
     sendData(data_pack, 1, topic_data);
 }
 
-void FusionModule::sendData(uint8_t data, const char* topic_data)
+void FusionModule::sendData(uint8_t data, char* topic_data)
 {
     char data_pack[1] = {(char) data};
     sendData(data_pack, 1, topic_data);
 }
 
-void FusionModule::sendData(int data, const char* topic_data)
+void FusionModule::sendData(int data, char* topic_data)
 {
     unsigned int length = sizeof(data);
     char data_pack[length];
@@ -137,7 +137,7 @@ void FusionModule::sendData(int data, const char* topic_data)
     sendData(data_pack, length, topic_data);
 }
 
-void FusionModule::sendData(uint16_t data, const char* topic_data)
+void FusionModule::sendData(uint16_t data, char* topic_data)
 {
     unsigned int length = sizeof(uint16_t);
     char data_pack[length];
@@ -148,7 +148,7 @@ void FusionModule::sendData(uint16_t data, const char* topic_data)
     sendData(data_pack, length, topic_data);
 }
 
-void FusionModule::sendData(bool data, const char* topic_data)
+void FusionModule::sendData(bool data, char* topic_data)
 {
     unsigned int length = sizeof(data);
     char data_pack[length];

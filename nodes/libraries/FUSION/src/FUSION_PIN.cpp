@@ -23,9 +23,17 @@ FusionPin::FusionPin(unsigned int pin_id) : FusionModule()
 
 void FusionPin::initialize()
 {
-    FusionModule::initialize();
-    
+    char topic_with_pin[128];
+
     snprintf(topic_pin, 2, "%d", pin);
+
+    strcpy(topic_with_pin, STR(NODE_NAME)); 
+    strcat(topic_with_pin, "/");
+    strcat(topic_with_pin, topic_pin);
+
+    strcpy(mqtt.topic_name, topic_with_pin);
+
+    FusionModule::initialize();
 
     registerCallbacks();
 }
