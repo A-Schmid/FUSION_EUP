@@ -14,6 +14,7 @@ FusionModule::FusionModule()
     nodeId = node_id;
 }
 
+// initialize the the correct communication protocol
 void FusionModule::initialize()
 {
     if(protocol == PROTOCOL_WIFI)
@@ -29,11 +30,13 @@ void FusionModule::initialize()
     }
 }
 
+// you might want to override this function
+// everything that should happen each frame belongs here
 void FusionModule::update()
 {
     if(protocol == PROTOCOL_MQTT)
     {
-        mqtt.update();
+        mqtt.update(); // make sure messages are sent and received
     }
 }
 
@@ -42,6 +45,8 @@ void FusionModule::createPacket(char* data, int data_length)
     createPacket(data, data_length, MSG_TYPE_PACKET);
 }
 
+// build a packet with header, data and checksum to be sent bytewise
+// needed for lightweight protocols like UDP
 void FusionModule::createPacket(char* data, int data_length, int type)
 {
 	packetLength = data_length + 7;
@@ -68,6 +73,8 @@ void FusionModule::freePacket()
 {
     free(packet);
 }
+
+// wrapper functions for sending data without caring about mqtt topics
 
 void FusionModule::sendData(bool data)
 {
@@ -99,6 +106,7 @@ void FusionModule::sendData(char* data, unsigned int length)
     sendData(data, TOPIC_UNDEFINED);
 }
 
+// send data with selected protocol
 void FusionModule::sendData(char* data, int data_length, char* topic_data)
 {
     if(protocol == PROTOCOL_WIFI)
@@ -113,6 +121,8 @@ void FusionModule::sendData(char* data, int data_length, char* topic_data)
         mqtt.send(data, data_length, topic_data);
     }
 }
+
+// wrapper functions for sending data with a mqtt topic
 
 void FusionModule::sendData(char data, char* topic_data)
 {

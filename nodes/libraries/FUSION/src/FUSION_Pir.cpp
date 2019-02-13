@@ -9,7 +9,6 @@
 FusionPir::FusionPir(unsigned int sensor_pin) : FusionModule()
 {
     pin = sensor_pin;
-    wait_time = 50;
 }
 
 void FusionPir::checkSensorState()
@@ -23,7 +22,7 @@ void FusionPir::checkSensorState()
         {
             Serial.println("enter");
             isTracked = true;
-            sendData("enter", true);
+            sendData(true, "enter");
         }
     }
     else
@@ -32,7 +31,7 @@ void FusionPir::checkSensorState()
         {
             Serial.println("leave");
             isTracked = false;
-            sendData("enter", false);
+            sendData(false, "enter");
         }
     }
 }

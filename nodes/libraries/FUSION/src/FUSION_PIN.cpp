@@ -23,7 +23,7 @@ FusionPin::FusionPin(unsigned int pin_id) : FusionModule()
 
 void FusionPin::initialize()
 {
-    char topic_with_pin[128];
+    char topic_with_pin[TOPIC_MAXLENGTH];
 
     snprintf(topic_pin, 2, "%d", pin);
 

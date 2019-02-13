@@ -5,14 +5,15 @@
 #endif
 #include "FUSION_MQTT.h"
 
+// initialize variables from compiler params
 FusionMQTT::FusionMQTT()
 {
-
     topic_network = STR(MQTT_TOPIC_NETWORK); //"FUSION";
     topic_location = STR(MQTT_TOPIC_LOCATION); //"1104";
     topic_name = STR(NODE_NAME);
 }
 
+// set up the wifi and mqtt connection
 void FusionMQTT::init()
 {
     mqttClient = PubSubClient(wifiClient);
@@ -26,6 +27,10 @@ void FusionMQTT::init()
 
     mqttClient.setServer(mqtt_server, mqtt_port);
 
+    // registers a member function of this instance
+    // as a callback for mqtt messages
+    // the strange syntax is necessary because of
+    // the weird way C++ handles pointers to member functions
     mqttClient.setCallback(std::bind(&FusionMQTT::callback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
     while (!mqttClient.connected())
@@ -39,9 +44,13 @@ void FusionMQTT::init()
     // member variable maybe?
     char topic[TOPIC_MAXLENGTH];
     snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/#", topic_network, topic_location, topic_name);
+    // listen to all messages addressed with topic
     mqttClient.subscribe(topic);
     Serial.println("initialized");
 }
+
+// wrapper functions for mqtt.publish()
+// overloaded to match all relevant data types
 
 void FusionMQTT::send(uint16_t data, char* topic_data)
 {
@@ -75,11 +84,15 @@ void FusionMQTT::send(const char* data, char* topic_data)
     mqttClient.loop();
 }
 
+// call this to make sure the mqtt module sends and receives messages
 void FusionMQTT::update()
 {
     mqttClient.loop();
 }
 
+// this functions is called when a message is received over mqtt
+// it iterates over all registered callbacks and calls the ones
+// matching the topic of the mqtt message
 void FusionMQTT::callback(char* topic, uint8_t* payload, unsigned int length)
 {
     for(std::function<void(char*, uint8_t*, unsigned int)> cb : callbacks[topic])
@@ -88,7 +101,8 @@ void FusionMQTT::callback(char* topic, uint8_t* payload, unsigned int length)
     }
 }
 
-// TODO test this!
+// registers a function as a callback for given mqtt topic
+// the function pointer is stored in a hashmap under the given topic as a key
 void FusionMQTT::registerCallback(std::function<void(char*, uint8_t*, unsigned int)> callback_function, char* topic_data)
 {
     char topic[TOPIC_MAXLENGTH];

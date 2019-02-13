@@ -10,7 +10,6 @@ class FusionButton : public FusionModule
 
         unsigned int pin;
         bool wasDown;
-        int wait_time;
 
         void checkButtonState();
 };
