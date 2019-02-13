@@ -17,6 +17,6 @@ void setup()
 void loop()
 {
     uint16_t lightIntensity = sensor.readLightIntensity();
-    mqtt.send("lightIntensity", lightIntensity);
+    mqtt.send(lightIntensity, "lightIntensity");
     delay(update_time);
 }
