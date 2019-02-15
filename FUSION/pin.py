@@ -10,8 +10,8 @@ class pin(FUSION_MQTT):
         self.add_data_entry("change", int)
         self.add_data_entry("rise", int)
         self.add_data_entry("fall", int)
-        self.add_data_entry("analogReadResult", int)
-        self.add_data_entry("digitalReadResult", int)
+        self.add_data_entry("analogData", int)
+        self.add_data_entry("digitalData", int)
 
     def digitalWrite(self, data):
         self.send_message("digitalWrite", data)

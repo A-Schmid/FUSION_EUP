@@ -53,7 +53,7 @@ class FUSION_MQTT():
 
     def send_message(self, topic, payload=None, qos=0, retain=False):
         theTopic = "{}/{}/{}/{}".format(self.mqtt_network, self.mqtt_location, self.mqtt_name, topic)
-        print(theTopic, payload)
+        #print(theTopic, payload)
         self._mqtt.publish(theTopic, payload, qos, retain)
 
     def _decode_message(self, data, data_type):
