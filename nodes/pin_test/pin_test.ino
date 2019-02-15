@@ -1,6 +1,6 @@
 #include "FUSION_PIN.h"
 
-FusionPin pin(D3);
+FusionPin pin = FusionPin(A0);
 
 void setup()
 {

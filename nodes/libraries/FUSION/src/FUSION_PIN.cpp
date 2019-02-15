@@ -25,7 +25,7 @@ void FusionPin::initialize()
 {
     char topic_with_pin[TOPIC_MAXLENGTH];
 
-    snprintf(topic_pin, 2, "%d", pin);
+    sprintf(topic_pin, "%d", pin);
 
     strcpy(topic_with_pin, STR(NODE_NAME)); 
     strcat(topic_with_pin, "/");
@@ -106,7 +106,7 @@ void FusionPin::dWrite(bool value)
 bool FusionPin::dRead()
 {
     bool data = digitalRead(pin);
-    sendData(data, "digitalReadResult");
+    sendData(data, "digitalData");
     return data;
 }
 
@@ -120,7 +120,7 @@ void FusionPin::aWrite(uint16_t value)
 uint16_t FusionPin::aRead()
 {
     uint16_t data = analogRead(pin);
-    sendData(data, "analogReadResult");
+    sendData(data, "analogData");
     return data;
 }
 
