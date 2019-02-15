@@ -13,8 +13,9 @@
 ### designentscheidungen ###
 
  * auf MQTT umsteigen?
-   -> eher am schluss
+    -> done
  * test-skripts anders organisieren/löschen
+    -> sind jetzt in eigenem ordner
  * "streaming-modus" für tcp module?
  * github-issues statt zettelwirtschaft und txt-files?
 

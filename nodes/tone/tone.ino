@@ -1,13 +1,14 @@
 #define DEBUG 1
 #include "FUSION_TONE.h"
 
-FusionTone f_tone(NODE_ID, PIN);
+#ifndef PIN
+    #define PIN 14 // ESP8266 D5
+#endif
 
-//uint8_t buttonPin = 0;
+FusionTone f_tone(PIN);
 
 void setup()
 {
-    //pinMode(buttonPin, INPUT);
     Serial.begin(9600);
     f_tone.initialize();
 }
@@ -15,5 +16,5 @@ void setup()
 void loop()
 {
     f_tone.update();
-    delay(50);
+    delay(update_time);
 }

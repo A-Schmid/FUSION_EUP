@@ -27,18 +27,11 @@ class FusionMQTT
 
         void callback(char* topic, uint8_t* payload, unsigned int length);
 
-        //void registerCallback(void (*callback_function)(char*, byte*, int), char* topic_data);
-
         void registerCallback(std::function<void(char*, uint8_t*, unsigned int)> callback_function, char* topic);
 
     private:
         WiFiClient wifiClient;
         PubSubClient mqttClient;
-        //char* wifi_ssid;
-        //char* wifi_password;
-        //char* mqtt_server;
-        //unsigned int mqtt_port;
-        //std::map<std::string, std::vector<void (*)(char*, byte*, int)>> callbacks;
         std::map<std::string, std::vector<std::function<void(char*, uint8_t*, unsigned int)>>> callbacks;
 };
 
