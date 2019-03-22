@@ -1,0 +1,17 @@
+import time
+import sys
+sys.path.append("..") # needed because test scripts are in a subdirectory
+from FUSION import minimal
+
+# initialize the module
+sensor = minimal.Minimal(node_name = "mini", node_location="1104")
+
+# define a callback
+def on_update():
+    print("{}".format(sensor.get("value")))
+
+# register the callback
+sensor.OnUpdate(on_update, "value")
+
+# make sure the script runs for a while
+time.sleep(60)

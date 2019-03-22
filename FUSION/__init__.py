@@ -16,3 +16,4 @@ from .BH1750 import *
 from .packet import * 
 from .email import *
 from .tone import *
+from .minimal import *
