@@ -6,21 +6,21 @@ WIP! End User Programming Interface for the Open Source Project FUSION (http://f
 The EUP interface for FUSION can be run on most Linux systems. It is recommended to use a SOC platform like the Raspberry Pi as a gateway. Communication between sensor nodes and gateway happens over TCP/IP using WiFi for most cases. In default configuration, the gateway will create an access point which nodes will connect to. The MQTT protocol is used to transmit data in a structured way.
 Configuration parameters like WiFi credentials and MQTT parameters are defined in the "fusion.conf" config file. This file is read by the upload script for sensor nodes.
 Content of "fusion.conf":
-    * WIFI_SSID: SSID of the access point
-    * WIFI_PASSWORD: password of the access point - has to be at least 8 characters
-    * MQTT_SERVER: IP address of the gateway (default: '192.168.4.1')
-    * MQTT_PORT: port to be used by MQTT (default: 1883)
-    * MQTT_USER: TODO
-    * MQTT_PASSWORD: TODO
-    * MQTT_TOPIC_NETWORK: first entry of the MQTT topic - it is used to distinguish different enclosed networks
-    * MQTT_TOPIC_LOCATION: second entry of the MQTT topic - it is used to specify a node's physical location
+  * WIFI_SSID: SSID of the access point
+  * WIFI_PASSWORD: password of the access point - has to be at least 8 characters
+  * MQTT_SERVER: IP address of the gateway (default: '192.168.4.1')
+  * MQTT_PORT: port to be used by MQTT (default: 1883)
+  * MQTT_USER: TODO
+  * MQTT_PASSWORD: TODO
+  * MQTT_TOPIC_NETWORK: first entry of the MQTT topic - it is used to distinguish different enclosed networks
+  * MQTT_TOPIC_LOCATION: second entry of the MQTT topic - it is used to specify a node's physical location
 
 The automatic installation script "setup.sh" (not entirely tested yet!) can be used for a quick installation and setup of required an recommended components to run the sensor network. The setup process consists of following steps:
-    * installation of required and recommended packages using apt
-    * setting up the python environment and installation of python packages using pip
-    * setting up the platformio command line interface which is used to flash sensor nodes
-    * configuring jupyter notebooks
-    * setting up dnsmasq and hostapd to create a WiFi access point
+  * installation of required and recommended packages using apt
+  * setting up the python environment and installation of python packages using pip
+  * setting up the platformio command line interface which is used to flash sensor nodes
+  * configuring jupyter notebooks
+  * setting up dnsmasq and hostapd to create a WiFi access point
 
 ### programming sensor nodes ###
 
@@ -39,14 +39,14 @@ sh pio_compile.sh [node] [param1=value param2=value ...]
 ```
 
 Parameters:
-    * NODE_NAME: custom name of the node, used as third part of the MQTT topic. Select whatever you want.
-    * NODE_ID: [deprecated?] numeric ID of a node, was used by the old communication protocol and is still used for UDP and XBEE communication. Might be automated in the future, feel free to leave this away if you plan to use TCP.
-    * PIN: [TODO] pin number for GPIO nodes. Maybe this is not needed anymore.
-    * DELAY: time in milliseconds to wait after each update of the sensor.
-    * PROTOCOL: protocol to use. Options: MQTT, [TODO]
-    * ACTION: action the upload script has to execute:
-        * debug: compile the program without uploading it
-        * upload: [default] compile and upload the program
+  * NODE_NAME: custom name of the node, used as third part of the MQTT topic. Select whatever you want.
+  * NODE_ID: [deprecated?] numeric ID of a node, was used by the old communication protocol and is still used for UDP and XBEE communication. Might be automated in the future, feel free to leave this away if you plan to use TCP.
+  * PIN: [TODO] pin number for GPIO nodes. Maybe this is not needed anymore.
+  * DELAY: time in milliseconds to wait after each update of the sensor.
+  * PROTOCOL: protocol to use. Options: MQTT, [TODO]
+  * ACTION: action the upload script has to execute:
+    * debug: compile the program without uploading it
+    * upload: [default] compile and upload the program
 
 All of those parameters except ACTION as well as the contents of "fusion.conf" are passed to the program as compile time parameters and can be called from within the program. Feel free to extend the upload script by adding custom parameters and passing them as "-DPARAM=\"whatever\"" in the PLATFORMIO_BUILD_FLAGS.
 
@@ -56,11 +56,11 @@ The "FUSION" subdectory contains the python package "FUSION" which can be used t
 
 Usage:
 
-    * run "jupyter notebook" in the FUSION_EUP root directory
-    * open the notebook in a web browser
-    * create a python3 notebook
-    * import desired modules of the FUSION library (from FUSION import [module])
-    * create a new instance of the imported class
+  * run "jupyter notebook" in the FUSION_EUP root directory
+  * open the notebook in a web browser
+  * create a python3 notebook
+  * import desired modules of the FUSION library (from FUSION import [module])
+  * create a new instance of the imported class
 
 Depending on the type of module, you can register callbacks for events of the sensor, poll sensor data in a loop or call functions of actors.
 Communication and other technical aspects are all handled by the library. If you want to explore the internal workings of the library, take a look at "FUSION_MQTT.py". Several global constants and settings are defined in "config.py".
