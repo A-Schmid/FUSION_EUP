@@ -63,6 +63,14 @@ pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
 
 echo "export PATH=$PATH:~/.platformio/penv/bin" >> ~/.bash_profile
 
+# install platformio libraries
+# maybe use -g for gloabl install?
+cd nodes/pio
+pio lib install 31 # Adafruit Unified Sensor
+pio lib install 19 # DHT sensor library
+pio lib install 89 # MQTT PubSubClient library
+cd ../..
+
 # configure jupyter
 echo "c.NotebookApp.open_browser = False" >> ~/.jupyter/jupyter_notebook_config.py
 echo "c.NotebookApp.ip = '*'" >> ~/.jupyter/jupyter_notebook_config.py
