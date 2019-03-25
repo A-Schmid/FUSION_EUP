@@ -1,10 +1,11 @@
 ### für die community ###
 
  * installer überarbeiten (meta-package?) und testen
- * platformIO/uploader auf RPi einrichten
-   * parameter für uploader definieren
+ * platformIO/uploader auf RPi einrichten -> done
+   * parameter für uploader definieren -> done
    * mehr plattformen unterstützen? (zB arduino mit wifi-shield)
- * anständige config
+   * GUI-uploader (in jupyter)
+ * anständige config -> done (evtl environment-variablen oder .fusionrc in home?)
  -> auf zweitem RPi from scratch installieren
  * wenn aufgeräumt ist: zwischenrealease?
  * doku schreiben -> format?
