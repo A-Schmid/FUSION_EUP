@@ -4,11 +4,11 @@ sys.path.append("..") # needed because test scripts are in a subdirectory
 from FUSION import minimal
 
 # initialize the module
-sensor = minimal.Minimal(node_name = "mini2", node_location="1104")
+sensor = minimal.Minimal(node_name = "mini", node_location="1104")
 
 # define a callback
-def on_update():
-    print("{}".format(sensor.get("value")))
+def on_update(data):
+    print(data)
 
 # register the callback
 sensor.OnUpdate(on_update, "value")

@@ -74,5 +74,5 @@ To write custom modules, it is recommended to extend the FUSION_MQTT class. For 
 
 The data entry is a basically a string to identify the type of data it represents. It forms the fourth part of the MQTT topic. The sensor node broadcasts data under this topic which is received by FUSION modules listening for this data entry.
 
-Read the last received value for a data entry using "module_instance.get("entry")" or register callbacks for updates of data on this entry using "module_instance.OnUpdate(callback_function, "entry")". No parameters are passed to the callback, so you have to call get() in your callback.
+Read the last received value for a data entry using "module_instance.get("entry")" or register callbacks for updates of data on this entry using "module_instance.OnUpdate(callback_function, "entry")". Data is passed to the callback as a parameter.
 

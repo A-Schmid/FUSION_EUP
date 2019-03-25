@@ -1,5 +1,6 @@
 from .core import *
 import struct
+import inspect
 import paho.mqtt.client as mqtt
 
 # main class for MQTT based nodes
@@ -64,7 +65,13 @@ class FUSION_MQTT():
             if(msg.topic.split("/")[-1] == entry):
                 self.data[entry] = self._decode_message(msg.payload, self._data_types[entry]) 
                 for callback in self._callbacks[entry]:
-                    callback(self.data[entry])
+                    cb_arg_num = len(inspect.getargspec(callback).args)
+                    if cb_arg_num == 0:
+                        callback()
+                    elif cb_arg_num == 1: 
+                        callback(self.data[entry])
+                    else:
+                        print("invalid number of arguments for callback") # TODO: print function name
         for callback in self._callbacks["all"]:
             callback()
 
