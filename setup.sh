@@ -36,8 +36,9 @@
 
 
 # install required packages
+sudo apt add-repository ppa:mosquitto-dev/mosquitto-ppa
 sudo apt update
-sudo apt -y install libatlas-base-dev git python3-venv dnsmasq hostapd
+sudo apt -y install libatlas-base-dev git python3-venv dnsmasq hostapd mosquitto mosquitto-clients
 
 # install recommended packages
 sudo apt -y install tmux nmap vim-gtk 
