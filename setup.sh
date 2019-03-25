@@ -71,6 +71,10 @@ pio lib install 19 # DHT sensor library
 pio lib install 89 # MQTT PubSubClient library
 cd ../..
 
+# add PIO udev rules
+curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/develop/scripts/99-platformio-udev.rules | sudo tee /etc/udev/rules.d/99-platformio-udev.rules
+sudo service udev restart
+
 # configure jupyter
 echo "c.NotebookApp.open_browser = False" >> ~/.jupyter/jupyter_notebook_config.py
 echo "c.NotebookApp.ip = '*'" >> ~/.jupyter/jupyter_notebook_config.py
