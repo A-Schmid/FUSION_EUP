@@ -1,6 +1,6 @@
 from .FUSION_MQTT import *
 
-class pin(FUSION_MQTT):
+class Pin(FUSION_MQTT):
     def __init__(self, node_name, pin_id, node_network=MQTT_DEFAULT_NETWORK, node_location=MQTT_DEFAULT_LOCATION):
         self.pin = pin_id
         node_name = "{}/{}".format(node_name, self.pin)
