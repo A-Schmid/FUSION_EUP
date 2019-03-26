@@ -11,7 +11,7 @@ class FusionButton : public FusionModule
         unsigned int pin;
         bool wasDown;
 
-        void checkButtonState();
+        void update();
 };
 
 #endif

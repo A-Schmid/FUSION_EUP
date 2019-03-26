@@ -9,9 +9,10 @@
 FusionButton::FusionButton(unsigned int button_pin) : FusionModule()
 {
     pin = button_pin;
+    pinMode(pin, INPUT);
 }
 
-void FusionButton::checkButtonState()
+void FusionButton::update()
 {
     bool buttonDown = digitalRead(pin);
 

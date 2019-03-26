@@ -11,7 +11,6 @@ FusionDHT11 sensor(sensorPin);
 
 void setup()
 {
-    Serial.begin(9600);
     sensor.initialize();
 }
 

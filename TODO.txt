@@ -10,6 +10,11 @@
  * wenn aufgeräumt ist: zwischenrealease?
  * doku schreiben -> format?
 
+### implementierung ###
+
+ * FUSION_MQTT aufteilen:
+   * Basisklasse für nodes (module?)
+   * Kommunikation
 
 ### designentscheidungen ###
 
@@ -19,7 +24,6 @@
     -> sind jetzt in eigenem ordner
  * "streaming-modus" für tcp module?
  * github-issues statt zettelwirtschaft und txt-files?
-
 
 ### depperlarbeit ###
 
@@ -35,7 +39,7 @@
    * neoPixel
    * ...
  * nodeRED-nodes implementieren
-
+ -> fällt weg wegen MQTT
 
 ### ausprobieren / testen / messen ###
 

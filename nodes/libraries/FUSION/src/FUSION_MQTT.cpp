@@ -16,6 +16,7 @@ FusionMQTT::FusionMQTT()
 // set up the wifi and mqtt connection
 void FusionMQTT::init()
 {
+    // TODO do only once!
     mqttClient = PubSubClient(wifiClient);
     WiFi.begin(wifi_ssid, wifi_password);
 

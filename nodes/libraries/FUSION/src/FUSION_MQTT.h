@@ -33,6 +33,7 @@ class FusionMQTT
         WiFiClient wifiClient;
         PubSubClient mqttClient;
         std::map<std::string, std::vector<std::function<void(char*, uint8_t*, unsigned int)>>> callbacks;
+        bool isInitialized;
 };
 
 #endif
