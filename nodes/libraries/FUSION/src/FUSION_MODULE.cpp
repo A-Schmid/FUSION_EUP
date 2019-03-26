@@ -6,6 +6,9 @@
 
 #include "FUSION_MODULE.h"
 
+bool mqtt_initialized = false;
+FusionMQTT *mqtt;
+
 // initialize builtin reset function
 void(* resetFunc) (void) = 0;
 
@@ -26,7 +29,12 @@ void FusionModule::initialize()
     if(protocol == PROTOCOL_MQTT)
     {
         Serial.println("MQTT MODE");
-        mqtt.init();
+        if(!mqtt_initialized)
+        {
+            mqtt = new FusionMQTT();
+            mqtt->init();
+            mqtt_initialized = true;
+        }
     }
 }
 
@@ -36,7 +44,7 @@ void FusionModule::update()
 {
     if(protocol == PROTOCOL_MQTT)
     {
-        mqtt.update(); // make sure messages are sent and received
+        mqtt->update(); // make sure messages are sent and received
     }
 }
 
@@ -118,7 +126,7 @@ void FusionModule::sendData(char* data, int data_length, char* topic_data)
 
     if(protocol == PROTOCOL_MQTT)
     {
-        mqtt.send(data, data_length, topic_data);
+        mqtt->send(data, data_length, topic_data);
     }
 }
 

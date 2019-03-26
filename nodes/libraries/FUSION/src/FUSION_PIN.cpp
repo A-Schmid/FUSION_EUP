@@ -24,17 +24,20 @@ FusionPin::FusionPin(unsigned int pin_id) : FusionModule()
 void FusionPin::initialize()
 {
     char topic_with_pin[TOPIC_MAXLENGTH];
+    
+    FusionModule::initialize();
 
+/*
+    // this should not be used as it overwrites the mqtt object's topic
+    // making it impossible to use multiple instances
     sprintf(topic_pin, "%d", pin);
 
     strcpy(topic_with_pin, STR(NODE_NAME)); 
     strcat(topic_with_pin, "/");
     strcat(topic_with_pin, topic_pin);
 
-    strcpy(mqtt.topic_name, topic_with_pin);
-
-    FusionModule::initialize();
-
+    strcpy(mqtt->topic_name, topic_with_pin);
+*/
     registerCallbacks();
 }
 
@@ -67,7 +70,17 @@ void FusionPin::registerCallbacks()
 
     for(char* command : callbackCommands)
     {
-        mqtt.registerCallback(std::bind(&FusionPin::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), command);
+        // I am sorry.
+        // here I append the current pin and a slash to the beginning of the command
+        // to fake a fifth entry in the mqtt topic
+        // the callback now listens for pin/command
+        char command_with_pin[TOPIC_MAXLENGTH];
+        
+        sprintf(command_with_pin, "%d", pin);
+        strcat(command_with_pin, "/");
+        strcat(command_with_pin, command);
+
+        mqtt->registerCallback(std::bind(&FusionPin::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), command_with_pin);
     }
 }
 

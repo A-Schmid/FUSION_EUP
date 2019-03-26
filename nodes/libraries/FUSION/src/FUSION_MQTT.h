@@ -5,6 +5,7 @@
 #include <PubSubClient.h>
 #include "FUSION_UTILS.h"
 
+// TODO why is this here and in FUSION_MODULE?
 #include <stdlib.h>
 #include "Adafruit_Sensor.h"
 #include <DHT.h>
@@ -33,7 +34,6 @@ class FusionMQTT
         WiFiClient wifiClient;
         PubSubClient mqttClient;
         std::map<std::string, std::vector<std::function<void(char*, uint8_t*, unsigned int)>>> callbacks;
-        bool isInitialized;
 };
 
 #endif

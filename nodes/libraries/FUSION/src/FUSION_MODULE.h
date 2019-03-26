@@ -9,11 +9,14 @@
 #include "FUSION_WIFI.h"
 #include "FUSION_MQTT.h"
 
+extern bool mqtt_initialized;
+extern FusionMQTT *mqtt;
+
 class FusionModule
 {
     public:
         FusionModule();
-        FusionMQTT mqtt;
+        //FusionMQTT mqtt;
         unsigned int nodeId;
         unsigned int packetLength;
         char* packet;
