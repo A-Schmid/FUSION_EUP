@@ -36,17 +36,13 @@ class FUSION_MQTT():
         
         self._mqtt.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEPALIVE)
 
-        print("mqtt connected")
-
         self._mqtt.loop_start()
-
-        print("loop started")
 
     # use this function to add new data entries to the object
     # data_entry (String) is a string representing the type of data the sensor measures (like "temperature")
     # data_type (Type) is the data type of the sensor data. it is sometimes necessary to specify it so the data can be deserialized correctly
     def add_data_entry(self, data_entry, data_type=None):
-        print("data entry: " + data_entry)
+        #print("data entry: " + data_entry)
         self.data_entries.append(data_entry)
         self.data[data_entry] = None
         self._data_types[data_entry] = data_type
