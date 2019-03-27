@@ -1,40 +1,5 @@
 #!/bin/bash
 
-
-## TODO
-## initialize config files
-#
-## $MODE: create access point or use existing WiFi network
-##   1) access point
-##   2) use existing network
-#
-#echo "Do you want FUSION to create an access point or use an existing network?"
-#echo "1) Access Point"
-#echo "2) Existing"
-#read MODE
-#
-#case "$MODE" in
-#    1)
-#        echo "AP"
-#        break;;
-#    2)
-#        echo "WIFI"
-#        break;;
-#    *)
-#        echo "$mode is not a valid choice"
-#        break;;
-#esac
-#
-#echo "enter the SSID of the WiFi network you want to use:"
-#read SSID
-#
-#echo "enter the password of the WiFi network you want to use:"
-#read -s PW
-#
-#exit
-    
-
-
 # install required packages
 sudo apt add-repository ppa:mosquitto-dev/mosquitto-ppa
 sudo apt update
@@ -55,7 +20,6 @@ pip install jupyter
 pip install numpy
 pip install bokeh
 pip install paho-mqtt
-#pip install platformio
 # install platformio dev version as the normal version does not support python3 yet
 pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
 
@@ -99,9 +63,4 @@ sudo cp additional_files/install/sysctl.conf /etc/
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 sudo sed '19iiptables-restore < /etc/iptables.ipv4.nat' /etc/rc.local
-
-# access point
-
-# existing
-
 
