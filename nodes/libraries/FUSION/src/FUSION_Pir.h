@@ -11,7 +11,7 @@ class FusionPir : public FusionModule
         unsigned int pin;
         bool isTracked;
 
-        void checkSensorState();
+        void update();
 };
 
 #endif

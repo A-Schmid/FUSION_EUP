@@ -27,17 +27,6 @@ void FusionPin::initialize()
     
     FusionModule::initialize();
 
-/*
-    // this should not be used as it overwrites the mqtt object's topic
-    // making it impossible to use multiple instances
-    sprintf(topic_pin, "%d", pin);
-
-    strcpy(topic_with_pin, STR(NODE_NAME)); 
-    strcat(topic_with_pin, "/");
-    strcat(topic_with_pin, topic_pin);
-
-    strcpy(mqtt->topic_name, topic_with_pin);
-*/
     registerCallbacks();
 }
 
@@ -119,7 +108,14 @@ void FusionPin::dWrite(bool value)
 bool FusionPin::dRead()
 {
     bool data = digitalRead(pin);
-    sendData(data, "digitalData");
+
+    // TODO not so nice... maybe wrap it in a function?
+    // this structure is used 5 times in this class
+    char command_with_pin[TOPIC_MAXLENGTH];
+    sprintf(command_with_pin, "%d", pin);
+    strcat(command_with_pin, "/digitalData");
+
+    sendData(data, command_with_pin);
     return data;
 }
 
@@ -133,7 +129,12 @@ void FusionPin::aWrite(uint16_t value)
 uint16_t FusionPin::aRead()
 {
     uint16_t data = analogRead(pin);
-    sendData(data, "analogData");
+
+    char command_with_pin[TOPIC_MAXLENGTH];
+    sprintf(command_with_pin, "%d", pin);
+    strcat(command_with_pin, "/analogData");
+
+    sendData(data, command_with_pin);
     return data;
 }
 
@@ -202,19 +203,31 @@ void FusionPin::setInterrupt(unsigned int edge)
 // interrupt callback on rise or fall
 void FusionPin::onChange()
 {
-    sendData(topic_pin, 2, "change");
+    char command_with_pin[TOPIC_MAXLENGTH];
+    sprintf(command_with_pin, "%d", pin);
+    strcat(command_with_pin, "/change");
+
+    sendData(topic_pin, 2, command_with_pin);
 }
 
 // interrupt callback on rise
 void FusionPin::onRise()
 {
-    sendData(topic_pin, 2, "rise");
+    char command_with_pin[TOPIC_MAXLENGTH];
+    sprintf(command_with_pin, "%d", pin);
+    strcat(command_with_pin, "/rise");
+
+    sendData(topic_pin, 2, command_with_pin);
 }
 
 // interrupt callback on fall
 void FusionPin::onFall()
 {
-    sendData(topic_pin, 2, "fall");
+    char command_with_pin[TOPIC_MAXLENGTH];
+    sprintf(command_with_pin, "%d", pin);
+    strcat(command_with_pin, "/fall");
+
+    sendData(topic_pin, 2, command_with_pin);
 }
 
 // this is a unnecessary complicated workaround to get interrupts to work
