@@ -5,6 +5,7 @@ from FUSION import Button
 
 btn = Button(node_name = "button", node_location="1104")
 
+# TODO move this to the Button class
 def on_change(data):
     if(data == True):
         print("press")

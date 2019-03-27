@@ -18,3 +18,4 @@ from .email import *
 #from .tone import *
 from .Minimal import *
 from .Pin import *
+from .Pir import *
