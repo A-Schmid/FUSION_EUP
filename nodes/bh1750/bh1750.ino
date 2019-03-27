@@ -1,4 +1,3 @@
-#define DEBUG 1
 #include "FUSION_BH1750.h"
 
 FusionBH1750 sensor;

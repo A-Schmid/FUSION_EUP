@@ -9,9 +9,10 @@
 FusionPir::FusionPir(unsigned int sensor_pin) : FusionModule()
 {
     pin = sensor_pin;
+    pinMode(pin, INPUT);
 }
 
-void FusionPir::checkSensorState()
+void FusionPir::update()
 {
     bool motion = digitalRead(pin);
     Serial.println(motion == HIGH);
@@ -22,7 +23,7 @@ void FusionPir::checkSensorState()
         {
             Serial.println("enter");
             isTracked = true;
-            sendData(true, "enter");
+            sendData(true, "action");
         }
     }
     else
@@ -31,7 +32,7 @@ void FusionPir::checkSensorState()
         {
             Serial.println("leave");
             isTracked = false;
-            sendData(false, "enter");
+            sendData(false, "action");
         }
     }
 }
