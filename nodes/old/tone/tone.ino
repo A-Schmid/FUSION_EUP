@@ -1,4 +1,3 @@
-#define DEBUG 1
 #include "FUSION_TONE.h"
 
 #ifndef PIN
