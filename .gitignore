@@ -9,3 +9,7 @@ nohup.out
 FUSION/__pycache__/
 log/
 *.ipynb
+sphinx
+doxygen
+documentation
+apidoc
