@@ -6,7 +6,6 @@ void setup()
 {
     Serial.begin(9600);
     pin.initialize();
-    pin.setDirection(INPUT);
 }
 
 void loop()

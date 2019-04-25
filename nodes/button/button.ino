@@ -12,6 +12,7 @@ FusionButton button(buttonPin);
 
 void setup()
 {
+    Serial.begin(9600);
     button.initialize();
 }
 

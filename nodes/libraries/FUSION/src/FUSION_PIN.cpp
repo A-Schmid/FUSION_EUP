@@ -76,6 +76,8 @@ void FusionPin::registerCallbacks()
 // handles MQTT messages
 void FusionPin::mqttCallback(char* topic, byte* payload, int length)
 {
+    Serial.println(topic);
+
     // extract payload from message
     uint16_t data;
 

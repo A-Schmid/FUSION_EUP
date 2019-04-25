@@ -36,7 +36,7 @@ void FusionMQTT::init()
 
     while (!mqttClient.connected())
     {
-        if (!mqttClient.connect("ESP8266Client"))
+        if (!mqttClient.connect(topic_name))
         {
             delay(100);
         }
@@ -67,6 +67,7 @@ void FusionMQTT::send(char* data, unsigned int length, char* topic_data)
     snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
     mqttClient.publish(topic, (uint8_t*) data, length, false);
     mqttClient.loop();
+    Serial.println(topic);
 }
 
 void FusionMQTT::send(uint8_t* data, unsigned int length, char* topic_data)
@@ -75,6 +76,7 @@ void FusionMQTT::send(uint8_t* data, unsigned int length, char* topic_data)
     snprintf(topic, TOPIC_MAXLENGTH, "%s/%s/%s/%s", topic_network, topic_location, topic_name, topic_data);
     mqttClient.publish(topic, data, length, false);
     mqttClient.loop();
+    Serial.println(topic);
 }
 
 void FusionMQTT::send(const char* data, char* topic_data)

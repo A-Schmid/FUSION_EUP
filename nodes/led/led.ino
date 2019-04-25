@@ -1,21 +1,16 @@
-#include "FUSION_PIN.h"
+#include "FUSION_LED.h"
 
-FusionPin red = FusionPin(D0);
-FusionPin yellow = FusionPin(D6);
-FusionPin green = FusionPin(D8);
+FusionLed led = FusionLed(D0);
 
 void setup()
 {
-    red.initialize(OUTPUT);
-    yellow.initialize(OUTPUT);
-    green.initialize(OUTPUT);
+    Serial.begin(9600);
+    led.initialize();
 }
 
 void loop()
 {
-    red.update(); 
-    yellow.update(); 
-    green.update(); 
+    led.update(); 
 
     delay(update_time);
 }
