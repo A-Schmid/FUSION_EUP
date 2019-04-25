@@ -9,6 +9,10 @@ def send_email(recipient, subject="FUSION", message=""):
     msg['To'] = recipient
     server = smtplib.SMTP("smtp.uni-regensburg.de", 587)
     server.starttls()
-    server.login("sca04209", "password")
-    server.send_message(msg)
+    server.login("mel15551", "apfelsaft1")
+    try:
+        server.send_message(msg)
+        print("The message was sent successfully.")
+    except:
+        print("The message could not be sent.")
     server.quit()
