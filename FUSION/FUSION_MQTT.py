@@ -30,8 +30,9 @@ class FUSION_MQTT():
         self.mqtt_name = node_name
 
         # register MQTT callbacks
-        self._mqtt = mqtt.Client()
+        self._mqtt = mqtt.Client("FUSION_" + node_name)
         self._mqtt.on_connect = self.on_connect
+        self._mqtt.on_disconnect = self.on_disconnect
         self._mqtt.on_message = self.on_message
         
         self._mqtt.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEPALIVE)
@@ -53,12 +54,19 @@ class FUSION_MQTT():
         #self._mqtt.subscribe("{}/{}/{}/#".format(self.mqtt_network, self.mqtt_location, self.mqtt_name))
         # we listen to the specified topic defined by NETWORK, LOCATION and NODE_NAME with a wildcard for the data entry
         self._mqtt.subscribe("{}/{}/{}/#".format(self.mqtt_network, self.mqtt_location, self.mqtt_name))
+        #print("connected", self.mqtt_name, result_code)
+
+    def on_disconnect(self, client, userdata, result_code):
+        #client.loop_stop()
+        #print("disconnected " + self.mqtt_name)
+        pass
 
     # checks if the received message matches a data entry our object listens to
     # if this is the case, decode the message, store the data and call corresponding callbacks
     def on_message(self, client, userdata, msg):
         for entry in self.data_entries:
             if(msg.topic.split("/")[-1] == entry):
+                #print(msg.topic)
                 self.data[entry] = self._decode_message(msg.payload, self._data_types[entry]) 
                 for callback in self._callbacks[entry]:
                     cb_arg_num = len(inspect.getargspec(callback).args)
@@ -74,8 +82,8 @@ class FUSION_MQTT():
     # send a message to the specified node
     def send_message(self, topic, payload=None, qos=0, retain=False):
         theTopic = "{}/{}/{}/{}".format(self.mqtt_network, self.mqtt_location, self.mqtt_name, topic)
-        #print(theTopic, payload)
         self._mqtt.publish(theTopic, payload, qos, retain)
+        #print(theTopic, payload)
 
     # deserialize the binary data from a message to a matching data type
     def _decode_message(self, data, data_type):

@@ -19,3 +19,4 @@ from .email import *
 from .Minimal import *
 from .Pin import *
 from .Pir import *
+from .Led import *
