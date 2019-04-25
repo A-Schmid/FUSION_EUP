@@ -1,7 +1,7 @@
 #include "FUSION_MIC.h"
 
 #ifndef PIN
-    #define PIN 2 // ESP8266 pin D4
+    #define PIN 17 // ESP8266 pin D4
 #endif
 
 FusionMic mic = FusionMic(PIN);

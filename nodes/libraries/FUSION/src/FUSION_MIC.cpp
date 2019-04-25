@@ -9,7 +9,7 @@
 FusionMic::FusionMic(unsigned int sensor_pin) : FusionModule()
 {
     pin = sensor_pin;
-    pinMode(pin, INPUT);
+    // pinMode(pin, INPUT);
 }
 
 void FusionMic::update()
